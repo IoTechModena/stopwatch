@@ -1,0 +1,13 @@
+# Build results
+bin/
+obj/
+
+# Recordings
+recordings/
+
+# Visual Studio
+.vs/
+*.sln
+
+# Github Desktop
+.github/
