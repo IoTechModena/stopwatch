@@ -1,9 +1,8 @@
 services:
-  db:
+  database:
     image: postgres
     environment:
       POSTGRES_PASSWORD: test
-    hostname: db
     ports:
       - 5432:5432
     volumes:
@@ -14,16 +13,7 @@ services:
       context: backend
       dockerfile: migrations.Dockerfile
     depends_on:
-      - db
-
-  backend:
-    build: backend
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-    ports:
-      - 8080:8080
-    depends_on:
-      - migrations
+      - database
 
 volumes:
   pgdata:
