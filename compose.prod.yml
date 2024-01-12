@@ -1,0 +1,24 @@
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: test
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  migrations:
+    build:
+      context: backend
+      dockerfile: migrations.Dockerfile
+    depends_on:
+      - database
+
+  backend:
+    build: backend
+    ports:
+      - 8080:8080
+    depends_on:
+      - migrations
+
+volumes:
+  pgdata:
