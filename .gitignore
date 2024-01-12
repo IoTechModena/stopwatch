@@ -1,6 +1,12 @@
-# Build results
+# .NET
 bin/
 obj/
+
+# Node.js
+node_modules/
+
+# Vite
+dist/
 
 # Recordings
 recordings/
