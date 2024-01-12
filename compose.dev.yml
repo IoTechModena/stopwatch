@@ -15,5 +15,12 @@ services:
     depends_on:
       - database
 
+  backend:
+    build: backend
+    ports:
+      - 8080:8080
+    depends_on:
+      - migrations
+
 volumes:
   pgdata:
