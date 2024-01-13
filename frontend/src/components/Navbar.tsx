@@ -7,7 +7,7 @@ export const Navbar = () => {
   const navigation = [
     { name: "Home", href: "/", current: false },
     { name: "Register", href: "register", current: false },
-    { name: "PlaceHolder3", href: "#", current: false },
+    { name: "Recordings", href: "video-list", current: false },
   ];
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
