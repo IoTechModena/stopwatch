@@ -27,9 +27,11 @@ export const VideocameraCard = () => {
           >
             Live
           </button>
-          <button className="bg-[#112D4E] mb-4 w-full hover:bg-[#0B1D32] text-white font-bold py-2 px-4 rounded-lg">
-            Registrazioni
-          </button>
+          <a href="video-list">
+            <button className="bg-[#112D4E] mb-4 w-full hover:bg-[#0B1D32] text-white font-bold py-2 px-4 rounded-lg">
+              Registrazioni
+            </button>
+          </a>
         </div>
       </div>
     </>
