@@ -31,12 +31,12 @@ export const DownloadButton = () => {
   return (
     <button
       onClick={() => downloadVideo(1)}
-      id="1"
-      className=" w-full py-2 px-4 bg-black p-2 hover:bg-slate-900 rounded text-white inline-flex items-center justify-center"
+      type="button"
+      className="group w-full py-2 px-4 font-bold bg-[#112d4e] hover:bg-[#0B1D32]  rounded-sm text-white inline-flex items-center justify-center  Gelion"
     >
       <img
         id="original-svg"
-        className="h-8 w-8 mr-3"
+        className="h-8 w-8 mr-2 transition-transform transform-gpu group-hover:saturate-200 group-hover:contrast-125 group-hover:scale-110"
         src="../imgs/downloadSvg.svg"
         alt="Download"
       />

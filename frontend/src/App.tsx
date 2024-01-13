@@ -4,6 +4,7 @@ import { Navbar } from "./components/Navbar";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { VideoList } from "./pages/VideoList";
+import "./App.css";
 
 const Layout = () => (
   <>
