@@ -19,11 +19,22 @@ services:
     build: backend
     ports:
       - 8080:8080
-    depends_on:
-      - migrations
     volumes:
       - recordings:/App/Data/recordings
+
+  frontend:
+    build: frontend
+    volumes:
+      - static_data:/App/dist
+
+  proxy:
+    build: proxy
+    ports:
+      - 80:80
+    volumes:
+      - static_data:/etc/nginx/html
 
 volumes:
   database_data:
   recordings:
+  static_data:
