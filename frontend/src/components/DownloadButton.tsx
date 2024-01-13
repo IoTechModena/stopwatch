@@ -31,7 +31,7 @@ export const DownloadButton = () => {
   return (
     <button
       onClick={() => downloadVideo(1)}
-      id="1"
+      type="button"
       className="group w-full py-2 px-4 font-bold bg-[#112d4e] hover:bg-[#0B1D32]  rounded-sm text-white inline-flex items-center justify-center  Gelion"
     >
       <img
