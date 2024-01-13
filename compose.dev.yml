@@ -6,7 +6,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - database_data:/var/lib/postgresql/data
 
   migrations:
     build:
@@ -21,6 +21,9 @@ services:
       - 8080:8080
     depends_on:
       - migrations
+    volumes:
+      - recordings:/App/Data/recordings
 
 volumes:
-  pgdata:
+  database_data:
+  recordings:
