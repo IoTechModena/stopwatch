@@ -95,18 +95,18 @@ public class VideoCameraController : ControllerBase
         Recording file = new Recording();
         file.Id = 1;
         file.Duration = new TimeSpan(0, 2, 0);
-        file.FilePath = "Aggiungi qui il percorso file";
-        FileInfo fileInfo = new FileInfo(file.FilePath);
+        file.Path = "Aggiungi qui il percorso file";
+        FileInfo fileInfo = new FileInfo(file.Path);
         file.Size = fileInfo.Length;
-        file.FileName = fileInfo.Name;
+        file.Name = fileInfo.Name;
         Recording file2 = new Recording();
 
         file2.Id = 2;
         file2.Duration = new TimeSpan(0, 2, 0);
-        file2.FilePath = "Aggiungi qui il percorso file";
-        fileInfo = new FileInfo(file2.FilePath);
+        file2.Path = "Aggiungi qui il percorso file";
+        fileInfo = new FileInfo(file2.Path);
         file2.Size = fileInfo.Length;
-        file2.FileName = fileInfo.Name;
+        file2.Name = fileInfo.Name;
 
         string path = null;
         string fileName = null;
@@ -114,12 +114,12 @@ public class VideoCameraController : ControllerBase
         switch (id)
         {
             case 1:
-                path = file.FilePath;
-                fileName = file.FileName;
+                path = file.Path;
+                fileName = file.Name;
                 break;
             case 2:
-                path = file2.FilePath;
-                fileName = file2.FileName;
+                path = file2.Path;
+                fileName = file2.Name;
                 break;
 
         };

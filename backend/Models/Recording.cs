@@ -2,26 +2,30 @@
 
 public class Recording
 {
-    private long id;
-    private long size;
-    private TimeSpan duration;
-    private string filePath;
-    private string fileName;
+    public long Id { get; set; }
+    public string Path { get; set; }
+    public string Name { get; set; }
+    public DateOnly StartDate { get; set; }
+    public DateOnly EndDate { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public TimeOnly EndTime { get; set; }
+    public TimeSpan Duration { get; set; }
+    public long Size { get; set; }
 
-    public Recording() { }
-
-    public Recording(long id, long size, TimeSpan duration, string filePath, string fileName)
+    public Recording() {}
+    public Recording(long id, string path, string name, DateOnly startDate, DateOnly endDate, TimeOnly startTime, TimeOnly endTime, long size, TimeSpan duration)
     {
-        this.Id = id;
-        this.Size = size;
-        this.Duration = duration;
-        this.filePath = filePath;
-        this.fileName = fileName;
+        Id = id;
+        Path = path;
+        Name = name;
+        StartDate = startDate;
+        EndDate = endDate;
+        StartTime = startTime;
+        EndTime = endTime;
+        Size = size;
+        Duration = duration;
     }
 
-    public long Id { get => id; set => id = value; }
-    public long Size { get => size; set => size = value; }
-    public TimeSpan Duration { get => duration; set => duration = value; }
-    public string FilePath { get => filePath; set => filePath = value; }
-    public string FileName { get => fileName; set => fileName = value; }
+
+
 }
