@@ -92,14 +92,14 @@ public class VideoCameraController : ControllerBase
     [HttpGet("api/download-recordings/{id}")]
     public async Task<IActionResult> getFile(long id)
     {
-        FileDownload file = new FileDownload();
+        Recording file = new Recording();
         file.Id = 1;
         file.Duration = new TimeSpan(0, 2, 0);
         file.FilePath = "Aggiungi qui il percorso file";
         FileInfo fileInfo = new FileInfo(file.FilePath);
         file.Size = fileInfo.Length;
         file.FileName = fileInfo.Name;
-        FileDownload file2 = new FileDownload();
+        Recording file2 = new Recording();
 
         file2.Id = 2;
         file2.Duration = new TimeSpan(0, 2, 0);
