@@ -17,6 +17,8 @@ services:
     build: backend
     volumes:
       - recordings:/App/Data/recordings
+    depends_on:
+      - migrations
 
   frontend:
     build: frontend
@@ -29,6 +31,9 @@ services:
       - 80:80
     volumes:
       - static_data:/etc/nginx/html
+    depends_on:
+      - frontend
+      - backend
 
 volumes:
   database_data:
