@@ -1,6 +1,6 @@
 ﻿namespace backend.Models;
 
-public class FileDownload
+public class Recording
 {
     private long id;
     private long size;
@@ -8,9 +8,9 @@ public class FileDownload
     private string filePath;
     private string fileName;
 
-    public FileDownload() { }
+    public Recording() { }
 
-    public FileDownload(long id, long size, TimeSpan duration, string filePath, string fileName)
+    public Recording(long id, long size, TimeSpan duration, string filePath, string fileName)
     {
         this.Id = id;
         this.Size = size;
