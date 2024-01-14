@@ -1,0 +1,4 @@
+# Docker
+.dockerignore
+Dockerfile
+migrations.Dockerfile
