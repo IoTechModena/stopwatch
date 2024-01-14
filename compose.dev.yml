@@ -18,12 +18,12 @@ services:
   backend:
     build: backend
     volumes:
-      - recordings:/App/Data/recordings
+      - recordings:/app/Data/recordings
 
   frontend:
     build: frontend
     volumes:
-      - static_data:/App/dist
+      - static_data:/app/dist
 
   proxy:
     build: proxy
@@ -31,6 +31,8 @@ services:
       - 80:80
     volumes:
       - static_data:/etc/nginx/html
+    depends_on:
+      - backend
 
 volumes:
   database_data:

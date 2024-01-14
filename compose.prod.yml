@@ -16,14 +16,14 @@ services:
   backend:
     build: backend
     volumes:
-      - recordings:/App/Data/recordings
+      - recordings:/app/Data/recordings
     depends_on:
       - migrations
 
   frontend:
     build: frontend
     volumes:
-      - static_data:/App/dist
+      - static_data:/app/dist
 
   proxy:
     build: proxy
