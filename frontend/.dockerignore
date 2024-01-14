@@ -1,0 +1,9 @@
+# Vite
+dist/
+
+# Node.js
+node_modules/
+
+# Docker
+.dockerignore
+Dockerfile

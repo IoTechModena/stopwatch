@@ -14,7 +14,7 @@ public class VideoCameraController : ControllerBase
     private string ip = "93.57.67.110";
     HttpClient client = new HttpClient();
 
-    [HttpGet("api/saveRecording/")]
+    [HttpGet("saveRecording")]
     // Formatting: dates=yyyy-mm-dd  times=hh:mm:ss
     public async Task<IActionResult> SaveRecording([FromQuery] string startDate, string startTime, string endDate, string endTime)
     {
@@ -89,7 +89,7 @@ public class VideoCameraController : ControllerBase
         }
     }
 
-    [HttpGet("api/download-recordings/{id}")]
+    [HttpGet("download-recordings/{id}")]
     public async Task<IActionResult> getFile(long id)
     {
         Recording file = new Recording();
