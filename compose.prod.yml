@@ -15,13 +15,27 @@ services:
 
   backend:
     build: backend
-    ports:
-      - 8080:8080
+    volumes:
+      - recordings:/app/Data/recordings
     depends_on:
       - migrations
+
+  frontend:
+    build: frontend
     volumes:
-      - recordings:/App/Data/recordings
+      - static_data:/app/dist
+
+  proxy:
+    build: proxy
+    ports:
+      - 80:80
+    volumes:
+      - static_data:/etc/nginx/html
+    depends_on:
+      - frontend
+      - backend
 
 volumes:
   database_data:
   recordings:
+  static_data:
