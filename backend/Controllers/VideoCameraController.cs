@@ -13,7 +13,14 @@ public class VideoCameraController : ControllerBase
     // Data needed to access the camera recording
     string authenticationString = "admin:mutina23";
     private string ip = "93.57.67.110";
+
     HttpClient client = new HttpClient();
+    private DataContext context;
+
+    public VideoCameraController(DataContext context)
+   {
+      this.context = context;
+   }
 
     [HttpGet("saveRecording")]
     public async Task<IActionResult> SaveRecording([FromQuery] string startDate, string startTime, string endDate, string endTime) // Formatting: dates=yyyy-mm-dd  times=hh:mm:ss
@@ -94,6 +101,10 @@ public class VideoCameraController : ControllerBase
                 DateTime startDateTime = recording.StartDate.ToDateTime(recording.StartTime);
                 DateTime endDateTime = recording.EndDate.ToDateTime(recording.EndTime);
                 recording.Duration = endDateTime - startDateTime;
+
+                // adding recording to the database
+                await context.AddAsync(recording);
+                await context.SaveChangesAsync();
 
                 return Ok("Video successfully downloaded"); // Not a good practice to check if everything went correctly, needs error handling
             }
