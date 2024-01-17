@@ -58,7 +58,7 @@ public class VideoCameraController : ControllerBase
             string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=secondary&videoFormat=mp4&streamData=1&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
 
             string fileName = $"NVR-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}.mp4";
-            string filePath = $"./Data/recordings/{fileName}";
+            string relativeFilePath = $"./Data/recordings/{fileName}";
 
             // get.playback.recordinfo request through curl process
 
@@ -67,7 +67,7 @@ public class VideoCameraController : ControllerBase
             {
                 // Set the FileName to "curl". This is the command that will be executed.
                 FileName = "curl",
-                Arguments = $"-o {filePath} -u admin:mutina23  {recordDownloadURL}",
+                Arguments = $"-o {relativeFilePath} -u admin:mutina23  {recordDownloadURL}",
                 // Set UseShellExecute to false. This means the process will be executed in the same process, not a new shell.
                 UseShellExecute = false,
             };
@@ -89,9 +89,9 @@ public class VideoCameraController : ControllerBase
                 Recording recording = new Recording()
                 {
                     Name = fileName,
-                    Path = filePath,
+                    Path = Path.GetFullPath(relativeFilePath),
                     Description = "",
-                    Size = new FileInfo(filePath).Length,
+                    Size = new FileInfo(relativeFilePath).Length,
                     StartDate = DateOnly.ParseExact(startDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
                     EndDate = DateOnly.ParseExact(endDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
                     StartTime = TimeOnly.ParseExact(startTime, "HH:mm:ss", CultureInfo.InvariantCulture),
