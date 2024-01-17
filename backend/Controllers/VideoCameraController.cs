@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using backend.Models;
 using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
@@ -15,7 +16,7 @@ public class VideoCameraController : ControllerBase
     private string ip = "93.57.67.110";
 
     HttpClient client = new HttpClient();
-    private DataContext context;
+    private readonly DataContext context;
 
     public VideoCameraController(DataContext context)
    {
@@ -170,6 +171,20 @@ public class VideoCameraController : ControllerBase
         {
             // Gestisci il caso in cui il file non esiste
             return NotFound();
+        }
+    }
+
+    [HttpGet("getRecordings")]
+    public async Task<IActionResult> GetRecordings()
+    {
+        try
+        {
+            var recordings = await context.Recordings.ToListAsync();
+            return Ok(recordings);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
         }
     }
 }
