@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using backend.Models;
+using System.Globalization;
 
 namespace backend.Controllers;
 
@@ -12,11 +13,17 @@ public class VideoCameraController : ControllerBase
     // Data needed to access the camera recording
     string authenticationString = "admin:mutina23";
     private string ip = "93.57.67.110";
+
     HttpClient client = new HttpClient();
+    private DataContext context;
+
+    public VideoCameraController(DataContext context)
+   {
+      this.context = context;
+   }
 
     [HttpGet("saveRecording")]
-    // Formatting: dates=yyyy-mm-dd  times=hh:mm:ss
-    public async Task<IActionResult> SaveRecording([FromQuery] string startDate, string startTime, string endDate, string endTime)
+    public async Task<IActionResult> SaveRecording([FromQuery] string startDate, string startTime, string endDate, string endTime) // Formatting: dates=yyyy-mm-dd  times=hh:mm:ss
     {
         // This method downloads a video from a camera.
         // It first retrieves the necessary information for the download request,
@@ -49,7 +56,8 @@ public class VideoCameraController : ControllerBase
 
             string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=secondary&videoFormat=mp4&streamData=1&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
 
-            string fileName = $"NVR-CAM-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}.mp4";
+            string fileName = $"NVR-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}.mp4";
+            string filePath = $"./Data/recordings/{fileName}";
 
             // get.playback.recordinfo request through curl process
 
@@ -58,13 +66,7 @@ public class VideoCameraController : ControllerBase
             {
                 // Set the FileName to "curl". This is the command that will be executed.
                 FileName = "curl",
-
-                // Set the Arguments for the curl command.
-                // -o specifies the output file path and name.
-                // -u specifies the username and password for authentication.
-                // The last argument is the URL from which the recording will be downloaded.
-                Arguments = $"-o ./Data/recordings/{fileName} -u admin:mutina23  {recordDownloadURL}",
-
+                Arguments = $"-o {filePath} -u admin:mutina23  {recordDownloadURL}",
                 // Set UseShellExecute to false. This means the process will be executed in the same process, not a new shell.
                 UseShellExecute = false,
             };
@@ -80,9 +82,37 @@ public class VideoCameraController : ControllerBase
             // might try to use the file before it's fully downloaded, which would cause errors.
             await process.WaitForExitAsync();
 
-            return Ok("Video successfully downloaded"); // Not a good practice to check if everything went correctly, needs error handling
-        }
+            //Recording model generation
+            try
+            {
+                Recording recording = new Recording()
+                {
+                    Name = fileName,
+                    Path = filePath,
+                    Description = "",
+                    Size = new FileInfo(filePath).Length,
+                    StartDate = DateOnly.ParseExact(startDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+                    EndDate = DateOnly.ParseExact(endDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+                    StartTime = TimeOnly.ParseExact(startTime, "HH:mm:ss", CultureInfo.InvariantCulture),
+                    EndTime = TimeOnly.ParseExact(endTime, "HH:mm:ss", CultureInfo.InvariantCulture)
+                };
 
+                // Duration calculation
+                DateTime startDateTime = recording.StartDate.ToDateTime(recording.StartTime);
+                DateTime endDateTime = recording.EndDate.ToDateTime(recording.EndTime);
+                recording.Duration = endDateTime - startDateTime;
+
+                // adding recording to the database
+                await context.AddAsync(recording);
+                await context.SaveChangesAsync();
+
+                return Ok("Video successfully downloaded"); // Not a good practice to check if everything went correctly, needs error handling
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         else
         {
             return StatusCode((int)recordInfoResponse.StatusCode, recordInfoResponse.ReasonPhrase + "Unable to retrieve recording info");
