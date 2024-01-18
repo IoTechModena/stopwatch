@@ -7,12 +7,17 @@ import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 axios.defaults.baseURL = "http://localhost/";
 
-export const Login = (/*props: any | undefined*/) => {
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
+
+export const Login = () => {
   const [, setError] = useState("");
   const signIn = useSignIn();
   const navigate = useNavigate();
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: LoginFormValues) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
 
     try {

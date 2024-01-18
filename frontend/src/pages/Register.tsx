@@ -1,15 +1,21 @@
+// Autor: Smanuel
+
 import axios, { AxiosError } from "axios";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useSignIn } from "react-auth-kit";
 import { Link } from "react-router-dom";
 
-// Autor: Smanuel
-export const Register = (/*props: any*/) => {
+interface FormValues {
+  email: string;
+  password: string;
+}
+
+export const Register = () => {
   const [, setError] = useState("");
   const signIn = useSignIn();
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: FormValues) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
     setError("");
 
