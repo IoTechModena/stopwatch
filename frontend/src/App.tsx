@@ -29,3 +29,8 @@ export const App = () => {
 };
 
 export default App;
+
+// If you are using the Refresh Token feature, then you must add
+//the refresh prop with proper value, otherwise refresh token will throw
+//a not implemented error. If you are not using the Refresh Token feature,
+// then don't add it

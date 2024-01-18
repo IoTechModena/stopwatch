@@ -1,7 +1,7 @@
 // Author: Sbenduel
 import axios from "axios";
 //cambiare questo url quando avremo un server ufficiale da contattare
-axios.defaults.baseURL = "https://localhost:5001/";
+axios.defaults.baseURL = "http://localhost/";
 const downloadVideo = async (id: number) => {
   try {
     console.log("id: ", id);
