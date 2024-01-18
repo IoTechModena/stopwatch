@@ -5,7 +5,7 @@ import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { VideoList } from "./pages/VideoList";
 import "./App.css";
-import { RequireAuth } from "react-auth-kit";
+//import { RequireAuth } from "react-auth-kit";
 
 const Layout = () => (
   <>
