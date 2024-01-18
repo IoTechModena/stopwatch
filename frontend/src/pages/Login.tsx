@@ -4,37 +4,39 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useSignIn } from "react-auth-kit";
 import { useFormik } from "formik";
-
-// Define the interface for user data
-
-// Login component
+axios.defaults.baseURL = "http://localhost/";
 
 export const Login = (props: any | undefined) => {
   const [error, setError] = useState("");
   const signIn = useSignIn();
 
   const onSubmit = async (values: any) => {
-    console.log("Values: ", values);
+    console.log("Valori inviati: ", values); // Log dei valori inviati
     setError("");
-    //mandiamo le credenziali al server
+
     try {
+      console.log("Inizio richiesta di login"); // Prima della richiesta
       const response = await axios.post("api/login", values);
-      //autentichiamo l'utente
+      console.log("Risposta ricevuta: ", response); // Dopo aver ricevuto la risposta
+
       signIn({
         token: response.data.token,
         expiresIn: 3600,
         tokenType: "Bearer",
         authState: { email: values.email },
       });
+      console.log("Login eseguito con successo"); // Dopo il login
     } catch (err) {
-      if (err && err instanceof AxiosError)
+      console.log("Errore durante il login: ", err); // In caso di errore
+      if (err && err instanceof AxiosError) {
         setError(err.response?.data.message);
-      else if (err && err instanceof Error) setError(err.message);
-
-      console.log("Error: ", err);
+        console.log("Dettagli errore Axios: ", err.response?.data);
+      } else if (err && err instanceof Error) {
+        setError(err.message);
+        console.log("Errore generico: ", err.message);
+      }
     }
   };
-
   const formik = useFormik({
     initialValues: {
       email: "",

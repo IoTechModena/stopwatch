@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useSignOut } from "react-auth-kit";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
   //Lista stub di link per la navigazione, current indica la pagina attuale
@@ -9,6 +10,13 @@ export const Navbar = () => {
     { name: "Register", href: "register", current: false },
     { name: "Recordings", href: "video-list", current: false },
   ];
+
+  const signOut = useSignOut();
+  const navigate = useNavigate();
+  const logout = () => {
+    signOut();
+    navigate("/login");
+  };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -109,6 +117,15 @@ export const Navbar = () => {
                 <i className="fa-solid pl-2 fa-right-to-bracket"></i>
               </button>
             </Link>
+          </li>
+          <li>
+            <button
+              onClick={logout}
+              type="button"
+              className="text-white md:block hidden Gelion font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </nav>

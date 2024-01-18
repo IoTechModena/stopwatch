@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       authType={"cookie"}
       authName={"_auth"}
       cookieDomain={window.location.hostname}
-      cookieSecure={false} //https true o http false
+      cookieSecure={false} //https == true  http == false
     >
       <BrowserRouter>
         <App />
