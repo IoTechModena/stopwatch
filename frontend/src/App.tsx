@@ -19,23 +19,8 @@ export const App = () => {
     <Routes>
       <Route path="/" element={<Layout />}>
         {/* <Route path="id" element={<DetailCamera />} /> */}
-        <Route
-          path="video-list"
-          element={
-            <RequireAuth loginPath="/login">
-              <VideoList />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/"
-          index
-          element={
-            <RequireAuth loginPath="/login">
-              <Home />
-            </RequireAuth>
-          }
-        />
+        <Route path="video-list" element={<VideoList />} />
+        <Route path="/" index element={<Home />} />
         <Route path="favorites" element="FavoriteCamera" />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
@@ -44,4 +29,15 @@ export const App = () => {
   );
 };
 
+/* ROUTE PROTETTE DA METTERE PRIMA DI ANDARE IN PRODUZIONE
+            <RequireAuth loginPath="/login">
+              <VideoList />
+            </RequireAuth>
+
+            <RequireAuth loginPath="/login">
+              <Home />
+            </RequireAuth>
+          }
+        />
+        */
 export default App;
