@@ -1,3 +1,5 @@
+#!/bin/sh
+
 $pre_push_script = "#!/bin/sh
 
 cd frontend
