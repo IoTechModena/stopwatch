@@ -17,4 +17,6 @@ npm install"
 
 echo $post_merge_script > .git/hooks/post-merge
 
+chmod 777 .git/hooks/pre-push .git/hooks/post-merge
+
 echo "Script installati correttamente"
