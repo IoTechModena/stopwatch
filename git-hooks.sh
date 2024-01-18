@@ -1,6 +1,6 @@
 #!/bin/sh
 
-$pre_push_script = "#!/bin/sh
+pre_push_script="#!/bin/sh
 
 cd frontend
 npm install
@@ -10,7 +10,7 @@ npm run build"
 echo $pre_push_script > .git/hooks/pre-push
 
 
-$post_merge_script = "#!/bin/sh
+post_merge_script="#!/bin/sh
 
 cd frontend
 npm install"
