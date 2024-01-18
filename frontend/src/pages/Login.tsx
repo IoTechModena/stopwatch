@@ -6,8 +6,8 @@ import { useSignIn } from "react-auth-kit";
 import { useFormik } from "formik";
 axios.defaults.baseURL = "http://localhost/";
 
-export const Login = (props: any | undefined) => {
-  const [error, setError] = useState("");
+export const Login = (/*props: any | undefined*/) => {
+  const [, setError] = useState("");
   const signIn = useSignIn();
 
   const onSubmit = async (values: any) => {
