@@ -4,15 +4,16 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useSignIn } from "react-auth-kit";
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 axios.defaults.baseURL = "http://localhost/";
 
 export const Login = (/*props: any | undefined*/) => {
   const [, setError] = useState("");
   const signIn = useSignIn();
+  const navigate = useNavigate();
 
   const onSubmit = async (values: any) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
-    setError("");
 
     try {
       console.log("Inizio richiesta di login"); // Prima della richiesta
@@ -26,6 +27,7 @@ export const Login = (/*props: any | undefined*/) => {
         authState: { email: values.email },
       });
       console.log("Login eseguito con successo"); // Dopo il login
+      navigate("/");
     } catch (err) {
       console.log("Errore durante il login: ", err); // In caso di errore
       if (err && err instanceof AxiosError) {
@@ -91,7 +93,7 @@ export const Login = (/*props: any | undefined*/) => {
           </button>
           <p className=" text-sm text-neutral-800">Non hai un account? </p>
           <Link to="/register">
-            <button className="w-[80%] bg-gradient-to-r from-yellow-300 to-yellow-400 py-2 rounded-lg mx-auto block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 mt-4 mb-6">
+            <button className="w-[80%] bg-gradient-to-r from-yellow-300 to-yellow-500 py-2 rounded-lg mx-auto block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 mt-4 mb-6">
               Registrati
             </button>
           </Link>
