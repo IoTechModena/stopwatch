@@ -4,14 +4,9 @@ import { VideoCard } from "../components/VideoCard";
 import { VideoCardProps } from "../components/VideoCard";
 import axios from "axios";
 
-// TODO: Create an instance in a separate file for the whole project
-const instance = axios.create({
-  baseURL: "http://localhost/api/",
-});
-
 const getVideos = async () => {
   try {
-    const response = await instance.get("getRecordings");
+    const response = await axios.get("api/getRecordings");
     return response.data;
   } catch (error) {
     console.error(error);

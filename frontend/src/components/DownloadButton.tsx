@@ -1,11 +1,10 @@
 // Author: Sbenduel
 import axios from "axios";
-//cambiare questo url quando avremo un server ufficiale da contattare
-axios.defaults.baseURL = "http://localhost/";
+
 const downloadVideo = async (id: number) => {
   try {
     console.log("id: ", id);
-    const response = await axios.get(`download-recordings/${id}`, {
+    const response = await axios.get(`api/download-recordings/${id}`, {
       responseType: "blob", // Gestisce la risposta come file binario
     });
 
