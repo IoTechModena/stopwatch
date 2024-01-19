@@ -1,11 +1,12 @@
 // Author: Sbenduel
 import axios from "axios";
 //cambiare questo url quando avremo un server ufficiale da contattare
-axios.defaults.baseURL = "https://localhost:5001/";
+axios.defaults.baseURL = "http:localhost/api/";
+
 const downloadVideo = async (id: number) => {
   try {
     console.log("id: ", id);
-    const response = await axios.get(`/api/download-recordings/${id}`, {
+    const response = await axios.get(`download-recordings/${id}`, {
       responseType: "blob", // Gestisce la risposta come file binario
     });
 
@@ -27,7 +28,7 @@ const downloadVideo = async (id: number) => {
 };
 
 // questo componente dovrebbe stare dentro un parent, altrimenti diventa lungo come lo schermo, nel caso tolgiere w-full da button
-export const DownloadButton = () => {
+export const DownloadButton = (props: { size: number }) => {
   return (
     <button
       onClick={() => downloadVideo(1)}
@@ -40,7 +41,7 @@ export const DownloadButton = () => {
         src="../imgs/downloadSvg.svg"
         alt="Download"
       />
-      Download video
+      Download video - {props.size}
     </button>
   );
 };
