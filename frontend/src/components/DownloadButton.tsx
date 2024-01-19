@@ -1,11 +1,12 @@
 // Author: Sbenduel
 import axios from "axios";
 //cambiare questo url quando avremo un server ufficiale da contattare
-axios.defaults.baseURL = "https://localhost:5001/";
+axios.defaults.baseURL = "http:localhost/api/";
+
 const downloadVideo = async (id: number) => {
   try {
     console.log("id: ", id);
-    const response = await axios.get(`/api/download-recordings/${id}`, {
+    const response = await axios.get(`download-recordings/${id}`, {
       responseType: "blob", // Gestisce la risposta come file binario
     });
 
@@ -26,8 +27,21 @@ const downloadVideo = async (id: number) => {
   }
 };
 
+// Questa funzione prende in input un numero di byte e lo converte in una stringa che rappresenta la dimensione in byte, KB, MB, GB
+function formatBytes(bytes: number, decimals = 2) {
+  if (bytes === 0) return "0 Bytes";
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
+
 // questo componente dovrebbe stare dentro un parent, altrimenti diventa lungo come lo schermo, nel caso tolgiere w-full da button
-export const DownloadButton = () => {
+export const DownloadButton = (props: { size: number }) => {
   return (
     <button
       onClick={() => downloadVideo(1)}
@@ -40,7 +54,7 @@ export const DownloadButton = () => {
         src="../imgs/downloadSvg.svg"
         alt="Download"
       />
-      Download video
+      Download video ({formatBytes(props.size)})
     </button>
   );
 };
