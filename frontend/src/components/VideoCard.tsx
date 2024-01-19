@@ -1,16 +1,13 @@
 // Author: Aboom
 
 import { DownloadButton } from "./DownloadButton";
-import VideoPlayer from "./VideoPlayer";
+import { VideoPlayer } from "./VideoPlayer";
 
 export const VideoCard = () => {
   return (
     <>
       <div className="max-w-lg Gelion rounded-md  overflow-hidden  shadow-2xl m-10">
-       <div>
-
         <VideoPlayer />
-       </div>
         <div className="px-6 py-4">
           <h1
             id="videoTitle"
@@ -34,7 +31,6 @@ export const VideoCard = () => {
         </div>
         <DownloadButton />
       </div>
-      
     </>
   );
 };
