@@ -1,6 +1,6 @@
 import ReactPlayer from "react-player";
 
-export const VideoPlayer = (props: { id: number }) => {
+export const VideoPlayer = (/*props: { id: number }*/) => {
   return (
     <ReactPlayer
       light={

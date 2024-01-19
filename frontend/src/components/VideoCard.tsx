@@ -19,7 +19,7 @@ export const VideoCard = (props: VideoCardProps) => {
   return (
     <>
       <div className="min-w-lg Gelion rounded-md  overflow-hidden  shadow-2xl m-10">
-        <VideoPlayer id={props.id} />
+        <VideoPlayer /*id={props.id}*/ />
         <div className="px-6 py-4">
           <h1
             id="videoTitle"
