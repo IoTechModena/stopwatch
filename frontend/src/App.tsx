@@ -5,6 +5,7 @@ import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { VideoList } from "./pages/VideoList";
 import "./App.css";
+//import { RequireAuth } from "react-auth-kit";
 
 const Layout = () => (
   <>
@@ -17,9 +18,9 @@ export const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
         {/* <Route path="id" element={<DetailCamera />} /> */}
         <Route path="video-list" element={<VideoList />} />
+        <Route path="/" index element={<Home />} />
         <Route path="favorites" element="FavoriteCamera" />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
@@ -28,4 +29,15 @@ export const App = () => {
   );
 };
 
+/* ROUTE PROTETTE DA METTERE PRIMA DI ANDARE IN PRODUZIONE
+            <RequireAuth loginPath="/login">
+              <VideoList />
+            </RequireAuth>
+
+            <RequireAuth loginPath="/login">
+              <Home />
+            </RequireAuth>
+          }
+        />
+        */
 export default App;
