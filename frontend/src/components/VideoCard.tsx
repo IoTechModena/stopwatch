@@ -3,7 +3,7 @@
 import { DownloadButton } from "./DownloadButton";
 import { VideoPlayer } from "./VideoPlayer";
 
-interface VideoCardProps {
+export interface VideoCardProps {
   id: number;
   name: string;
   description: string;
@@ -19,7 +19,7 @@ export const VideoCard = (props: VideoCardProps) => {
   return (
     <>
       <div className="min-w-lg Gelion rounded-md  overflow-hidden  shadow-2xl m-10">
-        <VideoPlayer />
+        <VideoPlayer id={props.id} />
         <div className="px-6 py-4">
           <h1
             id="videoTitle"
@@ -39,7 +39,7 @@ export const VideoCard = (props: VideoCardProps) => {
             {props.description}
           </p>
         </div>
-        <DownloadButton />
+        <DownloadButton size={props.size} />
       </div>
     </>
   );
