@@ -1,23 +1,28 @@
-// Autor: Smanuel
+// Author: Sbenduel
 
 import axios, { AxiosError } from "axios";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useSignIn } from "react-auth-kit";
 import { Link } from "react-router-dom";
+axios.defaults.baseURL = "http://localhost"; //ELIMINARE
 
-interface FormValues {
+type FormValues = {
   email: string;
   password: string;
-}
+};
 
-export const Register = () => {
-  const [, setError] = useState("");
+type ErrorStructure = {
+  [key: string]: string[];
+};
+
+export const Register: React.FC = () => {
   const signIn = useSignIn();
+  const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [errorList, setErrorList] = useState<string[]>([]);
 
   const onSubmit = async (values: FormValues) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
-    setError("");
 
     try {
       console.log("Inizio richiesta di register"); // Prima della richiesta
@@ -33,12 +38,24 @@ export const Register = () => {
       console.log("Registrazione eseguita con successo");
     } catch (err) {
       console.log("Errore durante il register: ", err); // In caso di errore
-      if (err && err instanceof AxiosError) {
-        setError(err.response?.data.message);
-        console.log("Dettagli errore Axios: ", err.response?.data);
+      if (err && err instanceof AxiosError && err.response?.data.errors) {
+        // Questa if dice che se c'è un errore di Axios e se questo errore non è dovuto ad una mancata risposta da parte del server fai:
+        const newErrorList: string[] = [];
+        Object.values(err.response.data.errors as ErrorStructure).forEach(
+          (errorArray) => {
+            //estrazione dei valori dell'oggetto errors, errorArray è un array di messaggi di errore
+            if (Array.isArray(errorArray)) {
+              errorArray.forEach((errorMessage) => {
+                newErrorList.push(errorMessage);
+                console.log(errorMessage);
+              });
+            }
+          }
+        );
+        setPasswordError(true);
+        setErrorList(newErrorList);
       } else if (err && err instanceof Error) {
-        setError(err.message);
-        console.log("Errore generico: ", err.message);
+        console.log("Errore: ", err.message);
       }
     }
   };
@@ -70,7 +87,7 @@ export const Register = () => {
               className="w-full px-4 py-5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300"
               required
               placeholder="Email"
-            ></input>
+            />
           </div>
           <div className="mb-12">
             <input
@@ -81,7 +98,16 @@ export const Register = () => {
               className="w-full px-4 py-5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300"
               required
               placeholder="Password"
-            ></input>
+            />
+            {passwordError && (
+              <ul>
+                {errorList.map((error, index) => (
+                  <li key={index} className="text-red-500 text-sm mt-1">
+                    {error}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <button
             disabled={formik.isSubmitting}

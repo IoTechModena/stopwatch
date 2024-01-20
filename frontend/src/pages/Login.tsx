@@ -15,6 +15,7 @@ export const Login = () => {
   const [, setError] = useState("");
   const signIn = useSignIn();
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState(false);
 
   const onSubmit = async (values: LoginFormValues) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
@@ -33,7 +34,8 @@ export const Login = () => {
       console.log("Login eseguito con successo"); // Dopo il login
       navigate("/");
     } catch (err) {
-      console.log("Errore durante il login: ", err); // In caso di errore
+      setLoginError(true);
+      console.log("Errore durante il login: ", err);
       if (err && err instanceof AxiosError) {
         setError(err.response?.data.message);
         console.log("Dettagli errore Axios: ", err.response?.data);
@@ -81,9 +83,14 @@ export const Login = () => {
               required
               placeholder="Password"
             ></input>
+            {loginError && (
+              <p className="text-red-500 text-sm mb-4">
+                Ahia! Qualcuno si è dimenticato le credenziali...
+              </p>
+            )}
             <p className="block text-right text-xs">
               Password dimenticata?
-              <Link to="/register" className="text-[#4F709C]">
+              <Link to="/register" className="text-[#4F709C] pl-1">
                 Fatti un altro account
               </Link>
             </p>

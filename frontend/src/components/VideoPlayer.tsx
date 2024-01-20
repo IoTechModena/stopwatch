@@ -1,3 +1,4 @@
+//Author: INSERIRE AUTORE
 import ReactPlayer from "react-player";
 
 export const VideoPlayer = (/*props: { id: number }*/) => {
@@ -8,7 +9,7 @@ export const VideoPlayer = (/*props: { id: number }*/) => {
       }
       controls={true}
       // url={`http://localhost/api/download-recordings/${props.id}`}
-      url = "https://www.youtube.com/watch?v=u31qwQUeGuM" //placeholder
+      url="https://www.youtube.com/watch?v=u31qwQUeGuM" //placeholder
       width="100%"
     />
   );

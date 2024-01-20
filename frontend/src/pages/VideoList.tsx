@@ -1,3 +1,4 @@
+//Author: INSERIRE AUTORE
 import { useState, useEffect } from "react";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoCard";
