@@ -5,13 +5,16 @@ import axios, { AxiosError } from "axios";
 import { useSignIn } from "react-auth-kit";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
+import { useToaster } from "../context/ToasterContext";
+axios.defaults.baseURL = "http://localhost"; //ELIMINARE
 
 interface LoginFormValues {
   email: string;
   password: string;
 }
 
-export const Login = () => {
+export const Login: React.FC = () => {
+  const { showToaster } = useToaster();
   const [, setError] = useState("");
   const signIn = useSignIn();
   const navigate = useNavigate();
@@ -31,6 +34,7 @@ export const Login = () => {
         tokenType: "Bearer",
         authState: { email: values.email },
       });
+      showToaster("Logged in successfully!");
       console.log("Login eseguito con successo"); // Dopo il login
       navigate("/");
     } catch (err) {

@@ -4,23 +4,18 @@ import axios, { AxiosError } from "axios";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useSignIn } from "react-auth-kit";
-import { Link } from "react-router-dom";
-axios.defaults.baseURL = "http://localhost"; //ELIMINARE
+import { Link, useNavigate } from "react-router-dom";
 
 type FormValues = {
   email: string;
   password: string;
 };
 
-type ErrorStructure = {
-  [key: string]: string[];
-};
-
 export const Register: React.FC = () => {
+  const navigate = useNavigate();
   const signIn = useSignIn();
   const [passwordError, setPasswordError] = useState<boolean>(false);
-  const [errorList, setErrorList] = useState<string[]>([]);
-
+  const [emailError, setEmailError] = useState<boolean>(false);
   const onSubmit = async (values: FormValues) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
 
@@ -36,24 +31,14 @@ export const Register: React.FC = () => {
         authState: { email: values.email },
       });
       console.log("Registrazione eseguita con successo");
+      navigate("/");
     } catch (err) {
       console.log("Errore durante il register: ", err); // In caso di errore
+      // Questa if dice che se c'è un errore di Axios e se questo errore non è dovuto ad una mancata risposta da parte del server fai:
       if (err && err instanceof AxiosError && err.response?.data.errors) {
-        // Questa if dice che se c'è un errore di Axios e se questo errore non è dovuto ad una mancata risposta da parte del server fai:
-        const newErrorList: string[] = [];
-        Object.values(err.response.data.errors as ErrorStructure).forEach(
-          (errorArray) => {
-            //estrazione dei valori dell'oggetto errors, errorArray è un array di messaggi di errore
-            if (Array.isArray(errorArray)) {
-              errorArray.forEach((errorMessage) => {
-                newErrorList.push(errorMessage);
-                console.log(errorMessage);
-              });
-            }
-          }
-        );
-        setPasswordError(true);
-        setErrorList(newErrorList);
+        if ("DuplicateUserName" in err.response.data.errors)
+          setEmailError(true);
+        else setPasswordError(true);
       } else if (err && err instanceof Error) {
         console.log("Errore: ", err.message);
       }
@@ -88,6 +73,9 @@ export const Register: React.FC = () => {
               required
               placeholder="Email"
             />
+            {emailError && (
+              <p className="text-red-600 mt-2 Gelion">Email già in uso</p>
+            )}
           </div>
           <div className="mb-12">
             <input
@@ -100,13 +88,18 @@ export const Register: React.FC = () => {
               placeholder="Password"
             />
             {passwordError && (
-              <ul>
-                {errorList.map((error, index) => (
-                  <li key={index} className="text-red-500 text-sm mt-1">
-                    {error}
-                  </li>
-                ))}
-              </ul>
+              <>
+                <h6 className="text-red-600 mt-2 Gelion">
+                  Attenzione! La password deve avere:
+                </h6>
+                <ul className="text-red-600  Gelion">
+                  <li>Almeno 6 caratteri</li>
+                  <li>Un lettera minuscola 'a'-'z'</li>
+                  <li>Una lettera maiscola 'A'-'Z'</li>
+                  <li>Un numero '0'-'9'</li>
+                  <li>Un carattere speciale '!' '?' '#'</li>
+                </ul>
+              </>
             )}
           </div>
           <button
