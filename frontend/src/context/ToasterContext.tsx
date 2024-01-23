@@ -1,6 +1,6 @@
 // ToasterContext.tsx
 //Context made with AI, brittle code, need to be revisited
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { createContext, useState, ReactNode } from "react";
 
 interface ToasterContextType {
   showToaster: (message: string) => void;
@@ -9,7 +9,9 @@ interface ToasterContextType {
   isToasterVisible: boolean;
 }
 
-const ToasterContext = createContext<ToasterContextType | undefined>(undefined);
+export const ToasterContext = createContext<ToasterContextType | undefined>(
+  undefined
+);
 
 interface ToasterProviderProps {
   children: ReactNode;
@@ -38,12 +40,4 @@ export const ToasterProvider: React.FC<ToasterProviderProps> = ({
       {children}
     </ToasterContext.Provider>
   );
-};
-
-export const useToaster = () => {
-  const context = useContext(ToasterContext);
-  if (!context) {
-    throw new Error("useToaster must be used within a ToasterProvider");
-  }
-  return context;
 };

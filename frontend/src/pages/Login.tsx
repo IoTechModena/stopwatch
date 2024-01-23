@@ -5,8 +5,7 @@ import axios, { AxiosError } from "axios";
 import { useSignIn } from "react-auth-kit";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
-import { useToaster } from "../context/ToasterContext";
-axios.defaults.baseURL = "http://localhost"; //ELIMINARE
+import { useToaster } from "../hooks/useToaster";
 
 interface LoginFormValues {
   email: string;
