@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0.101-alpine3.19-amd64
 WORKDIR /app
 
 COPY . ./
