@@ -6,7 +6,7 @@ import axios from "axios";
 
 const getVideos = async () => {
   try {
-    const response = await axios.get("api/getRecordings");
+    const response = await axios.get("http://localhost/api/getRecordings");
     return response.data;
   } catch (error) {
     console.error(error);
@@ -50,7 +50,7 @@ export const VideoList = () => {
       {/* Se ci sta solo una card, la centra */}
       <div
         className={`${
-          videoCards && videoCards.length === 1
+          videoCards && videoCards.length <= 2
             ? "flex justify-center"
             : "grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1  2xl:gap-4"
         }`}
