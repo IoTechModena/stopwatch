@@ -7,7 +7,6 @@ import { VideoList } from "./pages/VideoList";
 import "./App.css";
 //import { RequireAuth } from "react-auth-kit";
 import { ToasterProvider } from "./context/ToasterContext";
-import { Toaster } from "./components/Toaster";
 
 const Layout = () => (
   <>
@@ -19,7 +18,6 @@ const Layout = () => (
 export const App = () => {
   return (
     <ToasterProvider>
-      <Toaster />
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* <Route path="id" element={<DetailCamera />} /> */}

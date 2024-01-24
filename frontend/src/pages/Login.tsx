@@ -7,6 +7,8 @@ import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useToaster } from "../hooks/useToaster";
 
+axios.defaults.baseURL = "http://localhost";
+
 interface LoginFormValues {
   email: string;
   password: string;
@@ -33,7 +35,7 @@ export const Login: React.FC = () => {
         tokenType: "Bearer",
         authState: { email: values.email },
       });
-      showToaster("Logged in successfully!");
+      showToaster("Login eseguito con successo!");
       console.log("Login eseguito con successo"); // Dopo il login
       navigate("/");
     } catch (err) {
