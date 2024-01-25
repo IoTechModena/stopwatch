@@ -5,23 +5,28 @@ import axios, { AxiosError } from "axios";
 import { useSignIn } from "react-auth-kit";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
+import { useToaster } from "../hooks/useToaster";
+
+axios.defaults.baseURL = "http://localhost";
 
 interface LoginFormValues {
   email: string;
   password: string;
 }
 
-export const Login = () => {
+export const Login: React.FC = () => {
+  const { showToaster } = useToaster();
   const [, setError] = useState("");
   const signIn = useSignIn();
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState(false);
 
   const onSubmit = async (values: LoginFormValues) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
 
     try {
       console.log("Inizio richiesta di login"); // Prima della richiesta
-      const response = await axios.post("api/login", values);
+      const response = await axios.post("http://localhost/api/login", values);
       console.log("Risposta ricevuta: ", response); // Dopo aver ricevuto la risposta
 
       signIn({
@@ -30,10 +35,12 @@ export const Login = () => {
         tokenType: "Bearer",
         authState: { email: values.email },
       });
+      showToaster("Login eseguito con successo!");
       console.log("Login eseguito con successo"); // Dopo il login
       navigate("/");
     } catch (err) {
-      console.log("Errore durante il login: ", err); // In caso di errore
+      setLoginError(true);
+      console.log("Errore durante il login: ", err);
       if (err && err instanceof AxiosError) {
         setError(err.response?.data.message);
         console.log("Dettagli errore Axios: ", err.response?.data);
@@ -81,9 +88,14 @@ export const Login = () => {
               required
               placeholder="Password"
             ></input>
+            {loginError && (
+              <p className="text-red-500 text-sm mb-4">
+                Ahia! Qualcuno si è dimenticato le credenziali...
+              </p>
+            )}
             <p className="block text-right text-xs">
               Password dimenticata?
-              <Link to="/register" className="text-[#4F709C]">
+              <Link to="/register" className="text-[#4F709C] pl-1">
                 Fatti un altro account
               </Link>
             </p>

@@ -1,27 +1,27 @@
-// Autor: Smanuel
+// Author: Sbenduel
 
 import axios, { AxiosError } from "axios";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { useSignIn } from "react-auth-kit";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-interface FormValues {
+type FormValues = {
   email: string;
   password: string;
-}
+};
 
-export const Register = () => {
-  const [, setError] = useState("");
+export const Register: React.FC = () => {
+  const navigate = useNavigate();
   const signIn = useSignIn();
-
+  const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<boolean>(false);
   const onSubmit = async (values: FormValues) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
-    setError("");
 
     try {
       console.log("Inizio richiesta di register"); // Prima della richiesta
-      const response = await axios.post("api/register", values);
+      const response = await axios.post("http://localhost/api/register", values);
       console.log("Risposta ricevuta: ", response); // Dopo aver ricevuto la risposta
 
       signIn({
@@ -31,14 +31,16 @@ export const Register = () => {
         authState: { email: values.email },
       });
       console.log("Registrazione eseguita con successo");
+      navigate("/");
     } catch (err) {
       console.log("Errore durante il register: ", err); // In caso di errore
-      if (err && err instanceof AxiosError) {
-        setError(err.response?.data.message);
-        console.log("Dettagli errore Axios: ", err.response?.data);
+      // Questa if dice che se c'è un errore di Axios e se questo errore non è dovuto ad una mancata risposta da parte del server fai:
+      if (err && err instanceof AxiosError && err.response?.data.errors) {
+        if ("DuplicateUserName" in err.response.data.errors)
+          setEmailError(true);
+        else setPasswordError(true);
       } else if (err && err instanceof Error) {
-        setError(err.message);
-        console.log("Errore generico: ", err.message);
+        console.log("Errore: ", err.message);
       }
     }
   };
@@ -70,7 +72,10 @@ export const Register = () => {
               className="w-full px-4 py-5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300"
               required
               placeholder="Email"
-            ></input>
+            />
+            {emailError && (
+              <p className="text-red-600 mt-2 Gelion">Email già in uso</p>
+            )}
           </div>
           <div className="mb-12">
             <input
@@ -81,7 +86,21 @@ export const Register = () => {
               className="w-full px-4 py-5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300"
               required
               placeholder="Password"
-            ></input>
+            />
+            {passwordError && (
+              <>
+                <h6 className="text-red-600 mt-2 Gelion">
+                  Attenzione! La password deve avere:
+                </h6>
+                <ul className="text-red-600  Gelion">
+                  <li>Almeno 6 caratteri</li>
+                  <li>Un lettera minuscola 'a'-'z'</li>
+                  <li>Una lettera maiscola 'A'-'Z'</li>
+                  <li>Un numero '0'-'9'</li>
+                  <li>Un carattere speciale '!' '?' '#'</li>
+                </ul>
+              </>
+            )}
           </div>
           <button
             disabled={formik.isSubmitting}

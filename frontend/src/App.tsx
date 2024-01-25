@@ -6,6 +6,7 @@ import { Register } from "./pages/Register";
 import { VideoList } from "./pages/VideoList";
 import "./App.css";
 //import { RequireAuth } from "react-auth-kit";
+import { ToasterProvider } from "./context/ToasterContext";
 
 const Layout = () => (
   <>
@@ -16,16 +17,18 @@ const Layout = () => (
 
 export const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        {/* <Route path="id" element={<DetailCamera />} /> */}
-        <Route path="video-list" element={<VideoList />} />
-        <Route path="/" index element={<Home />} />
-        <Route path="favorites" element="FavoriteCamera" />
-        <Route path="register" element={<Register />} />
-        <Route path="login" element={<Login />} />
-      </Route>
-    </Routes>
+    <ToasterProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          {/* <Route path="id" element={<DetailCamera />} /> */}
+          <Route path="video-list" element={<VideoList />} />
+          <Route path="/" index element={<Home />} />
+          <Route path="favorites" element="FavoriteCamera" />
+          <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+        </Route>
+      </Routes>
+    </ToasterProvider>
   );
 };
 

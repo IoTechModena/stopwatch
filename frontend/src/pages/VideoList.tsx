@@ -1,3 +1,4 @@
+//Author: INSERIRE AUTORE
 import { useState, useEffect } from "react";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoCard";
@@ -12,6 +13,8 @@ const getVideos = async () => {
     console.error(error);
   }
 };
+
+//https://mocki.io/v1/a61ec3ad-3395-4641-a5a9-f3334975b005
 
 export const VideoList = () => {
   const [videoList, setVideoList] = useState([]);
