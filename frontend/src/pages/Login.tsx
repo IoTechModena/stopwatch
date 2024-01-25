@@ -26,7 +26,7 @@ export const Login: React.FC = () => {
 
     try {
       console.log("Inizio richiesta di login"); // Prima della richiesta
-      const response = await axios.post("api/login", values);
+      const response = await axios.post("http://localhost/api/login", values);
       console.log("Risposta ricevuta: ", response); // Dopo aver ricevuto la risposta
 
       signIn({

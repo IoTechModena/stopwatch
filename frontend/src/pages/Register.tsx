@@ -21,7 +21,7 @@ export const Register: React.FC = () => {
 
     try {
       console.log("Inizio richiesta di register"); // Prima della richiesta
-      const response = await axios.post("api/register", values);
+      const response = await axios.post("http://localhost/api/register", values);
       console.log("Risposta ricevuta: ", response); // Dopo aver ricevuto la risposta
 
       signIn({
