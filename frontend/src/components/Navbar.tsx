@@ -56,9 +56,8 @@ export const Navbar = () => {
             <div className="bg-white">
               <ul className="divide-y divide-gray-400">
                 {navigation.map((item) => (
-                  <li>
+                  <li key={item.name}>
                     <a
-                      key={item.name}
                       href={item.href}
                       className={classNames(
                         item.current
@@ -72,7 +71,7 @@ export const Navbar = () => {
                     </a>
                   </li>
                 ))}
-                <li>
+                <li key="login">
                   <Link to="/login">
                     <button
                       type="button"
@@ -91,9 +90,8 @@ export const Navbar = () => {
         {/*DESKTOP-MENU */}
         <ul className="md:flex hidden gap-8 items-center w-full">
           {navigation.map((item) => (
-            <li>
+            <li key={item.name}>
               <Link
-                key={item.name}
                 to={item.href}
                 className={classNames(
                   item.current
