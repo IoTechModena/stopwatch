@@ -14,7 +14,6 @@ public class VideoCameraController : ControllerBase
     // Data needed to access the camera recording
     string authenticationString = "admin:mutina23";
     private string ip = "77.89.51.65";
-
     HttpClient client = new HttpClient();
     private readonly DataContext context;
 
@@ -47,35 +46,37 @@ public class VideoCameraController : ControllerBase
             // Parsing the content of recordInfoResponse 
             Dictionary<string, string> recordInfoValues = Utility.ParseResponse(content);
 
+            // Printing the values of recordInfoResponse
+            // foreach (KeyValuePair<string, string> entry in recordInfoValues)
+            // {
+            //     Console.WriteLine($"Response values \n Key: {entry.Key}, Value: {entry.Value}");
+            // }
+
             // Retrieving needed values for the get.playback.download request
-            // Available keys: cnt, sid, chnid, allCnt, allSize, ch0, recordType0, port0, lock0 (chapter 1.6.2 in Milesight documentation)
             string chnid = recordInfoValues["chnid"];
             string sid = recordInfoValues["sid"];
             int cnt = int.Parse(recordInfoValues["cnt"]);
 
-            foreach (KeyValuePair<string, string> entry in recordInfoValues)
-            {
-                Console.WriteLine($"Key: {entry.Key}, Value: {entry.Value}");
-            }
-
-
             string relativeFilePath = $"./Data/recordings/";
-
 
             for (int i = 0; i < cnt; i++)
             {
-                // get.playback.recordinfo request through curl process
+                // get.playback.recordinfo requests through curl processes
 
-                string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={recordInfoValues[$"startTime{i}"]}&endTime={recordInfoValues[$"endTime{i}"]}";
+                Console.WriteLine($"Downloading video {i + 1} of {cnt}");
+
+                string cntStartDateTime = recordInfoValues[$"startTime{i}"];
+                string cntEndDateTime = recordInfoValues[$"endTime{i}"];
+
+                string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
 
                 string fileName = $"NVR-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}_{i + 1}.mp4";
 
                 // Create a new ProcessStartInfo object
                 var startInfo = new ProcessStartInfo
                 {
-                    // Set the FileName to "curl". This is the command that will be executed.
                     FileName = "curl",
-                    Arguments = $"--http1.0 --output {relativeFilePath}{fileName} -u admin:mutina23  -v {recordDownloadURL}",
+                    Arguments = $"--http1.0 --output {relativeFilePath}{fileName} -u {authenticationString}  -v {recordDownloadURL}",
                     // Set UseShellExecute to false. This means the process will be executed in the same process, not a new shell.
                     UseShellExecute = false,
                 };
@@ -85,10 +86,6 @@ public class VideoCameraController : ControllerBase
 
                 // Start the process. This will execute the curl command with the specified arguments.
                 process.Start();
-
-                // Wait for the process to exit asynchronously. This is necessary to ensure that the process has completed
-                // its task (in this case, downloading the file) before the program continues. If we didn't wait, the program
-                // might try to use the file before it's fully downloaded, which would cause errors.
                 await process.WaitForExitAsync();
 
                 //Recording model generation
@@ -114,8 +111,6 @@ public class VideoCameraController : ControllerBase
                     // adding recording to the database
                     await context.AddAsync(recording);
                     await context.SaveChangesAsync();
-
-
                 }
                 catch (Exception e)
                 {
