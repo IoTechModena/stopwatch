@@ -28,15 +28,8 @@ public class Recording
     [Required]
     public long Size { get; set; }
 
-    public Recording(string path, string name, string description, DateTime startDateTime, DateTime endDateTime, TimeSpan duration, long size)
+    public Recording()
     {
-        Path = path;
-        Name = name;
-        Description = description;
-        StartDateTime = startDateTime;
-        EndDateTime = endDateTime;
-        Duration = duration;
-        Size = size;
     }
 
 
