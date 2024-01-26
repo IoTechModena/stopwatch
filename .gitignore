@@ -5,7 +5,7 @@ obj/
 # Node.js
 node_modules/
 
-# Vite
+# React
 dist/
 
 # Recordings

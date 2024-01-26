@@ -6,9 +6,7 @@ namespace backend;
 
 public class DataContext : IdentityDbContext
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
-    {
-
-    }
     public DbSet<Recording> Recordings { get; set; }
+
+    public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 }

@@ -16,7 +16,7 @@ services:
   backend:
     build: backend
     volumes:
-      - recordings:/app/Data/recordings
+      - recordings:/app/public/recordings
     depends_on:
       - database
 

@@ -58,7 +58,7 @@ public class VideoCameraController : ControllerBase
             string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=secondary&videoFormat=mp4&streamData=1&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
 
             string fileName = $"NVR-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}.mp4";
-            string relativeFilePath = $"./Data/recordings/{fileName}";
+            string relativeFilePath = $"./public/recordings/{fileName}";
 
             // get.playback.recordinfo request through curl process
 
