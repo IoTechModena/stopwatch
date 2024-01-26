@@ -47,9 +47,11 @@ public class VideoCameraController : ControllerBase
             Dictionary<string, string> recordInfoValues = Utility.ParseResponse(content);
 
             // Printing the values of recordInfoResponse
+
+            Console.WriteLine("\nPrinting the keys and values of recordInfoResponse");
             foreach (KeyValuePair<string, string> entry in recordInfoValues)
             {
-                Console.WriteLine($"Response values \n Key: {entry.Key}, Value: {entry.Value}");
+                Console.WriteLine($"{entry.Key}:{entry.Value}");
             }
 
             // Retrieving needed values for the get.playback.download request
@@ -63,14 +65,14 @@ public class VideoCameraController : ControllerBase
             {
                 // get.playback.recordinfo requests through curl processes
 
-                Console.WriteLine($"Downloading video {i + 1} of {cnt}");
-
+                Console.WriteLine($"\nDownloading video {i + 1} of {cnt}");
                 string cntStartDateTime = recordInfoValues[$"startTime{i}"];
                 string cntEndDateTime = recordInfoValues[$"endTime{i}"];
 
                 string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
 
                 string fileName = $"NVR-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}_{i + 1}.mp4";
+                Console.WriteLine($"Video name: {fileName}");
 
                 // Create a new ProcessStartInfo object
                 var startInfo = new ProcessStartInfo
