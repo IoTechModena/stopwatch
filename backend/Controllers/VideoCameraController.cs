@@ -47,10 +47,10 @@ public class VideoCameraController : ControllerBase
             Dictionary<string, string> recordInfoValues = Utility.ParseResponse(content);
 
             // Printing the values of recordInfoResponse
-            // foreach (KeyValuePair<string, string> entry in recordInfoValues)
-            // {
-            //     Console.WriteLine($"Response values \n Key: {entry.Key}, Value: {entry.Value}");
-            // }
+            foreach (KeyValuePair<string, string> entry in recordInfoValues)
+            {
+                Console.WriteLine($"Response values \n Key: {entry.Key}, Value: {entry.Value}");
+            }
 
             // Retrieving needed values for the get.playback.download request
             string chnid = recordInfoValues["chnid"];
@@ -97,16 +97,10 @@ public class VideoCameraController : ControllerBase
                         Path = Path.GetFullPath(relativeFilePath + fileName),
                         Description = "",
                         Size = new FileInfo(relativeFilePath + fileName).Length,
-                        StartDate = DateOnly.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                        EndDate = DateOnly.ParseExact("2000-01-01", "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                        StartTime = TimeOnly.ParseExact("10:00:00", "HH:mm:ss", CultureInfo.InvariantCulture),
-                        EndTime = TimeOnly.ParseExact("10:00:00", "HH:mm:ss", CultureInfo.InvariantCulture)
+                        StartDateTime = DateTime.ParseExact(cntStartDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                        EndDateTime = DateTime.ParseExact(cntEndDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
                     };
-
-                    // Duration calculation
-                    DateTime startDateTime = recording.StartDate.ToDateTime(recording.StartTime);
-                    DateTime endDateTime = recording.EndDate.ToDateTime(recording.EndTime);
-                    recording.Duration = endDateTime - startDateTime;
+                    recording.Duration = recording.EndDateTime - recording.StartDateTime;
 
                     // adding recording to the database
                     await context.AddAsync(recording);
