@@ -18,7 +18,7 @@ services:
     volumes:
       - recordings:/app/Data/recordings
     depends_on:
-      - migrations
+      - database
 
   frontend:
     build: frontend
