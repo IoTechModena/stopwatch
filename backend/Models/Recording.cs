@@ -17,16 +17,10 @@ public class Recording
     public string? Description { get; set; }
 
     [Required]
-    public DateOnly StartDate { get; set; }
+    public DateTime StartDateTime { get; set; }
 
     [Required]
-    public DateOnly EndDate { get; set; }
-
-    [Required]
-    public TimeOnly StartTime { get; set; }
-
-    [Required]
-    public TimeOnly EndTime { get; set; }
+    public DateTime EndDateTime { get; set; }
 
     [Required]
     public TimeSpan Duration { get; set; }
@@ -34,20 +28,18 @@ public class Recording
     [Required]
     public long Size { get; set; }
 
-    public Recording() { }
-    public Recording(long id, string path, string name, string description, DateOnly startDate, DateOnly endDate, TimeOnly startTime, TimeOnly endTime, long size, TimeSpan duration)
+    public Recording(string path, string name, string description, DateTime startDateTime, DateTime endDateTime, TimeSpan duration, long size)
     {
-        Id = id;
         Path = path;
         Name = name;
         Description = description;
-        StartDate = startDate;
-        EndDate = endDate;
-        StartTime = startTime;
-        EndTime = endTime;
-        Size = size;
+        StartDateTime = startDateTime;
+        EndDateTime = endDateTime;
         Duration = duration;
+        Size = size;
     }
+
+
 
 
 
