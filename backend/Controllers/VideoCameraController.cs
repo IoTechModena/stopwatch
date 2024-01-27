@@ -14,14 +14,13 @@ public class VideoCameraController : ControllerBase
     // Data needed to access the camera recording
     string authenticationString = "admin:mutina23";
     private string ip = "77.89.51.65";
-
     HttpClient client = new HttpClient();
     private readonly DataContext context;
 
     public VideoCameraController(DataContext context)
-   {
-      this.context = context;
-   }
+    {
+        this.context = context;
+    }
 
     [HttpGet("saveRecording")]
     public async Task<IActionResult> SaveRecording([FromQuery] string startDate, string startTime, string endDate, string endTime) // Formatting: dates=yyyy-mm-dd  times=hh:mm:ss
@@ -29,9 +28,6 @@ public class VideoCameraController : ControllerBase
         // This method downloads a video from a camera.
         // It first retrieves the necessary information for the download request,
         // then sends the download request and checks if it was successful.
-
-        // TODO: Add error handling for the request and the curl command
-        // TODO: Add model validation for the query parameters
 
         // get.playback.recordinfo request
 
@@ -50,69 +46,74 @@ public class VideoCameraController : ControllerBase
             // Parsing the content of recordInfoResponse 
             Dictionary<string, string> recordInfoValues = Utility.ParseResponse(content);
 
+            // Printing the values of recordInfoResponse
+
+            Console.WriteLine("\nPrinting the keys and values of recordInfoResponse");
+            foreach (KeyValuePair<string, string> entry in recordInfoValues)
+            {
+                Console.WriteLine($"{entry.Key}:{entry.Value}");
+            }
+
             // Retrieving needed values for the get.playback.download request
-            // Available keys: cnt, sid, chnid, allCnt, allSize, ch0, recordType0, port0, lock0 (chapter 1.6.2 in Milesight documentation)
             string chnid = recordInfoValues["chnid"];
             string sid = recordInfoValues["sid"];
+            int cnt = int.Parse(recordInfoValues["cnt"]);
 
-            string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=secondary&videoFormat=mp4&streamData=1&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
+            string relativeFilePath = $"./public/recordings/";
 
-            string fileName = $"NVR-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}.mp4";
-            string relativeFilePath = $"./public/recordings/{fileName}";
-
-            // get.playback.recordinfo request through curl process
-
-            // Create a new ProcessStartInfo object
-            var startInfo = new ProcessStartInfo
+            for (int i = 0; i < cnt; i++)
             {
-                // Set the FileName to "curl". This is the command that will be executed.
-                FileName = "curl",
-                Arguments = $"-o {relativeFilePath} -u admin:mutina23  {recordDownloadURL}",
-                // Set UseShellExecute to false. This means the process will be executed in the same process, not a new shell.
-                UseShellExecute = false,
-            };
+                // get.playback.recordinfo requests through curl processes
 
-            // Create a new Process object and set its StartInfo property to the previously created startInfo object
-            var process = new Process { StartInfo = startInfo };
+                Console.WriteLine($"\nDownloading video {i + 1} of {cnt}");
+                string cntStartDateTime = recordInfoValues[$"startTime{i}"];
+                string cntEndDateTime = recordInfoValues[$"endTime{i}"];
 
-            // Start the process. This will execute the curl command with the specified arguments.
-            process.Start();
+                string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
 
-            // Wait for the process to exit asynchronously. This is necessary to ensure that the process has completed
-            // its task (in this case, downloading the file) before the program continues. If we didn't wait, the program
-            // might try to use the file before it's fully downloaded, which would cause errors.
-            await process.WaitForExitAsync();
+                string fileName = $"NVR-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}_{i + 1}.mp4";
+                Console.WriteLine($"Video name: {fileName}");
 
-            //Recording model generation
-            try
-            {
-                Recording recording = new Recording()
+                // Create a new ProcessStartInfo object
+                var startInfo = new ProcessStartInfo
                 {
-                    Name = fileName,
-                    Path = Path.GetFullPath(relativeFilePath),
-                    Description = "",
-                    Size = new FileInfo(relativeFilePath).Length,
-                    StartDate = DateOnly.ParseExact(startDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                    EndDate = DateOnly.ParseExact(endDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                    StartTime = TimeOnly.ParseExact(startTime, "HH:mm:ss", CultureInfo.InvariantCulture),
-                    EndTime = TimeOnly.ParseExact(endTime, "HH:mm:ss", CultureInfo.InvariantCulture)
+                    FileName = "curl",
+                    Arguments = $"--http1.0 --output {relativeFilePath}{fileName} -u {authenticationString}  -v {recordDownloadURL}",
+                    // Set UseShellExecute to false. This means the process will be executed in the same process, not a new shell.
+                    UseShellExecute = false,
                 };
 
-                // Duration calculation
-                DateTime startDateTime = recording.StartDate.ToDateTime(recording.StartTime);
-                DateTime endDateTime = recording.EndDate.ToDateTime(recording.EndTime);
-                recording.Duration = endDateTime - startDateTime;
+                // Create a new Process object and set its StartInfo property to the previously created startInfo object
+                var process = new Process { StartInfo = startInfo };
 
-                // adding recording to the database
-                await context.AddAsync(recording);
-                await context.SaveChangesAsync();
+                // Start the process. This will execute the curl command with the specified arguments.
+                process.Start();
+                await process.WaitForExitAsync();
 
-                return Ok("Video successfully downloaded"); // Not a good practice to check if everything went correctly, needs error handling
+                //Recording model generation
+                try
+                {
+                    Recording recording = new Recording()
+                    {
+                        Name = fileName,
+                        Path = Path.GetFullPath(relativeFilePath + fileName),
+                        Description = "",
+                        Size = new FileInfo(relativeFilePath + fileName).Length,
+                        StartDateTime = DateTime.ParseExact(cntStartDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                        EndDateTime = DateTime.ParseExact(cntEndDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                    };
+                    recording.Duration = recording.EndDateTime - recording.StartDateTime;
+
+                    // adding recording to the database
+                    await context.AddAsync(recording);
+                    await context.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    return StatusCode(500, e.Message);
+                }
             }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+            return Ok("Video successfully downloaded");
         }
         else
         {
@@ -120,57 +121,33 @@ public class VideoCameraController : ControllerBase
         }
     }
 
-    [HttpGet("download-recordings/{id}")]
-    public async Task<IActionResult> getFile(long id)
+    [HttpGet("downloadRecording/{id}")]
+    public async Task<IActionResult> DownloadRecording(long id)
     {
-        Recording file = new Recording();
-        file.Id = 1;
-        file.Duration = new TimeSpan(0, 2, 0);
-        file.Path = "Aggiungi qui il percorso file";
-        FileInfo fileInfo = new FileInfo(file.Path);
-        file.Size = fileInfo.Length;
-        file.Name = fileInfo.Name;
-        Recording file2 = new Recording();
+        var record = await context.Recordings.FindAsync(id);
 
-        file2.Id = 2;
-        file2.Duration = new TimeSpan(0, 2, 0);
-        file2.Path = "Aggiungi qui il percorso file";
-        fileInfo = new FileInfo(file2.Path);
-        file2.Size = fileInfo.Length;
-        file2.Name = fileInfo.Name;
-
-        string path = null;
-        string fileName = null;
-
-        switch (id)
+        if (record == null)
         {
-            case 1:
-                path = file.Path;
-                fileName = file.Name;
-                break;
-            case 2:
-                path = file2.Path;
-                fileName = file2.Name;
-                break;
-
-        };
-
-        if (System.IO.File.Exists(path))
-        {
-            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(path);
-
-            // Puoi personalizzare il tipo di contenuto e il nome del file nella risposta HTTP
-            var fileContentResult = new FileContentResult(fileBytes, "application/octet-stream")
-            {
-                FileDownloadName = fileName // Sostituisci con il nome che desideri dare al file
-            };
-
-            return fileContentResult;
+            return NotFound("Record not found");
         }
         else
         {
-            // Gestisci il caso in cui il file non esiste
-            return NotFound();
+            if (record.Path != null)
+            {
+                var recordingPath = record.Path;
+
+                var fileBytes = await System.IO.File.ReadAllBytesAsync(recordingPath);
+
+                var recordDownload = File(fileBytes, "application/octet-stream", Path.GetFileName(recordingPath));
+
+                Response.Headers["Content-Disposition"] = "attachment; filename=" + Path.GetFileName(recordingPath);
+
+                return recordDownload;
+            }
+            else
+            {
+                return BadRequest("Path is null");
+            }
         }
     }
 
@@ -187,4 +164,5 @@ public class VideoCameraController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+
 }
