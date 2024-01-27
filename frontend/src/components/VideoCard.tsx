@@ -7,10 +7,8 @@ export interface VideoCardProps {
   id: number;
   name: string;
   description: string;
-  startDate: string;
-  endDate: string;
-  startTime: string;
-  endTime: string;
+  startDateTime: string;
+  endDateTime: string;
   duration: string;
   size: number;
 }
@@ -28,33 +26,13 @@ export const VideoCard = (props: VideoCardProps) => {
             {props.name}
           </h1>
           <div className="flex lg:flex-row md:flex-row  justify-between">
-            {/* <p id="timeRange" className="text-gray-700 text-base mb-4">
-              🕒
-              {props.startTime}~{props.endTime}
-            </p>
-            <p id="dateRange" className="text-gray-700 text-base mb-4">
-              📅{new Date(props.startDate).toLocaleDateString("it-IT")}~
-              {new Date(props.endDate).toLocaleDateString("it-IT")}
-            </p> */}
             <p id="startDateTimeRange" className="text-gray-700 text-base mb-4">
               <i className="fa-solid fa-play mr-1 text-green-600"></i>
-              {new Date(
-                `${props.startDate}T${props.startTime}`
-              ).toLocaleTimeString("it-IT")}
-              ,{" "}
-              {new Date(
-                `${props.startDate}T${props.startTime}`
-              ).toLocaleDateString("it-IT")}{" "}
+              {new Date(props.startDateTime).toLocaleTimeString("it-IT")}
             </p>
             <p id="endDateTimeRange" className="text-gray-700 text-base mb-4">
               <i className="fa-solid fa-stop mr-1 text-red-600"></i>
-              {new Date(`${props.endDate}T${props.endTime}`).toLocaleTimeString(
-                "it-IT"
-              )}
-              ,{" "}
-              {new Date(`${props.endDate}T${props.endTime}`).toLocaleDateString(
-                "it-IT"
-              )}
+              {new Date(props.endDateTime).toLocaleTimeString("it-IT")}
             </p>
           </div>
           <p id="videoDescription" className="text-gray-700 text-base">

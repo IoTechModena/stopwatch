@@ -14,8 +14,6 @@ const getVideos = async () => {
   }
 };
 
-//https://mocki.io/v1/a61ec3ad-3395-4641-a5a9-f3334975b005
-
 export const VideoList = () => {
   const [videoList, setVideoList] = useState([]);
 
@@ -36,10 +34,8 @@ export const VideoList = () => {
               ? "Questo video non ha una descrizione."
               : data.description
           }
-          startDate={data.startDate}
-          endDate={data.endDate}
-          startTime={data.startTime}
-          endTime={data.endTime}
+          startDateTime={data.startDateTime}
+          endDateTime={data.endDateTime}
           duration={data.duration}
           size={data.size}
           name={data.name}
