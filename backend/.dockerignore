@@ -3,7 +3,7 @@ bin/
 obj/
 
 # Recordings
-recordings/
+public/
 
 # Docker
 .dockerignore

@@ -11,8 +11,6 @@ namespace backend.Controllers;
 [ApiController]
 public class VideoCameraController : ControllerBase
 {
-
-
     // Data needed to access the camera recording
     string authenticationString = "admin:mutina23";
     private string ip = "77.89.51.65";
@@ -61,7 +59,7 @@ public class VideoCameraController : ControllerBase
             string sid = recordInfoValues["sid"];
             int cnt = int.Parse(recordInfoValues["cnt"]);
 
-            string relativeFilePath = $"./Data/recordings/";
+            string relativeFilePath = $"./public/recordings/";
 
             for (int i = 0; i < cnt; i++)
             {
