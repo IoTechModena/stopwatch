@@ -4,7 +4,7 @@ import axios from "axios";
 const downloadVideo = async (id: number) => {
   try {
     console.log("id: ", id);
-    const response = await axios.get(`api/download-recordings/${id}`, {
+    const response = await axios.get(`api/downloadRecording/${id}`, {
       responseType: "blob", // Gestisce la risposta come file binario
     });
 
@@ -39,7 +39,7 @@ function formatBytes(bytes: number, decimals = 2) {
 }
 
 // questo componente dovrebbe stare dentro un parent, altrimenti diventa lungo come lo schermo, nel caso tolgiere w-full da button
-export const DownloadButton = (props: { size: number }) => {
+export const DownloadButton = (props: { size: number; id: number }) => {
   return (
     <button
       onClick={() => downloadVideo(1)}

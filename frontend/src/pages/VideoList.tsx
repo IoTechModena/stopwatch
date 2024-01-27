@@ -28,6 +28,7 @@ export const VideoList = () => {
   const videoCards = Array.isArray(videoList)
     ? videoList.map((data: VideoCardProps) => (
         <VideoCard
+          key={data.id}
           id={data.id}
           description={
             data.description == ""

@@ -16,8 +16,8 @@ export interface VideoCardProps {
 export const VideoCard = (props: VideoCardProps) => {
   return (
     <>
-      <div className="min-w-lg Gelion rounded-md  overflow-hidden  2xl:m-4 shadow-2xl m-3">
-        <VideoPlayer /*id={props.id}*/ />
+      <div className="min-w-lg min-h-lg Gelion rounded-md  overflow-hidden  2xl:m-4 shadow-2xl m-3">
+        <VideoPlayer id={props.id} />
         <div className="px-6 py-4">
           <h1
             id="videoTitle"
@@ -39,7 +39,7 @@ export const VideoCard = (props: VideoCardProps) => {
             {props.description}
           </p>
         </div>
-        <DownloadButton size={props.size} />
+        <DownloadButton size={props.size} id={props.id} />
       </div>
     </>
   );
