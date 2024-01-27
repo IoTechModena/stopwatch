@@ -10,9 +10,11 @@ namespace backend.Controllers;
 [ApiController]
 public class VideoCameraController : ControllerBase
 {
+
+
     // Data needed to access the camera recording
     string authenticationString = "admin:mutina23";
-    private string ip = "93.57.67.110";
+    private string ip = "77.89.51.65";
 
     HttpClient client = new HttpClient();
     private DataContext context;
@@ -119,57 +121,35 @@ public class VideoCameraController : ControllerBase
         }
     }
 
-    [HttpGet("download-recordings/{id}")]
-    public async Task<IActionResult> getFile(long id)
+    [HttpGet("downloadRecording/{id}")]
+    public async Task<IActionResult> DownloadRecording(long id)
     {
-        Recording file = new Recording();
-        file.Id = 1;
-        file.Duration = new TimeSpan(0, 2, 0);
-        file.Path = "Aggiungi qui il percorso file";
-        FileInfo fileInfo = new FileInfo(file.Path);
-        file.Size = fileInfo.Length;
-        file.Name = fileInfo.Name;
-        Recording file2 = new Recording();
+        var record = await context.Recordings.FindAsync(id);
 
-        file2.Id = 2;
-        file2.Duration = new TimeSpan(0, 2, 0);
-        file2.Path = "Aggiungi qui il percorso file";
-        fileInfo = new FileInfo(file2.Path);
-        file2.Size = fileInfo.Length;
-        file2.Name = fileInfo.Name;
-
-        string path = null;
-        string fileName = null;
-
-        switch (id)
+        if (record == null)
         {
-            case 1:
-                path = file.Path;
-                fileName = file.Name;
-                break;
-            case 2:
-                path = file2.Path;
-                fileName = file2.Name;
-                break;
-
-        };
-
-        if (System.IO.File.Exists(path))
-        {
-            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(path);
-
-            // Puoi personalizzare il tipo di contenuto e il nome del file nella risposta HTTP
-            var fileContentResult = new FileContentResult(fileBytes, "application/octet-stream")
-            {
-                FileDownloadName = fileName // Sostituisci con il nome che desideri dare al file
-            };
-
-            return fileContentResult;
+            return NotFound("Record not found");
         }
         else
         {
-            // Gestisci il caso in cui il file non esiste
-            return NotFound();
+            if (record.Path != null)
+            {
+                var recordingPath = record.Path;
+
+                var fileBytes = await System.IO.File.ReadAllBytesAsync(recordingPath);
+
+                var recordDownload = File(fileBytes, "application/octet-stream", Path.GetFileName(recordingPath));
+
+                Response.Headers["Content-Disposition"] = "attachment; filename=" + Path.GetFileName(recordingPath);
+
+                return recordDownload;
+            }
+            else
+            {
+                return BadRequest("Path is null");
+            }
         }
     }
+
+
 }
