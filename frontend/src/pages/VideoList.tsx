@@ -14,8 +14,6 @@ const getVideos = async () => {
   }
 };
 
-//https://mocki.io/v1/a61ec3ad-3395-4641-a5a9-f3334975b005
-
 export const VideoList = () => {
   const [videoList, setVideoList] = useState([]);
 
@@ -30,16 +28,15 @@ export const VideoList = () => {
   const videoCards = Array.isArray(videoList)
     ? videoList.map((data: VideoCardProps) => (
         <VideoCard
+          key={data.id}
           id={data.id}
           description={
             data.description == ""
               ? "Questo video non ha una descrizione."
               : data.description
           }
-          startDate={data.startDate}
-          endDate={data.endDate}
-          startTime={data.startTime}
-          endTime={data.endTime}
+          startDateTime={data.startDateTime}
+          endDateTime={data.endDateTime}
           duration={data.duration}
           size={data.size}
           name={data.name}
@@ -51,13 +48,7 @@ export const VideoList = () => {
     <>
       <Searchbox datepickerIcon />
       {/* Se ci sta solo una card, la centra */}
-      <div
-        className={`${
-          videoCards && videoCards.length <= 2
-            ? "flex justify-center"
-            : "grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1  2xl:gap-4"
-        }`}
-      >
+      <div className="flex  justify-center flex-wrap shrink-0 gap-5">
         {videoCards}
       </div>
     </>
