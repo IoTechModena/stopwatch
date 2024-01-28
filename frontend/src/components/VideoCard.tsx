@@ -16,7 +16,7 @@ export interface VideoCardProps {
 export const VideoCard = (props: VideoCardProps) => {
   return (
     <>
-      <div className="Gelion rounded-md  overflow-hidden shadow-2xl m-4">
+      <div className="Gelion rounded-md overflow-hidden shadow-2xl m-4">
         <VideoPlayer id={props.id} />
         <div className="px-6 py-4">
           <h1
