@@ -1,10 +1,11 @@
 // Author: Sbenduel
 import axios from "axios";
+import { formatBytes } from "../lib/utils";
 
-const downloadVideo = async (id: number) => {
+const downloadVideo = async (videoId: number, videoName: string) => {
   try {
-    console.log("id: ", id);
-    const response = await axios.get(`api/downloadRecording/${id}`, {
+    console.log("Downloading video with id: ", videoId);
+    const response = await axios.get(`api/downloadRecording/${videoId}`, {
       responseType: "blob", // Gestisce la risposta come file binario
     });
 
@@ -14,7 +15,7 @@ const downloadVideo = async (id: number) => {
     const link = document.createElement("a");
     link.href = url;
     // Aggiunge ad "a" l'attributo download e lo fa cliccare e scaricare col nome di video.mp4
-    link.setAttribute("download", "video.mp4");
+    link.setAttribute("download", videoName);
     document.body.appendChild(link);
     link.click();
     // Elimina "a" e toglie dalla memoria il blob
@@ -25,24 +26,14 @@ const downloadVideo = async (id: number) => {
   }
 };
 
-// Questa funzione prende in input un numero di byte e lo converte in una stringa che rappresenta la dimensione in byte, KB, MB, GB
-function formatBytes(bytes: number, decimals = 2) {
-  if (bytes === 0) return "0 Bytes";
-
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-}
-
-// questo componente dovrebbe stare dentro un parent, altrimenti diventa lungo come lo schermo, nel caso tolgiere w-full da button
-export const DownloadButton = (props: { size: number; id: number }) => {
+export const DownloadButton = (props: {
+  videoSize: number;
+  videoId: number;
+  videoName: string;
+}) => {
   return (
     <button
-      onClick={() => downloadVideo(1)}
+      onClick={() => downloadVideo(props.videoId, props.videoName)}
       type="button"
       className="group w-full py-2 px-4 font-bold bg-[#112d4e] hover:bg-[#0B1D32]  rounded-sm text-white inline-flex items-center justify-center  Gelion"
     >
@@ -52,7 +43,7 @@ export const DownloadButton = (props: { size: number; id: number }) => {
         src="../imgs/downloadSvg.svg"
         alt="Download"
       />
-      Download video ({formatBytes(props.size)})
+      Download video ({formatBytes(props.videoSize)})
     </button>
   );
 };

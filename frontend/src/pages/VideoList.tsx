@@ -47,10 +47,7 @@ export const VideoList = () => {
   return (
     <>
       <Searchbox datepickerIcon />
-      {/* Se ci sta solo una card, la centra */}
-      <div className="flex  justify-center flex-wrap shrink-0 gap-5">
-        {videoCards}
-      </div>
+      <div className="flex  justify-center flex-wrap gap-5">{videoCards}</div>
     </>
   );
 };

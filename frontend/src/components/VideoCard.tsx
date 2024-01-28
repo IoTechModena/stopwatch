@@ -39,7 +39,11 @@ export const VideoCard = (props: VideoCardProps) => {
             {props.description}
           </p>
         </div>
-        <DownloadButton size={props.size} id={props.id} />
+        <DownloadButton
+          videoSize={props.size}
+          videoId={props.id}
+          videoName={props.name}
+        />
       </div>
     </>
   );
