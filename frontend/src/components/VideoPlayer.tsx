@@ -1,4 +1,4 @@
-//Author: INSERIRE AUTORE
+//Authors: Sus + Aboom
 import ReactPlayer from "react-player";
 
 export const VideoPlayer = (props: { id: number }) => {
@@ -9,8 +9,8 @@ export const VideoPlayer = (props: { id: number }) => {
       }
       controls={true}
       url={`http://localhost/api/downloadRecording/${props.id}`}
-      width="100%"
-      height=""
+      width="640px"
+      height="480px"
     />
   );
 };
