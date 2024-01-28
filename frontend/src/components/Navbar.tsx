@@ -49,7 +49,7 @@ export const Navbar = () => {
 
         {/*MOBILE-MENU */}
         <section className="z-10 md:hidden absolute top-2 right-0 flex flex-col rounded-lg shadow-lg">
-          <button className="text-white px-4 py-2 Inter" onClick={toggleMenu}>
+          <button className="text-white px-4 py-2 Gelion" onClick={toggleMenu}>
             apri
           </button>
           {isMenuOpen && (
@@ -61,9 +61,9 @@ export const Navbar = () => {
                       href={item.href}
                       className={classNames(
                         item.current
-                          ? "bg-[#0B1D32] text-white py-2 text-center Inter"
+                          ? "bg-[#0B1D32] text-white py-2 text-center Gelion"
                           : "text-gray-600 hover:bg-[#0B1D32] hover:text-white",
-                        "block px-8 py-4 text-sm Inter"
+                        "block px-8 py-4 text-sm Gelion"
                       )}
                       aria-current={item.current ? "page" : undefined}
                     >

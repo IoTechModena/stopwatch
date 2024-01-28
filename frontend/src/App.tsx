@@ -5,6 +5,8 @@ import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { VideoList } from "./pages/VideoList";
 import "./App.css";
+import "./fonts.css";
+
 //import { RequireAuth } from "react-auth-kit";
 import { ToasterProvider } from "./context/ToasterContext";
 
