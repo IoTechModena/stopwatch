@@ -48,12 +48,12 @@ export const Navbar = () => {
         </div>
 
         {/*MOBILE-MENU */}
-        <section className="z-10 md:hidden absolute top-2 right-0 flex flex-col rounded-lg shadow-lg">
-          <button className="text-white px-4 py-2 Gelion" onClick={toggleMenu}>
-            apri
+        <section className="z-10 md:hidden absolute top-2 right-0 flex flex-col rounded-lg align-items">
+          <button className="text-white  hover:bg-[#0B1D32] rounded-lg px-4 py-2 Gelion" onClick={toggleMenu}>
+            <i className="fa-solid fa-bars"></i>
           </button>
           {isMenuOpen && (
-            <div className="bg-white">
+            <div className="bg-white border border-[#0B1D32] rounded-lg">
               <ul className="divide-y divide-gray-400">
                 {navigation.map((item) => (
                   <li key={item.name}>
@@ -75,7 +75,7 @@ export const Navbar = () => {
                   <Link to="/login">
                     <button
                       type="button"
-                      className="text-center w-full text-gray-600 hover:bg-[#0B1D32] hover:text-white block px-4 py-2 text-sm"
+                      className="text-center w-full text-gray-600 Gelion hover:bg-[#0B1D32] hover:text-white block px-8 py-4 text-sm"
                     >
                       Login
                       <i className="fa-solid fa-right-to-bracket"></i>
