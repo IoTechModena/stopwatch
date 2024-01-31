@@ -6,9 +6,6 @@ import { VideoCardProps } from "../components/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoCardsCarousel";
 import axios from "axios";
 
-
-
-
 const getVideos = async () => {
   try {
     const response = await axios.get("http://localhost/api/getRecordings");
@@ -52,10 +49,7 @@ export const VideoList = () => {
     <>
       <Searchbox datepickerIcon />
       {/* <div className="flex  justify-center flex-wrap gap-5">{videoCards}</div> */}
-      <VideoCardsCarousel eventName="Evento x">  
-        {videoCards}
-      </VideoCardsCarousel>
-
+      <VideoCardsCarousel>{videoCards}</VideoCardsCarousel>
     </>
   );
 };

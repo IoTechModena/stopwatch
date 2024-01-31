@@ -4,16 +4,22 @@ import Carousel from "react-multi-carousel";
 import { ReactNode } from "react";
 
 interface VideoCardsCarouselProps {
- children: ReactNode;
- eventName: string;
+  children: ReactNode;
 }
 
-export const VideoCardsCarousel = ({ children, eventName }: VideoCardsCarouselProps) => {
+export const VideoCardsCarousel = ({ children }: VideoCardsCarouselProps) => {
   return (
     <>
-      <h1 className="text-3xl font-bold Gelion text-center mt-10 mb-5">
-        {eventName}
-      </h1>
+      <div id="eventDescription" className="text-center Gelion">
+        <h1 className="text-3xl font-extrabold mt-10 mb-1">🔔Evento 1</h1>
+        <p className="text-gray-700 font-bold">Numero di filmati: x</p>
+        <div className="flex justify-center gap-10">
+          <p className="text-gray-500 font-normal">
+            Inizio: 00:00:00 01/01/1970
+          </p>
+          <p className="text-gray-500 font-normal">Fine: 00:00:00 01/01/1970</p>
+        </div>
+      </div>
       <Carousel
         className="mx-20"
         arrows
@@ -48,6 +54,7 @@ export const VideoCardsCarousel = ({ children, eventName }: VideoCardsCarouselPr
       >
         {children}
       </Carousel>
+      <hr className="my-10" />
     </>
   );
 };
