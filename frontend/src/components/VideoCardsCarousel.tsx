@@ -54,7 +54,6 @@ export const VideoCardsCarousel = ({ children }: VideoCardsCarouselProps) => {
       >
         {children}
       </Carousel>
-      <hr className="my-10" />
     </>
   );
 };
