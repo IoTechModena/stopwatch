@@ -1,10 +1,11 @@
 services:
   database:
     image: postgres:16.1-alpine3.19
+    restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: test
+      - POSTGRES_PASSWORD=test
     volumes:
-      - database_data:/var/lib/postgresql/data
+      - database-data:/var/lib/postgresql/data
 
   migrations:
     build:
@@ -15,6 +16,7 @@ services:
 
   backend:
     build: backend
+    restart: unless-stopped
     volumes:
       - recordings:/app/public/recordings
     depends_on:
@@ -23,18 +25,19 @@ services:
   frontend:
     build: frontend
     volumes:
-      - static_data:/app/dist
+      - static-data:/app/dist
 
   proxy:
     build: proxy
+    restart: unless-stopped
     ports:
       - 80:80
     volumes:
-      - static_data:/usr/share/nginx/html
+      - static-data:/usr/share/nginx/html
     depends_on:
       - backend
 
 volumes:
-  database_data:
+  database-data:
   recordings:
-  static_data:
+  static-data:
