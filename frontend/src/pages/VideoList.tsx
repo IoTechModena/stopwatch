@@ -1,9 +1,13 @@
-//Author: INSERIRE AUTORE
+//Author: Aboom
 import { useState, useEffect } from "react";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoCard";
 import { VideoCardProps } from "../components/VideoCard";
+import { VideoCardsCarousel } from "../components/VideoCardsCarousel";
 import axios from "axios";
+
+
+
 
 const getVideos = async () => {
   try {
@@ -47,7 +51,11 @@ export const VideoList = () => {
   return (
     <>
       <Searchbox datepickerIcon />
-      <div className="flex  justify-center flex-wrap gap-5">{videoCards}</div>
+      {/* <div className="flex  justify-center flex-wrap gap-5">{videoCards}</div> */}
+      <VideoCardsCarousel eventName="Evento x">  
+        {videoCards}
+      </VideoCardsCarousel>
+
     </>
   );
 };
