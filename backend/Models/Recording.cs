@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models;
 
@@ -27,6 +28,11 @@ public class Recording
 
     [Required]
     public long Size { get; set; }
+
+    [ForeignKey("Event")]
+    public long EventId { get; set; }
+
+    public Event Event { get; set; }
 
     public Recording()
     {
