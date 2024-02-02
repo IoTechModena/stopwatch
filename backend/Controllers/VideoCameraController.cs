@@ -13,7 +13,7 @@ public class VideoCameraController : ControllerBase
 {
     // Data needed to access the camera recording
     string authenticationString = "admin:mutina23";
-    private string ip = "77.89.51.65";
+    private string ip = "151.78.228.229";
     HttpClient client = new HttpClient();
     private readonly DataContext context;
 
