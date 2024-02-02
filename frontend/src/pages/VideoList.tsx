@@ -4,6 +4,7 @@ import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoCard";
 import { VideoCardProps } from "../components/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoCardsCarousel";
+import BeatLoader from "react-spinners/BeatLoader";
 import axios from "axios";
 
 const getVideos = async () => {
@@ -17,11 +18,13 @@ const getVideos = async () => {
 
 export const VideoList = () => {
   const [videoList, setVideoList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchVideos = async () => {
       const data = await getVideos();
       setVideoList(data);
+      setLoading(false);
     };
     fetchVideos();
   }, []);
@@ -50,6 +53,12 @@ export const VideoList = () => {
       <Searchbox datepickerIcon />
       {/* <div className="flex  justify-center flex-wrap gap-5">{videoCards}</div> */}
       <VideoCardsCarousel>{videoCards}</VideoCardsCarousel>
+      <BeatLoader
+        className="text-center my-10"
+        color="#eab308"
+        loading={loading}
+        size="16"
+      />
     </>
   );
 };
