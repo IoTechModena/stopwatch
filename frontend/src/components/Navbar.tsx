@@ -1,13 +1,14 @@
 //Author: Sbenduel
+import { Home } from "lucide-react";
 import { useState } from "react";
 import { useSignOut } from "react-auth-kit";
 import { Link, useNavigate } from "react-router-dom";
+import { LogoComponent } from "./LogoComponent";
 
 export const Navbar = () => {
   //Lista stub di link per la navigazione, current indica la pagina attuale
   //La mia idea era di importare la lista dei jSon dal backend e renderizzarla dinamicamente
   const navigation = [
-    { name: "Home", href: "/", current: false },
     { name: "Register", href: "register", current: false },
     { name: "Recordings", href: "video-list", current: false },
   ];
@@ -31,25 +32,15 @@ export const Navbar = () => {
     return classes.filter(Boolean).join(" ");
   }
   return (
-    <header className="bg-[#112d4e]">
-      {/*LOGO*/}
+    <header className="bg-[#112d4e] Gelion">
       <nav className="flex justify-start items-center h-16 px-4 md:px-[8%]">
-        <div className="mr-8">
-          <img
-            className="lg:hidden block h-8 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-            alt="Workflow logo"
-          />
-          <img
-            className="lg:block hidden h-8 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
-            alt="Workflow logo"
-          />
-        </div>
-
+        <LogoComponent />
         {/*MOBILE-MENU */}
         <section className="z-10 md:hidden absolute top-2 right-0 flex flex-col rounded-lg align-items">
-          <button className="text-white  hover:bg-[#0B1D32] rounded-lg px-4 py-2 Gelion" onClick={toggleMenu}>
+          <button
+            className="text-white  hover:bg-[#0B1D32] rounded-lg px-4 py-2"
+            onClick={toggleMenu}
+          >
             <i className="fa-solid fa-bars"></i>
           </button>
           {isMenuOpen && (
@@ -61,9 +52,9 @@ export const Navbar = () => {
                       href={item.href}
                       className={classNames(
                         item.current
-                          ? "bg-[#0B1D32] text-white py-2 text-center Gelion"
+                          ? "bg-[#0B1D32] text-white py-2 text-center"
                           : "text-gray-600 hover:bg-[#0B1D32] hover:text-white",
-                        "block px-8 py-4 text-sm Gelion"
+                        "block px-8 py-4 text-sm "
                       )}
                       aria-current={item.current ? "page" : undefined}
                     >
@@ -75,7 +66,7 @@ export const Navbar = () => {
                   <Link to="/login">
                     <button
                       type="button"
-                      className="text-center w-full text-gray-600 Gelion hover:bg-[#0B1D32] hover:text-white block px-8 py-4 text-sm"
+                      className="text-center w-full text-gray-600  hover:bg-[#0B1D32] hover:text-white block px-8 py-4 text-sm"
                     >
                       Login
                       <i className="fa-solid fa-right-to-bracket"></i>
@@ -86,7 +77,6 @@ export const Navbar = () => {
             </div>
           )}
         </section>
-
         {/*DESKTOP-MENU */}
         <ul className="md:flex hidden gap-8 items-center w-full">
           {navigation.map((item) => (
@@ -97,7 +87,7 @@ export const Navbar = () => {
                   item.current
                     ? "bg-[#0B1D32] text-white"
                     : "text-gray-300 hover:bg-[#0B1D32] hover:text-white",
-                  "block rounded-md px-3 py-2 text-base Gelion font-bold"
+                  "block rounded-md px-3 py-2 text-base  font-bold"
                 )}
                 aria-current={item.current ? "page" : undefined}
               >
@@ -110,7 +100,7 @@ export const Navbar = () => {
             <Link to="/login">
               <button
                 type="button"
-                className="text-white md:block hidden Gelion font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
+                className="text-white md:block hidden font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
               >
                 Login
                 <i className="fa-solid pl-2 fa-right-to-bracket"></i>
@@ -121,7 +111,7 @@ export const Navbar = () => {
             <button
               onClick={logout}
               type="button"
-              className="text-white md:block hidden Gelion font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
+              className="text-white md:block hidden  font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
             >
               Logout
             </button>
