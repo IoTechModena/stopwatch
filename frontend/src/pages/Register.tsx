@@ -16,14 +16,18 @@ export const Register: React.FC = () => {
   const signIn = useSignIn();
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<boolean>(false);
+  const [networkError, setNetworkError] = useState<boolean>(false);
+
   const onSubmit = async (values: FormValues) => {
     console.log("Valori inviati: ", values); // Log dei valori inviati
 
     try {
       console.log("Inizio richiesta di register"); // Prima della richiesta
-      const response = await axios.post("http://localhost/api/register", values);
+      const response = await axios.post(
+        "http://localhost/api/register",
+        values
+      );
       console.log("Risposta ricevuta: ", response); // Dopo aver ricevuto la risposta
-
       signIn({
         token: response.data.token,
         expiresIn: 3600,
@@ -39,8 +43,8 @@ export const Register: React.FC = () => {
         if ("DuplicateUserName" in err.response.data.errors)
           setEmailError(true);
         else setPasswordError(true);
-      } else if (err && err instanceof Error) {
-        console.log("Errore: ", err.message);
+      } else if (err && err instanceof AxiosError) {
+        setNetworkError(true);
       }
     }
   };
@@ -75,6 +79,11 @@ export const Register: React.FC = () => {
             />
             {emailError && (
               <p className="text-red-600 mt-2 Gelion">Email già in uso</p>
+            )}
+            {networkError && (
+              <p className="text-red-600 mt-2 Gelion">
+                I server sono down, ci scusiamo per il disagio.
+              </p>
             )}
           </div>
           <div className="mb-12">
