@@ -1,5 +1,4 @@
 //Author: Sbenduel
-import { Home } from "lucide-react";
 import { useState } from "react";
 import { useSignOut } from "react-auth-kit";
 import { Link, useNavigate } from "react-router-dom";
