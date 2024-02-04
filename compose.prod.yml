@@ -13,12 +13,16 @@ services:
     build:
       context: backend
       dockerfile: migrations.Dockerfile
+    secrets:
+      - database-password
     depends_on:
       - database
 
   backend:
     build: backend
     restart: unless-stopped
+    secrets:
+      - database-password
     volumes:
       - recordings:/app/public/recordings
     depends_on:
