@@ -4,7 +4,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_PASSWORD=test
+      - POSTGRES_PASSWORD_FILE=/run/secrets/database-password
+    secrets:
+      - database-password
     volumes:
       - database-data:/var/lib/postgresql/data
 
@@ -12,11 +14,15 @@ services:
     build:
       context: backend
       dockerfile: migrations.Dockerfile
+    secrets:
+      - database-password
     depends_on:
       - database
 
   backend:
     build: backend
+    secrets:
+      - database-password
     volumes:
       - recordings:/app/public/recordings
 
@@ -33,6 +39,10 @@ services:
       - static-data:/usr/share/nginx/html
     depends_on:
       - backend
+
+secrets:
+  database-password:
+    file: database/password.txt
 
 volumes:
   database-data:
