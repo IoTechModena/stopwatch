@@ -13,7 +13,7 @@ public class VideoCameraController : ControllerBase
 {
     // Data needed to access the camera recording
     string authenticationString = "admin:mutina23";
-    private string ip = "77.89.51.65";
+    private string ip = "151.78.228.229";
     HttpClient client = new HttpClient();
     private readonly DataContext context;
 
@@ -22,12 +22,18 @@ public class VideoCameraController : ControllerBase
         this.context = context;
     }
 
-    [HttpGet("saveRecording")]
-    public async Task<IActionResult> SaveRecording([FromQuery] string startDate, string startTime, string endDate, string endTime) // Formatting: dates=yyyy-mm-dd  times=hh:mm:ss
+    [HttpGet("saveRecording/{chnid}")]
+    public async Task<IActionResult> SaveRecording([FromQuery] string startDate, string startTime, string endDate, string endTime, int chnid) // Formatting: dates=yyyy-mm-dd  times=hh:mm:ss
     {
-        // This method downloads a video from a camera.
+        // This method downloads videos from a camera.
         // It first retrieves the necessary information for the download request,
         // then sends the download request and checks if it was successful.
+
+        // Checking if the chnid is valid
+        if (chnid != 0 && chnid != 1)
+        {
+            return BadRequest("Invalid chnid, must be 0 to save CAM1 recordings or 1 for CAM2 recordings");
+        }
 
         // get.playback.recordinfo request
 
@@ -35,7 +41,7 @@ public class VideoCameraController : ControllerBase
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
         "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
 
-        string recordInfoURL = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid=0&stream=0&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
+        string recordInfoURL = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
 
         var recordInfoResponse = await client.GetAsync(recordInfoURL);
 
@@ -55,7 +61,6 @@ public class VideoCameraController : ControllerBase
             }
 
             // Retrieving needed values for the get.playback.download request
-            string chnid = recordInfoValues["chnid"];
             string sid = recordInfoValues["sid"];
             int cnt = int.Parse(recordInfoValues["cnt"]);
 
@@ -71,7 +76,7 @@ public class VideoCameraController : ControllerBase
 
                 string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
 
-                string fileName = $"NVR-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}_{i + 1}.mp4";
+                string fileName = $"CAM{chnid + 1}-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}_{i + 1}.mp4";
                 Console.WriteLine($"Video name: {fileName}");
 
                 // Create a new ProcessStartInfo object

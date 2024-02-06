@@ -8,8 +8,9 @@ node_modules/
 # React
 dist/
 
-# Recordings
+# Environment
 recordings/
+password.txt
 
 # Visual Studio
 .vs/

@@ -7,8 +7,6 @@ import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useToaster } from "../hooks/useToaster";
 
-axios.defaults.baseURL = "http://localhost";
-
 interface LoginFormValues {
   email: string;
   password: string;

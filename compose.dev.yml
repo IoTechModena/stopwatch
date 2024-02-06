@@ -1,40 +1,50 @@
 services:
   database:
     image: postgres:16.1-alpine3.19
-    environment:
-      POSTGRES_PASSWORD: test
     ports:
       - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/database-password
+    secrets:
+      - database-password
     volumes:
-      - database_data:/var/lib/postgresql/data
+      - database-data:/var/lib/postgresql/data
 
   migrations:
     build:
       context: backend
       dockerfile: migrations.Dockerfile
+    secrets:
+      - database-password
     depends_on:
       - database
 
   backend:
     build: backend
+    secrets:
+      - database-password
     volumes:
       - recordings:/app/public/recordings
 
   frontend:
     build: frontend
     volumes:
-      - static_data:/app/dist
+      - static-data:/app/dist
 
   proxy:
     build: proxy
     ports:
       - 80:80
     volumes:
-      - static_data:/usr/share/nginx/html
+      - static-data:/usr/share/nginx/html
     depends_on:
       - backend
 
+secrets:
+  database-password:
+    file: database/password.txt
+
 volumes:
-  database_data:
+  database-data:
   recordings:
-  static_data:
+  static-data:
