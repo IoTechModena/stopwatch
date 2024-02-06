@@ -13,6 +13,9 @@ namespace backend.Models
         public ICollection<Recording> Recordings { get; set; }
 
         [Required]
+        public byte Channel {  get; set; }
+
+        [Required]
         public string Name { get; set; }
 
         [Required]
