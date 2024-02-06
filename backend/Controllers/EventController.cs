@@ -15,11 +15,11 @@ namespace backend.Controllers
 
 
         [HttpGet("getEvents")]
-        public async Task<IActionResult> GetRecordings()
+        public async Task<IActionResult> GetEvents()
         {
             try
             {
-                var events = await context.Recordings.ToListAsync();
+                var events = await context.Events.ToListAsync();
                 return Ok(events);
             }
             catch (Exception e)
