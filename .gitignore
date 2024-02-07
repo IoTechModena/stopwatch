@@ -15,6 +15,7 @@ password.txt
 # Visual Studio
 .vs/
 *.sln
+*.user
 
 # Github Desktop
 .github/
