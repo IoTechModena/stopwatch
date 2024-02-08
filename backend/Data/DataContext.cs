@@ -8,5 +8,7 @@ public class DataContext : IdentityDbContext
 {
     public DbSet<Recording> Recordings { get; set; }
 
+    public DbSet<Event> Events { get; set; }
+
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 }

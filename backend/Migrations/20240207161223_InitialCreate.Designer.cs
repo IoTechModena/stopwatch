@@ -12,8 +12,8 @@ using backend;
 namespace backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240115082502_RecordingsMigration")]
-    partial class RecordingsMigration
+    [Migration("20240207161223_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,6 +221,32 @@ namespace backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Models.Event", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<byte>("Channel")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateTime>("EndDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Events");
+                });
+
             modelBuilder.Entity("backend.Models.Recording", b =>
                 {
                     b.Property<long>("Id")
@@ -236,11 +262,11 @@ namespace backend.Migrations
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("interval");
 
-                    b.Property<DateOnly>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("EndDateTime")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("time without time zone");
+                    b.Property<long>("EventId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -253,13 +279,12 @@ namespace backend.Migrations
                     b.Property<long>("Size")
                         .HasColumnType("bigint");
 
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("time without time zone");
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Recordings");
                 });
@@ -313,6 +338,22 @@ namespace backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("backend.Models.Recording", b =>
+                {
+                    b.HasOne("backend.Models.Event", "Event")
+                        .WithMany("Recordings")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("backend.Models.Event", b =>
+                {
+                    b.Navigation("Recordings");
                 });
 #pragma warning restore 612, 618
         }
