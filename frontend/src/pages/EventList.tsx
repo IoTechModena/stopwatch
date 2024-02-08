@@ -38,7 +38,7 @@ const getEvents = async () => {
   }
 };
 
-export const VideoList = () => {
+export const EventList = () => {
   const [eventList, setEventList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
