@@ -19,7 +19,9 @@ namespace backend.Controllers
         {
             try
             {
-                var events = await context.Events.ToListAsync();
+                var events = await context.Events
+                .Include(e => e.Recordings) //Including the related recordings, feature called "Eager loading"
+                .ToListAsync();
                 return Ok(events);
             }
             catch (Exception e)
