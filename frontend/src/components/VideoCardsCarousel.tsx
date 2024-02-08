@@ -1,7 +1,6 @@
 import "react-multi-carousel/lib/styles.css";
 import Carousel from "react-multi-carousel";
 import { ReactNode } from "react";
-import { EventHeader } from "./EventHeader";
 
 interface VideoCardsCarouselProps {
   children: ReactNode;
@@ -10,12 +9,6 @@ interface VideoCardsCarouselProps {
 export const VideoCardsCarousel = ({ children }: VideoCardsCarouselProps) => {
   return (
     <>
-      <EventHeader
-        id={0}
-        recordingCount={0}
-        startDateTime={"00:00:00 01/01/2000"}
-        endDateTime={"00:00:00 01/01/2000"}
-      />
       <Carousel
         className="lg:mx-20 md:mx-10 sm:mx-5  mb-5"
         arrows

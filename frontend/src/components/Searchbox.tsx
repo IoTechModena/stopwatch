@@ -19,7 +19,7 @@ export const Searchbox = (props: SearchBoxProps) => {
             className="h-14 rounded-sm shadow-xl placeholder-gray-700 block w-full p-4 ps-10  Gelion bg-yellow-400  focus:outline-none text-sm   hover:cursor-pointer "
             placeholder={
               props.datepickerIcon
-                ? "Che filmato stai cercando?"
+                ? "Che evento stai cercando?"
                 : "Che telecamera stai cercando?"
             }
             required

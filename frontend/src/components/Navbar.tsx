@@ -9,7 +9,7 @@ export const Navbar = () => {
   //La mia idea era di importare la lista dei jSon dal backend e renderizzarla dinamicamente
   const navigation = [
     { name: "Register", href: "register", current: false },
-    { name: "Recordings", href: "video-list", current: false },
+    { name: "Eventi", href: "video-list", current: false },
   ];
 
   const signOut = useSignOut();
