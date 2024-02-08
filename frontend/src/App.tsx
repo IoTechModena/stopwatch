@@ -23,7 +23,7 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* <Route path="id" element={<DetailCamera />} /> */}
-          <Route path="video-list" element={<EventList />} />
+          <Route path="events" element={<EventList />} />
           <Route path="/" index element={<Home />} />
           <Route path="favorites" element="FavoriteCamera" />
           <Route path="register" element={<Register />} />

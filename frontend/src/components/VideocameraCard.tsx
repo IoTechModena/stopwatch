@@ -19,7 +19,7 @@ export const VideocameraCard = () => {
           <p id="additionalDescription" className="text-gray-500 text-base">
             Descrizione opzionale
           </p>
-          <hr className="my-8 " />
+          <hr className="my-8" />
 
           <button
             id="liveButton"
@@ -27,7 +27,7 @@ export const VideocameraCard = () => {
           >
             Live
           </button>
-          <a href="video-list">
+          <a href="events">
             <button className="bg-[#112D4E] mb-4 w-full hover:bg-[#0B1D32] text-white font-bold py-2 px-4 rounded-lg">
               Registrazioni
             </button>
