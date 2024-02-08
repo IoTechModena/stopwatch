@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace backend.Models;
 
@@ -9,10 +10,10 @@ public class Recording
     public long Id { get; set; }
 
     [Required]
-    public string Path { get; set; }
+    public string? Path { get; set; }
 
     [Required]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [MaxLength(500)]
     public string? Description { get; set; }
@@ -32,14 +33,8 @@ public class Recording
     [ForeignKey("Event")]
     public long EventId { get; set; }
 
-    public Event Event { get; set; }
+    [JsonIgnore]
+    public Event? Event { get; set; }
 
-    public Recording()
-    {
-    }
-
-
-
-
-
+    public Recording() { }
 }
