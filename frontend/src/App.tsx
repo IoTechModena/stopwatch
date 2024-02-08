@@ -3,7 +3,7 @@ import { Home } from "./pages/Home";
 import { Navbar } from "./components/Navbar";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
-import { VideoList } from "./pages/VideoList";
+import { VideoList } from "./pages/EventList";
 import "./App.css";
 import "./fonts.css";
 
