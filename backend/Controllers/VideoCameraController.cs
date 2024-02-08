@@ -53,7 +53,6 @@ public class VideoCameraController : ControllerBase
             Dictionary<string, string> recordInfoValues = Utility.ParseResponse(content);
 
             // Printing the values of recordInfoResponse
-
             Console.WriteLine("\nPrinting the keys and values of recordInfoResponse");
             foreach (KeyValuePair<string, string> entry in recordInfoValues)
             {
@@ -65,6 +64,26 @@ public class VideoCameraController : ControllerBase
             int cnt = int.Parse(recordInfoValues["cnt"]);
 
             string relativeFilePath = $"./public/recordings/";
+
+            // Saving an Event
+            Event currEvent = new Event()
+            {
+                Channel = (byte)chnid,
+                Name = $"Event_{sid}",
+                StartDateTime = DateTime.ParseExact($"{startDate} {startTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                EndDateTime = DateTime.ParseExact($"{endDate} {endTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+            };
+
+            // Adding Event to the database
+            try
+            {
+                await context.AddAsync(currEvent);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
 
             for (int i = 0; i < cnt; i++)
             {
@@ -95,21 +114,24 @@ public class VideoCameraController : ControllerBase
                 process.Start();
                 await process.WaitForExitAsync();
 
-                //Recording model generation
+                // Creating a Recording object and saving it in currEvent
+                Recording recording = new Recording()
+                {
+                    Name = fileName,
+                    Path = Path.GetFullPath(relativeFilePath + fileName),
+                    Description = "",
+                    Size = new FileInfo(relativeFilePath + fileName).Length,
+                    StartDateTime = DateTime.ParseExact(cntStartDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                    EndDateTime = DateTime.ParseExact(cntEndDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                    Event = currEvent,
+                };
+                recording.Duration = recording.EndDateTime - recording.StartDateTime;
+                
+                currEvent.Recordings?.Add(recording);
+
+                // Adding Recording to the database
                 try
                 {
-                    Recording recording = new Recording()
-                    {
-                        Name = fileName,
-                        Path = Path.GetFullPath(relativeFilePath + fileName),
-                        Description = "",
-                        Size = new FileInfo(relativeFilePath + fileName).Length,
-                        StartDateTime = DateTime.ParseExact(cntStartDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                        EndDateTime = DateTime.ParseExact(cntEndDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                    };
-                    recording.Duration = recording.EndDateTime - recording.StartDateTime;
-
-                    // adding recording to the database
                     await context.AddAsync(recording);
                     await context.SaveChangesAsync();
                 }
@@ -118,11 +140,13 @@ public class VideoCameraController : ControllerBase
                     return StatusCode(500, e.Message);
                 }
             }
+
+
             return Ok("Video successfully downloaded");
         }
         else
         {
-            return StatusCode((int)recordInfoResponse.StatusCode, recordInfoResponse.ReasonPhrase + "Unable to retrieve recording info");
+            return StatusCode((int)recordInfoResponse.StatusCode, recordInfoResponse.ReasonPhrase + "Unable to retrieve recordings info");
         }
     }
 
