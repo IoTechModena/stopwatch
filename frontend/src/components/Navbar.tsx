@@ -1,7 +1,6 @@
 //Author: Sbenduel
 import { useState } from "react";
-import { useSignOut } from "react-auth-kit";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LogoComponent } from "./LogoComponent";
 
 export const Navbar = () => {
@@ -11,13 +10,6 @@ export const Navbar = () => {
     { name: "Register", href: "register", current: false },
     { name: "Eventi", href: "events", current: false },
   ];
-
-  const signOut = useSignOut();
-  const navigate = useNavigate();
-  const logout = () => {
-    signOut();
-    navigate("/login");
-  };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -108,7 +100,6 @@ export const Navbar = () => {
           </li>
           <li>
             <button
-              onClick={logout}
               type="button"
               className="text-white md:block hidden  font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
             >

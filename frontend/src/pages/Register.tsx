@@ -3,7 +3,6 @@
 import axios, { AxiosError } from "axios";
 import { useFormik } from "formik";
 import { useState } from "react";
-import { useSignIn } from "react-auth-kit";
 import { Link, useNavigate } from "react-router-dom";
 
 type FormValues = {
@@ -13,7 +12,6 @@ type FormValues = {
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
-  const signIn = useSignIn();
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [networkError, setNetworkError] = useState<boolean>(false);
@@ -28,12 +26,6 @@ export const Register: React.FC = () => {
         values
       );
       console.log("Risposta ricevuta: ", response); // Dopo aver ricevuto la risposta
-      signIn({
-        token: response.data.token,
-        expiresIn: 3600,
-        tokenType: "Bearer",
-        authState: { email: values.email },
-      });
       console.log("Registrazione eseguita con successo");
       navigate("/");
     } catch (err) {

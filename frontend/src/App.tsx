@@ -6,8 +6,6 @@ import { Register } from "./pages/Register";
 import { EventList } from "./pages/EventList";
 import "./App.css";
 import "./fonts.css";
-
-//import { RequireAuth } from "react-auth-kit";
 import { ToasterProvider } from "./context/ToasterContext";
 
 const Layout = () => (
@@ -34,15 +32,4 @@ export const App = () => {
   );
 };
 
-/* ROUTE PROTETTE DA METTERE PRIMA DI ANDARE IN PRODUZIONE
-            <RequireAuth loginPath="/login">
-              <EventList />
-            </RequireAuth>
-
-            <RequireAuth loginPath="/login">
-              <Home />
-            </RequireAuth>
-          }
-        />
-        */
 export default App;
