@@ -9,7 +9,7 @@ export const LogoComponent = () => {
     >
       <img
         className="h-16 camera-logo"
-        src="../public/imgs/CameraLogoT.svg"
+        src="/imgs/CameraLogoT.svg"
         alt="logo"
       />
       <h1 className="lg:block hidden text-2xl font-bold text-white mr-8 hover:text-yellow-500 ">
