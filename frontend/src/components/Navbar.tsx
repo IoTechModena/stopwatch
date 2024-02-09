@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { LogoComponent } from "./LogoComponent";
+import LoginButton from "./AuthComponents/LoginButton";
+import LogoutButton from "./AuthComponents/LogoutButton";
+import { RegisterButton } from "./AuthComponents/RegisterButton";
 
 export const Navbar = () => {
   //Lista stub di link per la navigazione, current indica la pagina attuale
@@ -105,6 +108,16 @@ export const Navbar = () => {
             >
               Logout
             </button>
+          </li>
+          <li>
+            {" "}
+            <LoginButton />
+          </li>
+          <li>
+            <LogoutButton />
+          </li>
+          <li>
+            <RegisterButton />
           </li>
         </ul>
       </nav>
