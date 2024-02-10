@@ -7,6 +7,7 @@ import { EventList } from "./pages/EventList";
 import "./App.css";
 import "./fonts.css";
 import { ToasterProvider } from "./context/ToasterContext";
+import { AuthProvider } from "./context/AuthContext";
 
 const Layout = () => (
   <>
@@ -17,18 +18,20 @@ const Layout = () => (
 
 export const App = () => {
   return (
-    <ToasterProvider>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          {/* <Route path="id" element={<DetailCamera />} /> */}
-          <Route path="events" element={<EventList />} />
-          <Route path="/" index element={<Home />} />
-          <Route path="favorites" element="FavoriteCamera" />
-          <Route path="register" element={<Register />} />
-          <Route path="login" element={<Login />} />
-        </Route>
-      </Routes>
-    </ToasterProvider>
+    <AuthProvider>
+      <ToasterProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            {/* <Route path="id" element={<DetailCamera />} /> */}
+            <Route path="events" element={<EventList />} />
+            <Route path="/" index element={<Home />} />
+            <Route path="favorites" element="FavoriteCamera" />
+            <Route path="register" element={<Register />} />
+            <Route path="login" element={<Login />} />
+          </Route>
+        </Routes>
+      </ToasterProvider>
+    </AuthProvider>
   );
 };
 

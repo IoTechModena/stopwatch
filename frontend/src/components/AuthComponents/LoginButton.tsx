@@ -16,8 +16,12 @@ export const LoginButton: React.FC = () => {
   };
 
   return (
-    <button className="button__login" onClick={handleLogin}>
+    <button
+      className="text-white md:block hidden font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
+      onClick={handleLogin}
+    >
       Log In
+      <i className="fa-solid pl-2 fa-right-to-bracket"></i>
     </button>
   );
 };

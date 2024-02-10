@@ -5,6 +5,8 @@ import { LogoComponent } from "./LogoComponent";
 import LoginButton from "./AuthComponents/LoginButton";
 import LogoutButton from "./AuthComponents/LogoutButton";
 import { RegisterButton } from "./AuthComponents/RegisterButton";
+import Profile from "./AuthComponents/Profile";
+import { useAuth } from "@/context/AuthContext";
 
 export const Navbar = () => {
   //Lista stub di link per la navigazione, current indica la pagina attuale
@@ -25,6 +27,9 @@ export const Navbar = () => {
   function classNames(...classes: string[] | boolean[]) {
     return classes.filter(Boolean).join(" ");
   }
+
+  const { isAuthenticated } = useAuth();
+
   return (
     <header className="bg-[#112d4e] Gelion">
       <nav className="flex justify-start items-center h-16 px-4 md:px-[8%]">
@@ -89,36 +94,27 @@ export const Navbar = () => {
               </Link>
             </li>
           ))}
-          <li className="flex-grow"></li>
+          <li className="flex-grow"></li>{" "}
+          {/*Spazio vuoto per portare tutto a destra */}
           <li>
-            <Link to="/login">
-              <button
-                type="button"
-                className="text-white md:block hidden font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
-              >
-                Login
-                <i className="fa-solid pl-2 fa-right-to-bracket"></i>
-              </button>
-            </Link>
+            <Profile />
           </li>
-          <li>
-            <button
-              type="button"
-              className="text-white md:block hidden  font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </li>
-          <li>
-            {" "}
-            <LoginButton />
-          </li>
-          <li>
-            <LogoutButton />
-          </li>
-          <li>
-            <RegisterButton />
-          </li>
+          {isAuthenticated ? (
+            <>
+              <li>
+                <LogoutButton />
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <LoginButton />
+              </li>
+              <li>
+                <RegisterButton />
+              </li>
+            </>
+          )}
         </ul>
       </nav>
     </header>
