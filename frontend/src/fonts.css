@@ -1,33 +1,33 @@
 /*Gelion font*/
 @font-face {
   font-family: "Gelion";
-  src: url("../public/fonts/GelionLight.ttf") format("truetype");
+  src: url("/fonts/GelionLight.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Gelion";
-  src: url("../public/fonts/GelionRegular.ttf") format("truetype");
+  src: url("/fonts/GelionRegular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Gelion";
-  src: url("../public/fonts/GelionMedium.ttf") format("truetype");
+  src: url("/fonts/GelionMedium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
 }
 @font-face {
   font-family: "Gelion";
-  src: url("../public/fonts/GelionSemiBold.ttf") format("truetype");
+  src: url("/fonts/GelionSemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
 }
 @font-face {
   font-family: "Gelion";
-  src: url("../public/fonts/GelionBold.ttf") format("truetype");
+  src: url("/fonts/GelionBold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
@@ -35,33 +35,33 @@
 /*Inter font*/
 @font-face {
   font-family: "Inter";
-  src: url("../public/fonts/InterLight.ttf") format("truetype");
+  src: url("/fonts/InterLight.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("../public/fonts/InterRegular.ttf") format("truetype");
+  src: url("/fonts/InterRegular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("../public/fonts/InterMedium.ttf") format("truetype");
+  src: url("/fonts/InterMedium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
 }
 @font-face {
   font-family: "Inter";
-  src: url("../public/fonts/InterSemiBold.ttf") format("truetype");
+  src: url("/fonts/InterSemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
 }
 @font-face {
   font-family: "Inter";
-  src: url("../public/fonts/InterBold.ttf") format("truetype");
+  src: url("/fonts/InterBold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
