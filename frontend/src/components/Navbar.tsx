@@ -6,15 +6,14 @@ import LoginButton from "./AuthComponents/LoginButton";
 import LogoutButton from "./AuthComponents/LogoutButton";
 import { RegisterButton } from "./AuthComponents/RegisterButton";
 import Profile from "./AuthComponents/Profile";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export const Navbar = () => {
   //Lista stub di link per la navigazione, current indica la pagina attuale
   //La mia idea era di importare la lista dei jSon dal backend e renderizzarla dinamicamente
-  const navigation = [
-    { name: "Register", href: "register", current: false },
-    { name: "Eventi", href: "events", current: false },
-  ];
+  const navigation = [{ name: "Eventi", href: "events", current: false }];
+
+  const { isAuthenticated } = useAuth0();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -27,8 +26,6 @@ export const Navbar = () => {
   function classNames(...classes: string[] | boolean[]) {
     return classes.filter(Boolean).join(" ");
   }
-
-  const { isAuthenticated } = useAuth();
 
   return (
     <header className="bg-[#112d4e] Gelion">

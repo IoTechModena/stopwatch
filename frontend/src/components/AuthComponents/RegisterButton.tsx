@@ -21,7 +21,7 @@ export const RegisterButton: React.FC = () => {
       className="text-white md:block hidden font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
       onClick={handleSignUp}
     >
-      Sign Up
+      Registrati
     </button>
   );
 };

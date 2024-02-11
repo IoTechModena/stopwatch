@@ -16,7 +16,7 @@ export const LogoutButton: React.FC = () => {
       className="text-white md:block hidden  font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
       onClick={handleLogout}
     >
-      Log Out
+      Disconnettiti
     </button>
   );
 };

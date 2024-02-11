@@ -20,7 +20,7 @@ export const LoginButton: React.FC = () => {
       className="text-white md:block hidden font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
       onClick={handleLogin}
     >
-      Log In
+      Accedi
       <i className="fa-solid pl-2 fa-right-to-bracket"></i>
     </button>
   );
