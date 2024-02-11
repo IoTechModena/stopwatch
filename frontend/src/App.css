@@ -75,7 +75,8 @@
   }
 }
 
-.camera-logo:hover {
+.camera-logo:hover img,
+.camera-logo:hover h1 {
   filter: brightness(0) saturate(100%) invert(100%) sepia(100%)
     saturate(100000%) hue-rotate(320deg) brightness(100%) contrast(100%);
 }
@@ -102,10 +103,9 @@
   border-radius: 35px;
   z-index: 1000;
   border: 0;
-  background: rgba(0, 0, 0, 0.8) !important; 
+  background: rgba(0, 0, 0, 0.8) !important;
   min-width: 43px;
   min-height: 43px;
   opacity: 1;
   cursor: pointer;
 }
-
