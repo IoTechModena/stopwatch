@@ -8,7 +8,7 @@ import "./App.css";
 import "./fonts.css";
 import { ToasterProvider } from "./context/ToasterContext";
 import { useAuth0 } from "@auth0/auth0-react";
-import { BeatLoader } from "react-spinners";
+import BeatLoader from "react-spinners/BeatLoader";
 import { AuthenticationGuard } from "./components/AuthComponents/AuthGuard";
 
 const Layout = () => (

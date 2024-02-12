@@ -3,7 +3,7 @@ import {
   WithAuthenticationRequiredOptions,
 } from "@auth0/auth0-react";
 import { ComponentType } from "react";
-import { BeatLoader } from "react-spinners";
+import BeatLoader from "react-spinners/BeatLoader";
 
 type AuthenticationGuardProps = {
   component: ComponentType;
