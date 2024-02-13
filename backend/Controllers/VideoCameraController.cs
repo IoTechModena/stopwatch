@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using backend.Models;
 using System.Globalization;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers;
 
@@ -126,7 +126,7 @@ public class VideoCameraController : ControllerBase
                     Event = currEvent,
                 };
                 recording.Duration = recording.EndDateTime - recording.StartDateTime;
-                
+
                 currEvent.Recordings?.Add(recording);
 
                 // Adding Recording to the database
@@ -141,7 +141,6 @@ public class VideoCameraController : ControllerBase
                 }
             }
 
-
             return Ok("Video successfully downloaded");
         }
         else
@@ -150,6 +149,7 @@ public class VideoCameraController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("downloadRecording/{id}")]
     public async Task<IActionResult> DownloadRecording(long id)
     {
@@ -179,19 +179,4 @@ public class VideoCameraController : ControllerBase
             }
         }
     }
-
-    [HttpGet("getRecordings")]
-    public async Task<IActionResult> GetRecordings()
-    {
-        try
-        {
-            var recordings = await context.Recordings.ToListAsync();
-            return Ok(recordings);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
 }
