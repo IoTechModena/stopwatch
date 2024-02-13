@@ -13,7 +13,7 @@ export const LogoutButton: React.FC = () => {
 
   return (
     <button
-      className="text-white md:block hidden  font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
+      className="text-white md:block hidden rounded-lg py-2 px-4 bg-red-500 hover:bg-red-600"
       onClick={handleLogout}
     >
       Disconnettiti

@@ -10,7 +10,7 @@ export const LoginButton: React.FC = () => {
 
   return (
     <button
-      className="text-white md:block hidden font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
+      className="md:block hidden py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
       onClick={handleLogin}
     >
       Accedi

@@ -9,8 +9,6 @@ import Profile from "./AuthComponents/Profile";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export const Navbar = () => {
-  //Lista stub di link per la navigazione, current indica la pagina attuale
-  //La mia idea era di importare la lista dei jSon dal backend e renderizzarla dinamicamente
   const navigation = [{ name: "Eventi", href: "events", current: false }];
 
   const { isAuthenticated } = useAuth0();
@@ -28,8 +26,8 @@ export const Navbar = () => {
   }
 
   return (
-    <header className="bg-[#112d4e] Gelion">
-      <nav className="flex justify-start items-center h-16 px-4 md:px-[8%]">
+    <header className="text-white bg-[#112d4e] Gelion">
+      <nav className="font-bold flex justify-start items-center h-16 px-4 md:px-[8%]">
         <LogoComponent />
         {/*MOBILE-MENU */}
         <section className="z-10 md:hidden absolute top-2 right-0 flex flex-col rounded-lg align-items">
@@ -75,23 +73,15 @@ export const Navbar = () => {
         </section>
         {/*DESKTOP-MENU */}
         <ul className="md:flex hidden gap-8 items-center w-full">
-          {navigation.map((item) => (
-            <li key={item.name}>
-              <Link
-                to={item.href}
-                className={classNames(
-                  item.current
-                    ? "bg-[#0B1D32] text-white"
-                    : "text-gray-300 hover:bg-[#0B1D32] hover:text-white",
-                  "block rounded-md px-3 py-2 text-base  font-bold"
-                )}
-                aria-current={item.current ? "page" : undefined}
-              >
-                {item.name}
-              </Link>
-            </li>
-          ))}
-          <li className="flex-grow"></li>{" "}
+          <li>
+            <Link
+              to="/events"
+              className="hover:bg-[#0B1D32] rounded-lg px-4 py-3"
+            >
+              Eventi
+            </Link>
+          </li>
+          <li className="flex-grow"></li>
           {/*Spazio vuoto per portare tutto a destra */}
           <li>
             <Profile />

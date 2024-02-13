@@ -19,9 +19,9 @@ const Profile: React.FC = () => {
         <img
           src={user?.picture ?? ""}
           alt={user?.name ?? ""}
-          className="h-12 rounded-lg "
+          className="h-10 rounded-full mr-2"
         />
-        <div className="text-base font-bold text-white">
+        <div>
           {/*<p>{user?.name ?? "Chiunque tu sia"}</p>*/}
           <p>{user?.email ?? "Ue giacconss tutt a posttt"}</p>
         </div>
@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
   ) : (
     <div className="flex justify-start items-center">
       <i className="fa-solid fa-user mr-2" style={{ color: "#fff" }}></i>
-      <p className="text-base font-bold text-white">Anonimo</p>
+      <p>Anonimo</p>
     </div>
   );
 };
