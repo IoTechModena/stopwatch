@@ -37,24 +37,24 @@ export const EventList = () => {
   const [error, setError] = useState<null | Error>(null);
   const getToken = useAuthToken();
 
-  const getEvents = async () => {
-    const headers = { Authorization: `Bearer ${(await getToken()) || ""}` };
-    try {
-      const response = await axios.get("http://localhost/api/getEvents", {
-        headers,
-      });
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
   useEffect(() => {
+    const getEvents = async () => {
+      const headers = { Authorization: `Bearer ${(await getToken()) || ""}` };
+      try {
+        const response = await axios.get("http://localhost/api/getEvents", {
+          headers,
+        });
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+
     const fetchEvents = async () => {
       try {
         const data = await getEvents();
-        setEventList(data);
+        setEventList(data.sort((a: Event, b: Event) => b.id - a.id));
       } catch (e) {
         setError(e as Error);
       } finally {
@@ -62,7 +62,7 @@ export const EventList = () => {
       }
     };
     fetchEvents();
-  });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (error) {
     return (
@@ -76,40 +76,38 @@ export const EventList = () => {
   return (
     <>
       <Searchbox datepickerIcon key="Searchbox" />
-      {eventList
-        .sort((a, b) => b.id - a.id)
-        .map((data: Event, index: number) => (
-          <React.Fragment key={`event-${data.id}`}>
-            <EventHeader
-              id={data.id}
-              recordingCount={data.recordings.length}
-              startDateTime={data.startDateTime}
-              endDateTime={data.endDateTime}
-              channel={data.channel}
-            />
-            <VideoCardsCarousel>
-              {data.recordings.map((recording) => (
-                <VideoCard
-                  key={`c-${data.id} recording-${recording.id}`}
-                  id={recording.id}
-                  description={
-                    recording.description === ""
-                      ? "Questo video non ha una descrizione."
-                      : recording.description
-                  }
-                  startDateTime={recording.startDateTime}
-                  endDateTime={recording.endDateTime}
-                  duration={recording.duration}
-                  size={recording.size}
-                  name={recording.name}
-                />
-              ))}
-            </VideoCardsCarousel>
-            {index !== eventList.length - 1 && (
-              <hr className="lg:mx-20 md:mx-10 sm:mx-5 mb-10 mt-10" />
-            )}
-          </React.Fragment>
-        ))}
+      {eventList.map((data: Event, index: number) => (
+        <React.Fragment key={`event-${data.id}`}>
+          <EventHeader
+            id={data.id}
+            recordingCount={data.recordings.length}
+            startDateTime={data.startDateTime}
+            endDateTime={data.endDateTime}
+            channel={data.channel}
+          />
+          <VideoCardsCarousel>
+            {data.recordings.map((recording) => (
+              <VideoCard
+                key={`c-${data.id} recording-${recording.id}`}
+                id={recording.id}
+                description={
+                  recording.description === ""
+                    ? "Questo video non ha una descrizione."
+                    : recording.description
+                }
+                startDateTime={recording.startDateTime}
+                endDateTime={recording.endDateTime}
+                duration={recording.duration}
+                size={recording.size}
+                name={recording.name}
+              />
+            ))}
+          </VideoCardsCarousel>
+          {index !== eventList.length - 1 && (
+            <hr className="lg:mx-20 md:mx-10 sm:mx-5 mb-10 mt-10" />
+          )}
+        </React.Fragment>
+      ))}
       <BeatLoader
         className="text-center my-20"
         color="#eab308"
