@@ -5,11 +5,7 @@ export const LoginButton: React.FC = () => {
   const { loginWithRedirect } = useAuth0();
 
   const handleLogin = async () => {
-    await loginWithRedirect({
-      authorizationParams: {
-        prompt: "login",
-      },
-    });
+    await loginWithRedirect();
   };
 
   return (
