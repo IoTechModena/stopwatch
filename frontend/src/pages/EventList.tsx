@@ -1,10 +1,10 @@
 //Author: Aboom
-import { useAuth0 } from "@auth0/auth0-react";
 import { useState, useEffect } from "react";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoCardsCarousel";
 import { EventHeader } from "../components/EventHeader";
+import { useAuthToken } from "../hooks/useAuthToken";
 import BeatLoader from "react-spinners/BeatLoader";
 import axios from "axios";
 import React from "react";
@@ -33,11 +33,10 @@ interface Event {
 export const EventList = () => {
   const [eventList, setEventList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const { getIdTokenClaims } = useAuth0();
+  const getToken = useAuthToken();
 
   const getEvents = async () => {
-    const token = await getIdTokenClaims();
-    const headers = { Authorization: `Bearer ${token?.__raw}` }; // Add 'Bearer' before the token
+    const headers = { Authorization: `Bearer ${(await getToken()) || ""}` };
     try {
       const response = await axios.get("http://localhost/api/getEvents", {
         headers,
