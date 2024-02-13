@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using backend.Models;
 
 namespace backend;
 
-public class DataContext : IdentityDbContext
+public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
 {
     public DbSet<Recording> Recordings { get; set; }
-
     public DbSet<Event> Events { get; set; }
-
-    public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 }

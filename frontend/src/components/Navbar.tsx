@@ -1,23 +1,19 @@
 //Author: Sbenduel
 import { useState } from "react";
-import { useSignOut } from "react-auth-kit";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LogoComponent } from "./LogoComponent";
+import LoginButton from "./AuthComponents/LoginButton";
+import LogoutButton from "./AuthComponents/LogoutButton";
+import { RegisterButton } from "./AuthComponents/RegisterButton";
+import Profile from "./AuthComponents/Profile";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export const Navbar = () => {
   //Lista stub di link per la navigazione, current indica la pagina attuale
   //La mia idea era di importare la lista dei jSon dal backend e renderizzarla dinamicamente
-  const navigation = [
-    { name: "Register", href: "register", current: false },
-    { name: "Eventi", href: "events", current: false },
-  ];
+  const navigation = [{ name: "Eventi", href: "events", current: false }];
 
-  const signOut = useSignOut();
-  const navigate = useNavigate();
-  const logout = () => {
-    signOut();
-    navigate("/login");
-  };
+  const { isAuthenticated } = useAuth0();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -30,6 +26,7 @@ export const Navbar = () => {
   function classNames(...classes: string[] | boolean[]) {
     return classes.filter(Boolean).join(" ");
   }
+
   return (
     <header className="bg-[#112d4e] Gelion">
       <nav className="flex justify-start items-center h-16 px-4 md:px-[8%]">
@@ -94,27 +91,27 @@ export const Navbar = () => {
               </Link>
             </li>
           ))}
-          <li className="flex-grow"></li>
+          <li className="flex-grow"></li>{" "}
+          {/*Spazio vuoto per portare tutto a destra */}
           <li>
-            <Link to="/login">
-              <button
-                type="button"
-                className="text-white md:block hidden font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
-              >
-                Login
-                <i className="fa-solid pl-2 fa-right-to-bracket"></i>
-              </button>
-            </Link>
+            <Profile />
           </li>
-          <li>
-            <button
-              onClick={logout}
-              type="button"
-              className="text-white md:block hidden  font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </li>
+          {isAuthenticated ? (
+            <>
+              <li>
+                <LogoutButton />
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <LoginButton />
+              </li>
+              <li>
+                <RegisterButton />
+              </li>
+            </>
+          )}
         </ul>
       </nav>
     </header>

@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { useSignIn } from "react-auth-kit";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useToaster } from "../hooks/useToaster";
@@ -15,7 +14,6 @@ interface LoginFormValues {
 export const Login: React.FC = () => {
   const { showToaster } = useToaster();
   const [, setError] = useState("");
-  const signIn = useSignIn();
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState(false);
 
@@ -27,12 +25,6 @@ export const Login: React.FC = () => {
       const response = await axios.post("http://localhost/api/login", values);
       console.log("Risposta ricevuta: ", response); // Dopo aver ricevuto la risposta
 
-      signIn({
-        token: response.data.token,
-        expiresIn: 3600,
-        tokenType: "Bearer",
-        authState: { email: values.email },
-      });
       showToaster("Login eseguito con successo!");
       console.log("Login eseguito con successo"); // Dopo il login
       navigate("/");

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
@@ -7,13 +8,12 @@ namespace backend.Controllers
     {
         private readonly DataContext context;
 
-
         public EventController(DataContext context)
         {
             this.context = context;
         }
 
-
+        [Authorize]
         [HttpGet("getEvents")]
         public async Task<IActionResult> GetEvents()
         {
@@ -29,9 +29,5 @@ namespace backend.Controllers
                 return StatusCode(500, e.Message);
             }
         }
-
-
-
-
     }
 }

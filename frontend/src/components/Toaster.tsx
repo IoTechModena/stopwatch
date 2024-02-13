@@ -1,5 +1,3 @@
-//Taken from https://ui.shadcn.com/docs/components/sonner
-
 import React from "react";
 import { useToaster } from "../hooks/useToaster";
 

@@ -6,9 +6,10 @@ import { Register } from "./pages/Register";
 import { EventList } from "./pages/EventList";
 import "./App.css";
 import "./fonts.css";
-
-//import { RequireAuth } from "react-auth-kit";
 import { ToasterProvider } from "./context/ToasterContext";
+import { useAuth0 } from "@auth0/auth0-react";
+import BeatLoader from "react-spinners/BeatLoader";
+import { AuthenticationGuard } from "./components/AuthComponents/AuthGuard";
 
 const Layout = () => (
   <>
@@ -18,12 +19,29 @@ const Layout = () => (
 );
 
 export const App = () => {
+  const { isLoading } = useAuth0();
+  if (isLoading) {
+    return (
+      <>
+        <BeatLoader
+          className="text-center my-10"
+          color="#eab308"
+          loading={isLoading}
+        />
+      </>
+    );
+  }
+  //questo frammento di codice serve per evitare che la pagina si carichi prima che l'utente sia autenticato
+
   return (
     <ToasterProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* <Route path="id" element={<DetailCamera />} /> */}
-          <Route path="events" element={<EventList />} />
+          <Route
+            path="events"
+            element={<AuthenticationGuard component={EventList} />}
+          />
           <Route path="/" index element={<Home />} />
           <Route path="favorites" element="FavoriteCamera" />
           <Route path="register" element={<Register />} />
@@ -34,15 +52,4 @@ export const App = () => {
   );
 };
 
-/* ROUTE PROTETTE DA METTERE PRIMA DI ANDARE IN PRODUZIONE
-            <RequireAuth loginPath="/login">
-              <EventList />
-            </RequireAuth>
-
-            <RequireAuth loginPath="/login">
-              <Home />
-            </RequireAuth>
-          }
-        />
-        */
 export default App;

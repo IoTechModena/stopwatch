@@ -10,13 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.2.4",
     "axios": "^1.6.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "formik": "^2.4.5",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
-    "react-auth-kit": "^2.6.2",
     "react-dom": "^18.2.0",
     "react-multi-carousel": "^2.8.4",
     "react-player": "^2.14.1",
