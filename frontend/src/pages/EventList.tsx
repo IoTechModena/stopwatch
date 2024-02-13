@@ -1,4 +1,5 @@
 //Author: Aboom
+import { useAuth0 } from "@auth0/auth0-react";
 import { useState, useEffect } from "react";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoCard";
@@ -29,18 +30,23 @@ interface Event {
   endDateTime: string;
 }
 
-const getEvents = async () => {
-  try {
-    const response = await axios.get("http://localhost/api/getEvents");
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export const EventList = () => {
   const [eventList, setEventList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const { getIdTokenClaims } = useAuth0();
+
+  const getEvents = async () => {
+    const token = await getIdTokenClaims();
+    const headers = { Authorization: `Bearer ${token?.__raw}` }; // Add 'Bearer' before the token
+    try {
+      const response = await axios.get("http://localhost/api/getEvents", {
+        headers,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
