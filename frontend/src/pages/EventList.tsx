@@ -4,6 +4,7 @@ import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoCardsCarousel";
 import { EventHeader } from "../components/EventHeader";
+import { ErrorAlert } from "../components/ErrorAlert";
 import { useAuthToken } from "../hooks/useAuthToken";
 import BeatLoader from "react-spinners/BeatLoader";
 import axios from "axios";
@@ -33,6 +34,7 @@ interface Event {
 export const EventList = () => {
   const [eventList, setEventList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | Error>(null);
   const getToken = useAuthToken();
 
   const getEvents = async () => {
@@ -44,17 +46,32 @@ export const EventList = () => {
       return response.data;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const data = await getEvents();
-      setEventList(data);
-      setLoading(false);
+      try {
+        const data = await getEvents();
+        setEventList(data);
+      } catch (e) {
+        setError(e as Error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchEvents();
   });
+
+  if (error) {
+    return (
+      <>
+        <Searchbox datepickerIcon key="Searchbox" />
+        <ErrorAlert errorMessage="Al momento non è  possibile caricare i dati." />
+      </>
+    );
+  }
 
   return (
     <>
@@ -94,7 +111,7 @@ export const EventList = () => {
           </React.Fragment>
         ))}
       <BeatLoader
-        className="text-center my-10"
+        className="text-center my-20"
         color="#eab308"
         loading={loading}
       />

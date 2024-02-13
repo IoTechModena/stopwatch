@@ -40,7 +40,7 @@ export const DownloadButton = (props: {
       <img
         id="original-svg"
         className="h-8 w-8 mr-2 transition-transform transform-gpu group-hover:saturate-200 group-hover:contrast-125 group-hover:scale-110"
-        src="../imgs/downloadSvg.svg"
+        src="/imgs/downloadSvg.svg"
         alt="Download"
       />
       Download video ({formatBytes(props.videoSize)})

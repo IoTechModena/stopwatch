@@ -7,7 +7,7 @@ export const Searchbox = (props: SearchBoxProps) => {
   return (
     <>
       <form className="my-8 p-5">
-        <div className="relative max-w-3xl  mx-auto  ">
+        <div className="relative max-w-3xl  mx-auto">
           <div className="absolute inset-y-0 start-0  flex items-center ps-3 pointer-events-none">
             <button title="searchButton">
               <i className="absolute fa fa-search text-black top-5 left-4"></i>
