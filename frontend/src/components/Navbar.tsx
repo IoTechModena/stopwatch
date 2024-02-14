@@ -16,7 +16,6 @@ export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
-    console.log("toggleMenu");
     setIsMenuOpen((open): boolean => !open);
   };
 

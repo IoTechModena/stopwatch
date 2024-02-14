@@ -9,7 +9,6 @@ export const DownloadButton = (props: {
   const { axiosInstance: authAxios } = useAuthAxios();
   const downloadVideo = async (videoId: number, videoName: string) => {
     try {
-      console.log("Downloading video with id: ", videoId);
       const response = await authAxios.get(`downloadRecording/${videoId}`, {
         responseType: "blob", // Gestisce la risposta come file binario
       });
@@ -33,7 +32,7 @@ export const DownloadButton = (props: {
       if (link.parentNode) link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Errore durante il download:", error);
+      console.error("Error during download:", error);
     }
   };
   return (
