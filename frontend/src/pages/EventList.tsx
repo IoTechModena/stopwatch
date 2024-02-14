@@ -34,7 +34,7 @@ export const EventList = () => {
   const [eventList, setEventList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
-  const authAxios = useAuthAxios();
+  const {axiosInstance:authAxios} = useAuthAxios();
 
   useEffect(() => {
     const getEvents = async () => {

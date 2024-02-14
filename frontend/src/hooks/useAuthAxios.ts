@@ -8,12 +8,16 @@ export const useAuthAxios = () => {
     axios.create({ baseURL: "http://localhost/api" })
   );
 
+  const getToken = async () => {
+    const idTokenClaims = await getIdTokenClaims();
+    return idTokenClaims?.__raw ?? "";
+  };
+
   useEffect(() => {
     // Setup interceptor
     const interceptor = axiosInstance.interceptors.request.use(
       async (config) => {
-        const idTokenClaims = await getIdTokenClaims();
-        config.headers.Authorization = `Bearer ${idTokenClaims?.__raw ?? ""}`;
+        config.headers.Authorization = `Bearer ${await getToken() ?? ""}`;
         return config;
       }
     );
@@ -23,5 +27,7 @@ export const useAuthAxios = () => {
       axiosInstance.interceptors.request.eject(interceptor);
     };
   }, [getIdTokenClaims]); // eslint-disable-line react-hooks/exhaustive-deps
-  return axiosInstance;
+
+
+  return { axiosInstance, getToken };
 };
