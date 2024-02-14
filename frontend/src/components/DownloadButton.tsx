@@ -6,13 +6,19 @@ export const DownloadButton = (props: {
   videoId: number;
   videoName: string;
 }) => {
-  const authAxios = useAuthAxios();
+  const { axiosInstance: authAxios } = useAuthAxios();
   const downloadVideo = async (videoId: number, videoName: string) => {
     try {
       console.log("Downloading video with id: ", videoId);
       const response = await authAxios.get(`downloadRecording/${videoId}`, {
         responseType: "blob", // Gestisce la risposta come file binario
       });
+
+      if (response.status !== 200) {
+        throw new Error(
+          `Failed to download video with id ${videoId}: Server responded with status ${response.status}`
+        );
+      }
 
       // Crea un obj blob dai dati ricevuti e genera un url che lo identifica
       const url = window.URL.createObjectURL(new Blob([response.data]));
