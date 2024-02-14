@@ -4,9 +4,15 @@
 type SearchBoxProps = { datepickerIcon?: boolean };
 
 export const Searchbox = (props: SearchBoxProps) => {
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const searchValue = formData.get('search') as string;
+    console.log('Esegui la ricerca con il valore:', searchValue);
+  };
   return (
     <>
-      <form className="my-8 p-5">
+      <form className="my-8 p-5" onSubmit={handleSearch}>
         <div className="relative max-w-3xl  mx-auto">
           <div className="absolute inset-y-0 start-0  flex items-center ps-3 pointer-events-none">
             <button title="searchButton">
