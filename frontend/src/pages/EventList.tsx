@@ -5,9 +5,8 @@ import { VideoCard } from "../components/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoCardsCarousel";
 import { EventHeader } from "../components/EventHeader";
 import { ErrorAlert } from "../components/ErrorAlert";
-import { useAuthToken } from "../hooks/useAuthToken";
+import { useAuthAxios } from "../hooks/useAuthAxios";
 import BeatLoader from "react-spinners/BeatLoader";
-import axios from "axios";
 import React from "react";
 
 interface Recording {
@@ -35,15 +34,12 @@ export const EventList = () => {
   const [eventList, setEventList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
-  const getToken = useAuthToken();
+  const authAxios = useAuthAxios();
 
   useEffect(() => {
     const getEvents = async () => {
-      const headers = { Authorization: `Bearer ${(await getToken()) || ""}` };
       try {
-        const response = await axios.get("http://localhost/api/getEvents", {
-          headers,
-        });
+        const response = await authAxios.get("/getEvents");
         return response.data;
       } catch (error) {
         console.error(error);
