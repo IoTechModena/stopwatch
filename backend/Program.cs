@@ -40,7 +40,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
 {
     options.Authority = "https://manuelcampi.eu.auth0.com/";
-    options.Audience = "7ZvDxcyIxwYz3IWx6ycjYXyX9EPEKVS5";
+    options.Audience = "https://localhost/API";
 });
 
 var app = builder.Build();

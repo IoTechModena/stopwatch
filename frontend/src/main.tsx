@@ -13,9 +13,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         clientId="7ZvDxcyIxwYz3IWx6ycjYXyX9EPEKVS5"
         authorizationParams={{
           redirect_uri: window.location.origin,
+          audience: "https://localhost/API",
         }}
-        useRefreshTokens={true}
-        cacheLocation="localstorage"
       >
         <App />
       </Auth0Provider>
