@@ -10,7 +10,7 @@ const Profile: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth0<user>();
 
   if (isLoading) {
-    return <div>Loading ...</div>;
+    return <></>;
   }
 
   return isAuthenticated ? (

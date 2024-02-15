@@ -2,12 +2,12 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Navbar } from "./components/Navbar";
 import { EventList } from "./pages/EventList";
-import "./App.css";
-import "./fonts.css";
 import { ToasterProvider } from "./context/ToasterContext";
 import { useAuth0 } from "@auth0/auth0-react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { AuthenticationGuard } from "./components/AuthComponents/AuthGuard";
+import "./App.css";
+import "./fonts.css";
 
 const Layout = () => (
   <>
