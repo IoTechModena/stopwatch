@@ -1,120 +1,103 @@
 //Author: Sbenduel
 import { useState } from "react";
-import { useSignOut } from "react-auth-kit";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LogoComponent } from "./LogoComponent";
+import LoginButton from "./AuthComponents/LoginButton";
+import LogoutButton from "./AuthComponents/LogoutButton";
+import { RegisterButton } from "./AuthComponents/RegisterButton";
+import Profile from "./AuthComponents/Profile";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export const Navbar = () => {
-  //Lista stub di link per la navigazione, current indica la pagina attuale
-  //La mia idea era di importare la lista dei jSon dal backend e renderizzarla dinamicamente
-  const navigation = [
-    { name: "Register", href: "register", current: false },
-    { name: "Eventi", href: "events", current: false },
-  ];
-
-  const signOut = useSignOut();
-  const navigate = useNavigate();
-  const logout = () => {
-    signOut();
-    navigate("/login");
-  };
+  const { isAuthenticated } = useAuth0();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
-    console.log("toggleMenu");
     setIsMenuOpen((open): boolean => !open);
   };
 
   //Funzione per capire se una classe merita il css true o false durante il rendering
-  function classNames(...classes: string[] | boolean[]) {
-    return classes.filter(Boolean).join(" ");
-  }
+
   return (
-    <header className="bg-[#112d4e] Gelion">
-      <nav className="flex justify-start items-center h-16 px-4 md:px-[8%]">
+    <header className="text-white bg-[#112d4e] Gelion">
+      <nav className="font-bold flex justify-start items-center h-16 px-4 md:px-[8%]">
         <LogoComponent />
         {/*MOBILE-MENU */}
         <section className="z-10 md:hidden absolute top-2 right-0 flex flex-col rounded-lg align-items">
-          <button
-            className="text-white  hover:bg-[#0B1D32] rounded-lg px-4 py-2"
-            onClick={toggleMenu}
-          >
-            <i className="fa-solid fa-bars"></i>
-          </button>
+          <div className="flex items-center">
+            <Profile />
+            <button
+              className="text-white hover:bg-[#0B1D32] rounded-lg px-4 py-2"
+              onClick={toggleMenu}
+            >
+              <i className="fa-solid fa-bars"></i>
+            </button>
+          </div>
           {isMenuOpen && (
-            <div className="bg-white border border-[#0B1D32] rounded-lg">
-              <ul className="divide-y divide-gray-400">
-                {navigation.map((item) => (
-                  <li key={item.name}>
-                    <a
-                      href={item.href}
-                      className={classNames(
-                        item.current
-                          ? "bg-[#0B1D32] text-white py-2 text-center"
-                          : "text-gray-600 hover:bg-[#0B1D32] hover:text-white",
-                        "block px-8 py-4 text-sm "
-                      )}
-                      aria-current={item.current ? "page" : undefined}
-                    >
-                      {item.name}
-                    </a>
-                  </li>
-                ))}
-                <li key="login">
-                  <Link to="/login">
-                    <button
-                      type="button"
-                      className="text-center w-full text-gray-600  hover:bg-[#0B1D32] hover:text-white block px-8 py-4 text-sm"
-                    >
-                      Login
-                      <i className="fa-solid fa-right-to-bracket"></i>
-                    </button>
+            <div className="bg-[#112d4e] border rounded-lg py-2">
+              <ul className="">
+                <li>
+                  <Link
+                    to="/events"
+                    className="text-center mb-2 py-2 px-4 text-white rounded-lg hover:bg-[#0B1D32] block"
+                  >
+                    Eventi
                   </Link>
                 </li>
+                {isAuthenticated ? (
+                  <>
+                    <li>
+                      <div className="justify-center text-center">
+                        <LogoutButton />
+                      </div>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <LoginButton />
+                    </li>
+                    <li>
+                      <RegisterButton />
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           )}
         </section>
         {/*DESKTOP-MENU */}
         <ul className="md:flex hidden gap-8 items-center w-full">
-          {navigation.map((item) => (
-            <li key={item.name}>
-              <Link
-                to={item.href}
-                className={classNames(
-                  item.current
-                    ? "bg-[#0B1D32] text-white"
-                    : "text-gray-300 hover:bg-[#0B1D32] hover:text-white",
-                  "block rounded-md px-3 py-2 text-base  font-bold"
-                )}
-                aria-current={item.current ? "page" : undefined}
-              >
-                {item.name}
-              </Link>
-            </li>
-          ))}
-          <li className="flex-grow"></li>
           <li>
-            <Link to="/login">
-              <button
-                type="button"
-                className="text-white md:block hidden font-bold py-2 px-4 rounded-lg hover:bg-[#0B1D32]"
-              >
-                Login
-                <i className="fa-solid pl-2 fa-right-to-bracket"></i>
-              </button>
+            <Link
+              to="/events"
+              className="hover:bg-[#0B1D32] rounded-lg px-4 py-3"
+            >
+              Eventi
             </Link>
           </li>
+          <li className="flex-grow"></li>
+          {/*Spazio vuoto per spostare sul lato destro il login e le credenziali */}
           <li>
-            <button
-              onClick={logout}
-              type="button"
-              className="text-white md:block hidden  font-bold py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600"
-            >
-              Logout
-            </button>
+            <Profile />
           </li>
+          {isAuthenticated ? (
+            <>
+              <li>
+                <LogoutButton />
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <LoginButton />
+              </li>
+              <li>
+                <RegisterButton />
+              </li>
+            </>
+          )}
         </ul>
       </nav>
     </header>
