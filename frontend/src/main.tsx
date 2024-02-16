@@ -3,21 +3,14 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
-import { Auth0Provider } from "@auth0/auth0-react";
+import { Auth0ProviderWithNavigate } from "./components/AuthComponents/Auth0ProviderWithNavigate.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Auth0Provider
-        domain="manuelcampi.eu.auth0.com"
-        clientId="7ZvDxcyIxwYz3IWx6ycjYXyX9EPEKVS5"
-        authorizationParams={{
-          redirect_uri: window.location.origin,
-          audience: "https://localhost/API",
-        }}
-      >
+      <Auth0ProviderWithNavigate>
         <App />
-      </Auth0Provider>
+      </Auth0ProviderWithNavigate>
     </BrowserRouter>
   </React.StrictMode>
 );
