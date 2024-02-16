@@ -14,7 +14,7 @@ export const LoginButton: React.FC = () => {
       onClick={handleLogin}
     >
       Accedi
-      <i className="fa-solid pl-2 fa-right-to-bracket "></i>
+      <i className="fa-solid pl-2 fa-right-to-bracket lg:inline hidden  "></i>
     </button>
   );
 };
