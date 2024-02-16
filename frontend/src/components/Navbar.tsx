@@ -1,5 +1,5 @@
 //Author: Sbenduel
-import { useState } from "react";
+import { useMenu } from "@/hooks/useMenu";
 import { Link } from "react-router-dom";
 import { LogoComponent } from "./LogoComponent";
 import LoginButton from "./AuthComponents/LoginButton";
@@ -10,14 +10,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 export const Navbar = () => {
   const { isAuthenticated } = useAuth0();
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen((open): boolean => !open);
-  };
-
-  //Funzione per capire se una classe merita il css true o false durante il rendering
+  const { isMenuOpen, toggleMenu } = useMenu(); //spacchettamento di funzione dall'hook useMenuToggle
 
   return (
     <header className="text-white bg-[#112d4e] Gelion">

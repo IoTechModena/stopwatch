@@ -4,12 +4,15 @@ import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { Auth0ProviderWithNavigate } from "./components/AuthComponents/Auth0ProviderWithNavigate.tsx";
+import { MenuProvider } from "./context/MenuContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <Auth0ProviderWithNavigate>
-        <App />
+        <MenuProvider>
+          <App />
+        </MenuProvider>
       </Auth0ProviderWithNavigate>
     </BrowserRouter>
   </React.StrictMode>

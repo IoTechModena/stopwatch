@@ -1,12 +1,14 @@
 // Author: Reda
 // Props: datePickerIcon (boolean) - se true, mostra il datepicker
 
+import { useMenu } from "@/hooks/useMenu";
 type SearchBoxProps = { datepickerIcon?: boolean };
-
 export const Searchbox = (props: SearchBoxProps) => {
+  const { closeMenu } = useMenu();
+
   return (
     <>
-      <form className="my-8 p-5">
+      <form onFocus={closeMenu} className="my-8 p-5">
         <div className="relative max-w-3xl  mx-auto">
           <div className="absolute inset-y-0 start-0  flex items-center ps-3 pointer-events-none">
             <button title="searchButton">
@@ -14,6 +16,7 @@ export const Searchbox = (props: SearchBoxProps) => {
             </button>
           </div>
           <input
+            onFocus={closeMenu}
             type="search"
             id="default-search"
             className="h-14 rounded-sm shadow-xl placeholder-gray-700 block w-full p-4 ps-10  Gelion bg-yellow-400  focus:outline-none text-sm   hover:cursor-pointer "
