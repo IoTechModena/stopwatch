@@ -19,7 +19,7 @@ export const Home = () => {
         });
       }
     }
-  },[isAuthenticated, logout, getAccessTokenSilently]);
+  }, [isAuthenticated, logout, getAccessTokenSilently]);
 
   useEffect(() => {
     checkToken();
@@ -29,8 +29,35 @@ export const Home = () => {
     <>
       <Toaster />
       <Searchbox />
-      <div className="flex justify-center">
-        <VideocameraCard />
+      <div className="text-center">
+        <h1 className="mb-4 mt-10 Gelion text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+          Benvenuto su{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#112d4e] from-40% to-yellow-400">
+            StopWatch
+          </span>
+        </h1>
+        <p className="mb-20 Gelion text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+          Qui troverai le telecamere disponibili, premi su "Registrazioni" per
+          visualizzare gli eventi della telecamera.
+        </p>
+      </div>
+      <div className="flex flex-col md:flex-row justify-center items-center mb-10  lg:gap-x-28 md:gap-x-7 gap-y-20">
+        <VideocameraCard
+          key="1"
+          title="Telecamera 1"
+          channelNum={0}
+          location={"Descrizione"}
+          eventsNum={0}
+          href={"events"}
+        />
+        <VideocameraCard
+          key="2"
+          title="Telecamera 2"
+          channelNum={1}
+          location={"Descrizione"}
+          eventsNum={0}
+          href={"events"}
+        />
       </div>
     </>
   );
