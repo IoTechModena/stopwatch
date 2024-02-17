@@ -1,10 +1,36 @@
 import { Toaster } from "../components/Toaster";
 import { VideocameraCard } from "../components/VideocameraCard";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
+import axios from "axios";
+
+interface ChannelData {
+  channel: number;
+  eventsCount: number;
+}
 
 export const Home = () => {
   const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
+  const [eventsCount, setEventsCount] = useState([0, 0]);
+
+  const fetchEventsCount = async () => {
+    try {
+      const response = await axios.get<ChannelData[]>(
+        "http://localhost/api/getEventsCount"
+      );
+      const eventsCountData = response.data;
+
+      const channel0Count =
+        eventsCountData.find((item) => item.channel === 0)?.eventsCount || 0;
+      const channel1Count =
+        eventsCountData.find((item) => item.channel === 1)?.eventsCount || 0;
+
+      setEventsCount([channel0Count, channel1Count]);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 
   const checkToken = useCallback(async () => {
     if (isAuthenticated) {
@@ -22,6 +48,7 @@ export const Home = () => {
 
   useEffect(() => {
     checkToken();
+    fetchEventsCount();
   }, [checkToken]);
 
   return (
@@ -45,7 +72,7 @@ export const Home = () => {
           title="Telecamera 1"
           channelNum={0}
           location={"Descrizione"}
-          eventsNum={0}
+          eventsNum={eventsCount[0]}
           href={"events"}
         />
         <VideocameraCard
@@ -53,7 +80,7 @@ export const Home = () => {
           title="Telecamera 2"
           channelNum={1}
           location={"Descrizione"}
-          eventsNum={0}
+          eventsNum={eventsCount[1]}
           href={"events"}
         />
       </div>
