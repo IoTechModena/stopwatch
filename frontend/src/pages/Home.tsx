@@ -28,11 +28,10 @@ export const Home = () => {
   return (
     <>
       <Toaster />
-      <Searchbox />
       <div className="text-center">
         <h1 className="mb-4 mt-10 Gelion text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
           Benvenuto su{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#112d4e] from-40% to-yellow-400">
+          <span className="bg-gradient-to-r from-[#0B1E33] to-[#2460A7] text-transparent bg-clip-text">
             StopWatch
           </span>
         </h1>

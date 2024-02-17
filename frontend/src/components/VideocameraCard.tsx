@@ -37,7 +37,7 @@ export const VideocameraCard = ({
           </p>
           <hr className="mt-3 my-5" />
           <a href={href}>
-            <button className="bg-[#112D4E] mb-1 w-full hover:bg-[#0B1D32] text-white font-bold py-2 px-4 rounded-lg">
+            <button className="bg-yellow-500 mb-1 w-full hover:bg-yellow-400 font-bold py-2 px-4 rounded-lg">
               Registrazioni
             </button>
           </a>
