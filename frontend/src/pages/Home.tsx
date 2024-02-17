@@ -9,9 +9,12 @@ interface ChannelData {
   eventsCount: number;
 }
 
+const savedEventsCount = localStorage.getItem("eventsCount");
+const initialEventsCount = savedEventsCount ? JSON.parse(savedEventsCount) : [0, 0];
+
 export const Home = () => {
   const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
-  const [eventsCount, setEventsCount] = useState([0, 0]);
+  const [eventsCount, setEventsCount] = useState(initialEventsCount);
 
   const fetchEventsCount = async () => {
     try {
@@ -25,10 +28,12 @@ export const Home = () => {
       const channel1Count =
         eventsCountData.find((item) => item.channel === 1)?.eventsCount || 0;
 
-      setEventsCount([channel0Count, channel1Count]);
+      const latestEventsCount = [channel0Count, channel1Count];
+      setEventsCount(latestEventsCount);
+
+      localStorage.setItem("eventsCount", JSON.stringify(latestEventsCount));
     } catch (error) {
       console.error(error);
-      throw error;
     }
   };
 
