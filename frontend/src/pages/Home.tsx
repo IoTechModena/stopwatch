@@ -1,4 +1,3 @@
-import { Searchbox } from "../components/Searchbox";
 import { Toaster } from "../components/Toaster";
 import { VideocameraCard } from "../components/VideocameraCard";
 import { useAuth0 } from "@auth0/auth0-react";
