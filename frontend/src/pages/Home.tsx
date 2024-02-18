@@ -10,7 +10,9 @@ interface ChannelData {
 }
 
 const savedEventsCount = localStorage.getItem("eventsCount");
-const initialEventsCount = savedEventsCount ? JSON.parse(savedEventsCount) : [0, 0];
+const initialEventsCount = savedEventsCount
+  ? JSON.parse(savedEventsCount)
+  : [0, 0];
 
 export const Home = () => {
   const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
@@ -60,7 +62,7 @@ export const Home = () => {
     <>
       <Toaster />
       <div className="text-center">
-        <h1 className="mb-4 mt-10 Gelion text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+        <h1 className="mb-4 mt-20 Gelion text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
           Benvenuto su{" "}
           <span className="bg-gradient-to-r from-[#0B1E33] to-[#2460A7] text-transparent bg-clip-text">
             StopWatch
