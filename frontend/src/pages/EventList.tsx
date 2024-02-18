@@ -1,8 +1,8 @@
 //Author: Aboom
 import { useState, useEffect } from "react";
 import { Searchbox } from "../components/Searchbox";
-import { VideoCard } from "../components/VideoCard";
-import { VideoCardsCarousel } from "../components/VideoCardsCarousel";
+import { VideoCard } from "../components/VideoComponents/VideoCard";
+import { VideoCardsCarousel } from "../components/VideoComponents/VideoCardsCarousel";
 import { EventHeader } from "../components/EventHeader";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { useAuthAxios } from "../hooks/useAuthAxios";
@@ -34,7 +34,7 @@ export const EventList = () => {
   const [eventList, setEventList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
-  const {axiosInstance:authAxios} = useAuthAxios();
+  const { axiosInstance: authAxios } = useAuthAxios();
 
   useEffect(() => {
     const getEvents = async () => {

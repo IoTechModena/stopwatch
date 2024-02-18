@@ -1,5 +1,5 @@
 import { Toaster } from "../components/Toaster";
-import { VideocameraCard } from "../components/VideocameraCard";
+import { VideocameraCard } from "../components/VideoComponents/VideocameraCard";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useCallback, useState } from "react";
 import axios from "axios";
@@ -10,7 +10,9 @@ interface ChannelData {
 }
 
 const savedEventsCount = localStorage.getItem("eventsCount");
-const initialEventsCount = savedEventsCount ? JSON.parse(savedEventsCount) : [0, 0];
+const initialEventsCount = savedEventsCount
+  ? JSON.parse(savedEventsCount)
+  : [0, 0];
 
 export const Home = () => {
   const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
