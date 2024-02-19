@@ -1,14 +1,18 @@
 // Author: Reda
 // Props: datePickerIcon (boolean) - se true, mostra il datepicker
 
+import React from "react";
+import {Event} from "src/pages/EventList";
+
+
 type SearchBoxProps = { datepickerIcon?: boolean };
 
-export const Searchbox = (props: SearchBoxProps) => {
+export const Searchbox = (props: SearchBoxProps & { onSearch: (searchTerm: string) => void }) =>{
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const searchValue = formData.get('search') as string;
-    console.log('Esegui la ricerca con il valore:', searchValue);
+    props.onSearch(searchValue); 
   };
   return (
     <>
