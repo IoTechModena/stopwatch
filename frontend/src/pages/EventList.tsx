@@ -61,19 +61,28 @@ export const EventList = () => {
   }, []);
 
   const handleSearch = (searchTerm: string) => {
-    const numericSearchTerm = searchTerm.replace(/\D/g, '');
+ const numericSearchTerm = searchTerm.replace(/\D/g, '');
 
-    if (!isNaN(parseInt(numericSearchTerm,   10))) {
-      const foundEvent = eventList.find(event => event.id === parseInt(numericSearchTerm,   10));
-   
-      if (foundEvent) {
-        setSingleEvent(foundEvent);
-      } else {
-        setSingleEvent(null);
-      }
-    } else {
-      setSingleEvent(null);
-    }
+ if (!isNaN(parseInt(numericSearchTerm,  10))) {
+   const foundEvent = eventList.find(event => event.id === parseInt(numericSearchTerm,  10));
+   if (foundEvent) {
+     setSingleEvent(foundEvent);
+   } else {
+     setSingleEvent(null);
+   }
+ } else {
+   const foundEvent = eventList.find(event => {
+     const lowerCaseEventName = event.name.toLowerCase();
+     const lowerCaseSearchTerm = searchTerm.toLowerCase();
+     return lowerCaseEventName.includes(lowerCaseSearchTerm);
+   });
+
+   if (foundEvent) {
+     setSingleEvent(foundEvent);
+   } else {
+     setSingleEvent(null);
+   }
+ }
   };
 
   if (error) {
