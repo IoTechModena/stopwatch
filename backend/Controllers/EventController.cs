@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
@@ -7,13 +8,12 @@ namespace backend.Controllers
     {
         private readonly DataContext context;
 
-
         public EventController(DataContext context)
         {
             this.context = context;
         }
 
-
+        [Authorize]
         [HttpGet("getEvents")]
         public async Task<IActionResult> GetEvents()
         {
@@ -30,8 +30,21 @@ namespace backend.Controllers
             }
         }
 
-
-
-
+        [HttpGet("getEventsCount")]
+        public async Task<IActionResult> GetEventsCount()
+        {
+            try
+            {
+                var eventsCount = await context.Events
+                .GroupBy(e => e.Channel)
+                .Select(g => new { Channel = g.Key, EventsCount = g.Count() })
+                .ToListAsync();
+                return Ok(eventsCount);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
     }
 }

@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.HttpOverrides;
 using Swashbuckle.AspNetCore.Filters;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.HttpOverrides;
 using backend;
+
 
 const string path = "/run/secrets/database-password";
 string? databasePassword = File.Exists(path) ? File.ReadAllText(path) : null;
@@ -37,8 +37,11 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") + databasePassword));
 
 builder.Services.AddAuthorization();
-
-builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<DataContext>();
+builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
+{
+    options.Authority = "https://manuelcampi.eu.auth0.com/";
+    options.Audience = "https://localhost/API";
+});
 
 var app = builder.Build();
 
@@ -47,8 +50,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.MapIdentityApi<IdentityUser>();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

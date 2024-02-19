@@ -1,6 +1,6 @@
 //Made with AI, brittle code, to refactor
 import { useContext } from "react";
-import { ToasterContext } from "../context/ToasterContext";
+import { ToasterContext } from "@/context/ToasterContext";
 
 export const useToaster = () => {
   const context = useContext(ToasterContext);
