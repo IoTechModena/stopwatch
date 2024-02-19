@@ -2,8 +2,6 @@
 // Props: datePickerIcon (boolean) - se true, mostra il datepicker
 
 import React from "react";
-import {Event} from "src/pages/EventList";
-
 
 type SearchBoxProps = { datepickerIcon?: boolean };
 
