@@ -5,7 +5,7 @@ import { EventList } from "./pages/EventList";
 import { ToasterProvider } from "./context/ToasterContext";
 import { useAuth0 } from "@auth0/auth0-react";
 import BeatLoader from "react-spinners/BeatLoader";
-import { AuthenticationGuard } from "./components/AuthComponents/AuthGuard";
+import { AuthenticationGuard } from "./lib/AuthGuard";
 import "./App.css";
 import "./fonts.css";
 

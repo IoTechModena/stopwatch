@@ -23,5 +23,3 @@ export function formatDateTime(isoString: string) {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
-
-

@@ -1,6 +1,6 @@
 // Author: Aboom
 
-import { DownloadButton } from "./DownloadButton";
+import { DownloadButton } from "../DownloadButton";
 import { VideoPlayer } from "./VideoPlayer";
 
 export interface VideoCardProps {

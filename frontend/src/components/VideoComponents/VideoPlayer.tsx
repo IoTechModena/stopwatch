@@ -1,6 +1,6 @@
 //Authors: Sus + Aboom
 import ReactPlayer from "react-player";
-import { useAuthAxios } from "../hooks/useAuthAxios";
+import { useAuthAxios } from "../../hooks/useAuthAxios";
 import { useEffect, useState } from "react";
 
 export const VideoPlayer = (props: { id: number }) => {
