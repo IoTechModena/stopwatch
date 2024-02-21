@@ -2,26 +2,21 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using backend.Models;
 using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
+using backend.Models;
 
 namespace backend.Controllers;
 
 [ApiController]
-public class VideoCameraController : ControllerBase
+public class VideoCameraController(DataContext context) : ControllerBase
 {
     // Data needed to access the camera recording
-    string authenticationString = "admin:mutina23";
-    private string ip = "151.78.228.229";
-    HttpClient client = new HttpClient();
-    private readonly DataContext context;
-
-    public VideoCameraController(DataContext context)
-    {
-        this.context = context;
-    }
+    readonly string authenticationString = "admin:mutina23";
+    private readonly string ip = "151.78.228.229";
+    readonly HttpClient client = new();
+    private readonly DataContext context = context;
 
     [HttpGet("saveRecording/{chnid}")]
     public async Task<IActionResult> SaveRecording([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
@@ -50,9 +45,7 @@ public class VideoCameraController : ControllerBase
             // Printing the values of recordInfoResponse
             Console.WriteLine("\nPrinting the keys and values of recordInfoResponse");
             foreach (KeyValuePair<string, string> entry in recordInfoValues)
-            {
                 Console.WriteLine($"{entry.Key}:{entry.Value}");
-            }
 
             // Retrieving needed values for the get.playback.download request
             string sid = recordInfoValues["sid"];
@@ -139,9 +132,7 @@ public class VideoCameraController : ControllerBase
             return Ok("Video successfully downloaded");
         }
         else
-        {
             return StatusCode((int)recordInfoResponse.StatusCode, recordInfoResponse.ReasonPhrase + "Unable to retrieve recordings info");
-        }
     }
 
     [Authorize]
@@ -151,27 +142,21 @@ public class VideoCameraController : ControllerBase
         var record = await context.Recordings.FindAsync(id);
 
         if (record == null)
-        {
             return NotFound("Record not found");
+        else
+            if (record.Path != null)
+        {
+            var recordingPath = record.Path;
+
+            var fileBytes = await System.IO.File.ReadAllBytesAsync(recordingPath);
+
+            var recordDownload = File(fileBytes, "application/octet-stream", Path.GetFileName(recordingPath));
+
+            Response.Headers["Content-Disposition"] = "attachment; filename=" + Path.GetFileName(recordingPath);
+
+            return recordDownload;
         }
         else
-        {
-            if (record.Path != null)
-            {
-                var recordingPath = record.Path;
-
-                var fileBytes = await System.IO.File.ReadAllBytesAsync(recordingPath);
-
-                var recordDownload = File(fileBytes, "application/octet-stream", Path.GetFileName(recordingPath));
-
-                Response.Headers["Content-Disposition"] = "attachment; filename=" + Path.GetFileName(recordingPath);
-
-                return recordDownload;
-            }
-            else
-            {
-                return BadRequest("Path is null");
-            }
-        }
+            return BadRequest("Path is null");
     }
 }

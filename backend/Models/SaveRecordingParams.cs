@@ -20,6 +20,4 @@ public class SaveRecordingParams
     [Required]
     [Time]
     public string? EndTime { get; set; }
-
-
 }
