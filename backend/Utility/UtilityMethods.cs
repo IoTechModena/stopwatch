@@ -1,6 +1,6 @@
-﻿namespace backend;
+﻿namespace backend.Utilty;
 
-public static class Utility
+public static class UtilityMethods
 {
     // Collection of utility methods
     public static string FormatDate(string date)

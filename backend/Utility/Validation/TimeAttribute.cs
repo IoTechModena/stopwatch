@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
-namespace backend.Validation;
+namespace backend.Utility.Validation;
 
 public class TimeAttribute : ValidationAttribute
 {

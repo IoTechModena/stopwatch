@@ -6,6 +6,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using backend.Models;
+using backend.Utilty;
 
 namespace backend.Controllers;
 
@@ -40,7 +41,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
             var content = await recordInfoResponse.Content.ReadAsStringAsync();
 
             // Parsing the content of recordInfoResponse 
-            Dictionary<string, string> recordInfoValues = Utility.ParseResponse(content);
+            Dictionary<string, string> recordInfoValues = UtilityMethods.ParseResponse(content);
 
             // Printing the values of recordInfoResponse
             Console.WriteLine("\nPrinting the keys and values of recordInfoResponse");
@@ -83,7 +84,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
 
                 string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
 
-                string fileName = $"CAM{chnid + 1}-S{Utility.FormatDate(p.StartDate)}-{Utility.FormatTime(p.StartTime)}-E{Utility.FormatDate(p.EndDate)}-{Utility.FormatTime(p.EndTime)}_{i + 1}.mp4";
+                string fileName = $"CAM{chnid + 1}-S{UtilityMethods.FormatDate(p.StartDate)}-{UtilityMethods.FormatTime(p.StartTime)}-E{UtilityMethods.FormatDate(p.EndDate)}-{UtilityMethods.FormatTime(p.EndTime)}_{i + 1}.mp4";
                 Console.WriteLine($"Video name: {fileName}");
 
                 // Create a new ProcessStartInfo object
