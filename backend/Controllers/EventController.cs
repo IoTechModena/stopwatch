@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
-    public class EventController : Controller
+    public class EventController(DataContext context) : Controller
     {
-        private readonly DataContext context;
-
-        public EventController(DataContext context)
-        {
-            this.context = context;
-        }
+        private readonly DataContext context = context;
 
         [Authorize]
         [HttpGet("getEvents")]
