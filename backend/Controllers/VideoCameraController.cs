@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Models;
 using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace backend.Controllers;
 
@@ -23,17 +24,11 @@ public class VideoCameraController : ControllerBase
     }
 
     [HttpGet("saveRecording/{chnid}")]
-    public async Task<IActionResult> SaveRecording([FromQuery] string startDate, string startTime, string endDate, string endTime, int chnid) // Formatting: dates=yyyy-mm-dd  times=hh:mm:ss
+    public async Task<IActionResult> SaveRecording([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
         // This method downloads videos from a camera.
         // It first retrieves the necessary information for the download request,
         // then sends the download request and checks if it was successful.
-
-        // Checking if the chnid is valid
-        if (chnid != 0 && chnid != 1)
-        {
-            return BadRequest("Invalid chnid, must be 0 to save CAM1 recordings or 1 for CAM2 recordings");
-        }
 
         // get.playback.recordinfo request
 
@@ -41,7 +36,7 @@ public class VideoCameraController : ControllerBase
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
         "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
 
-        string recordInfoURL = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={startDate}%20{startTime}&endTime={endDate}%20{endTime}";
+        string recordInfoURL = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={p.StartDate}%20{p.StartTime}&endTime={p.EndDate}%20{p.EndTime}";
 
         var recordInfoResponse = await client.GetAsync(recordInfoURL);
 
@@ -68,10 +63,10 @@ public class VideoCameraController : ControllerBase
             // Saving an Event
             Event currEvent = new Event()
             {
-                Channel = (byte)chnid,
+                Channel = chnid,
                 Name = $"Event_{sid}",
-                StartDateTime = DateTime.ParseExact($"{startDate} {startTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                EndDateTime = DateTime.ParseExact($"{endDate} {endTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
             };
 
             // Adding Event to the database
@@ -95,7 +90,7 @@ public class VideoCameraController : ControllerBase
 
                 string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
 
-                string fileName = $"CAM{chnid + 1}-S{Utility.FormatDate(startDate)}-{Utility.FormatTime(startTime)}-E{Utility.FormatDate(endDate)}-{Utility.FormatTime(endTime)}_{i + 1}.mp4";
+                string fileName = $"CAM{chnid + 1}-S{Utility.FormatDate(p.StartDate)}-{Utility.FormatTime(p.StartTime)}-E{Utility.FormatDate(p.EndDate)}-{Utility.FormatTime(p.EndTime)}_{i + 1}.mp4";
                 Console.WriteLine($"Video name: {fileName}");
 
                 // Create a new ProcessStartInfo object
