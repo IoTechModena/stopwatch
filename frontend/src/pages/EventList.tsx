@@ -72,7 +72,7 @@ export const EventList = () => {
     );
   }
 
-  if (eventList.length === 0) {
+  if (eventList.length === 0 && !loading) {
     return (
       <>
         <Searchbox datepickerIcon key="Searchbox" />
