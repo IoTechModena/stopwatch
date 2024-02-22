@@ -18,11 +18,11 @@ export const Alert = ({ prefix, message, type }: AlertProps) => {
   switch (type) {
     case "info":
       color = "blue";
-      role = "alert";
+      role = "info alert";
       break;
     case "error":
       color = "red";
-      role = "info";
+      role = "error alert";
       break;
   }
   return (
