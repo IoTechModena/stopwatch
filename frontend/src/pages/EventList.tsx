@@ -1,10 +1,9 @@
-//Author: Aboom
 import { useState, useEffect } from "react";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoComponents/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoComponents/VideoCardsCarousel";
 import { EventHeader } from "../components/EventHeader";
-import { ErrorAlert } from "../components/ErrorAlert";
+import { Alert } from "../components/Alert";
 import { useAuthAxios } from "../hooks/useAuthAxios";
 import BeatLoader from "react-spinners/BeatLoader";
 import React from "react";
@@ -64,11 +63,27 @@ export const EventList = () => {
     return (
       <>
         <Searchbox datepickerIcon key="Searchbox" />
-        <ErrorAlert errorMessage="Al momento non è  possibile caricare i dati." />
+        <Alert
+          type="error"
+          prefix="Ops😥! "
+          message="Al momento non è  possibile caricare i dati."
+        />
       </>
     );
   }
 
+  if (eventList.length === 0 && !loading) {
+    return (
+      <>
+        <Searchbox datepickerIcon key="Searchbox" />
+        <Alert
+          type="info"
+          prefix="Hmm...🤔"
+          message="Al momento non sembrano esserci eventi."
+        />
+      </>
+    );
+  }
   return (
     <>
       <Searchbox datepickerIcon key="Searchbox" />

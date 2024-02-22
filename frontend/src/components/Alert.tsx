@@ -1,11 +1,29 @@
 import { useState } from "react";
 
-interface ErrorAlertProps {
-  errorMessage: string;
+interface AlertProps {
+  type: "info" | "error";
+  message: string;
+  prefix: string;
 }
 
-export const ErrorAlert = ({ errorMessage }: ErrorAlertProps) => {
+interface ColorClass {
+  alert: string;
+  svg: string;
+}
+
+export const Alert = ({ prefix, message, type }: AlertProps) => {
   const [isOpen, setIsOpen] = useState(true);
+
+  const colorClasses: Record<"info" | "error", ColorClass> = {
+    info: {
+      alert: "bg-blue-100 border-blue-400 text-blue-700",
+      svg: "text-blue-500",
+    },
+    error: {
+      alert: "bg-red-100 border-red-400 text-red-700",
+      svg: "text-red-500",
+    },
+  };
 
   if (!isOpen) {
     return null;
@@ -14,17 +32,16 @@ export const ErrorAlert = ({ errorMessage }: ErrorAlertProps) => {
   return (
     <div className="flex justify-center my-20">
       <div
-        className="inline-block mx-auto bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-        role="alert"
+        className={`inline-block mx-auto border ${colorClasses[type].alert} px-4 py-3 rounded relative`}
       >
-        <strong className="font-bold">Ops😥! </strong>
-        <span className="block sm:inline mr-10">{errorMessage}</span>
+        <strong className="font-bold">{prefix}</strong>
+        <span className="block sm:inline mr-10">{message}</span>
         <span
           className="absolute top-0 bottom-0 right-0 px-4 py-3"
           onClick={() => setIsOpen(false)}
         >
           <svg
-            className="fill-current h-6 w-6 text-red-500"
+            className={`fill-current h-6 w-6 ${colorClasses[type].svg}`}
             role="button"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
