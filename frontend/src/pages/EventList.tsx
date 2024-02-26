@@ -36,6 +36,9 @@ export const EventList = () => {
   const [error, setError] = useState<null | Error>(null);
   const { axiosInstance: authAxios } = useAuthAxios();
   const [singleEvent, setSingleEvent] = useState<Event | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  
 
   useEffect(() => {
     const getEvents = async () => {
@@ -59,10 +62,15 @@ export const EventList = () => {
       }
     };
     fetchEvents();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); 
 
   const handleSearch = (searchTerm: string) => {
     const numericSearchTerm = searchTerm.replace(/\D/g, "");
+    if (!searchTerm.trim()) {
+      setSingleEvent(null); 
+      return;
+    }
+  
 
     if (!isNaN(parseInt(numericSearchTerm, 10))) {
       const foundEvent = eventList.find(
