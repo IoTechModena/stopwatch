@@ -1,28 +1,15 @@
-import React, { useState } from "react";
 import { useMenu } from "@/hooks/useMenu";
 
 type SearchBoxProps = {
   datepickerIcon?: boolean;
-  onSearch: (searchTerm: string) => void;
 };
 
 export const Searchbox = (props: SearchBoxProps) => {
   const { closeMenu } = useMenu();
-  const [searchValue, setSearchValue] = useState("");
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = event.target.value;
-    setSearchValue(searchTerm);
-    props.onSearch(searchTerm);
-  };
 
   return (
     <>
-      <form
-        className="my-8 p-5"
-        onSubmit={(e) => e.preventDefault()}
-        onFocus={closeMenu}
-      >
+      <form className="my-8 p-5" onFocus={closeMenu}>
         <div className="relative max-w-3xl mx-auto">
           <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <button title="searchButton">
@@ -30,11 +17,10 @@ export const Searchbox = (props: SearchBoxProps) => {
             </button>
           </div>
           <input
-            onChange={handleSearchChange}
             onFocus={closeMenu}
             type="search"
             id="default-search"
-            className="h-14 rounded-sm shadow-xl placeholder-gray-700 block w-full p-4 ps-10  Gelion bg-yellow-400  focus:outline-none text-sm   hover:cursor-pointer "
+            className="h-14 rounded-sm shadow-xl placeholder-gray-700 block w-full p-4 ps-10 Gelion bg-yellow-400 focus:outline-none text-sm hover:cursor-pointer "
             placeholder={
               props.datepickerIcon
                 ? "Che evento stai cercando?"
@@ -42,17 +28,10 @@ export const Searchbox = (props: SearchBoxProps) => {
             }
             required
             name="search"
-            value={searchValue}
           />
           {props.datepickerIcon && (
-            <span
-              className="absolute top-4 right-5 bg-yellow-400 border-slate-600 border-l pl-4 cursor-pointer"
-              onClick={() => {
-                setSearchValue("");
-                props.onSearch("");
-              }}
-            >
-              <i className="fa-regular fa-calendar text-black"></i>
+            <span className="absolute top-4 right-5 bg-yellow-400 border-slate-600 border-l pl-4">
+              <i className="fa-regular fa-calendar text-black hover:text-gray-100 hover:cursor-pointer"></i>
             </span>
           )}
         </div>

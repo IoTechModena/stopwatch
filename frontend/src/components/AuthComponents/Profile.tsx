@@ -19,11 +19,13 @@ const Profile: React.FC = () => {
         <img
           src={user?.picture ?? ""}
           alt={user?.name ?? ""}
-          className="h-10 rounded-full mr-2"
+          className="h-10 rounded-full mr-2 ml-6"
         />
         <div>
           {/*<p>{user?.name ?? "Chiunque tu sia"}</p>*/}
-          <p>{user?.email ?? "Ue giacconss tutt a posttt"}</p>
+          <p className="lg:inline hidden">
+            {user?.email ?? "Ue giacconss tutt a posttt"}
+          </p>
         </div>
       </div>
     </>

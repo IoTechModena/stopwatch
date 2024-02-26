@@ -28,8 +28,8 @@ export const Navbar = () => {
             </button>
           </div>
           {isMenuOpen && (
-            <div className="bg-[#112d4e] border rounded-lg py-2">
-              <ul className="">
+            <div className="bg-[#112d4e] border rounded-lg p-2">
+              <ul>
                 <li>
                   <Link
                     to="/events"
