@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import { formatDateTime } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+import { Alert } from "../components/Alert";
+import { EventHeader } from "../components/EventHeader";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoComponents/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoComponents/VideoCardsCarousel";
-import { EventHeader } from "../components/EventHeader";
-import { Alert } from "../components/Alert";
 import { useAuthAxios } from "../hooks/useAuthAxios";
-import { formatDateTime } from "@/lib/utils";
-import BeatLoader from "react-spinners/BeatLoader";
-import React from "react";
 
 interface Recording {
   id: number;

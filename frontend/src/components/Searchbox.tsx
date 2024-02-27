@@ -4,13 +4,14 @@ interface searchboxProps {
   searchInput: string;
   setSearchInput: (input: string) => void;
 }
+
 export const Searchbox = ({ searchInput, setSearchInput }: searchboxProps) => {
   const { closeMenu } = useMenu();
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
   };
-  
+
   return (
     <>
       <form className="my-8 p-5" onFocus={closeMenu} onSubmit={handleSubmit}>

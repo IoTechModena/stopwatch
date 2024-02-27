@@ -1,13 +1,13 @@
-import { Outlet, Route, Routes } from "react-router-dom";
-import { Home } from "./pages/Home";
-import { Navbar } from "./components/Navbar";
-import { EventList } from "./pages/EventList";
-import { ToasterProvider } from "./context/ToasterContext";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Outlet, Route, Routes } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
-import { AuthenticationGuard } from "./lib/AuthGuard";
 import "./App.css";
+import { Navbar } from "./components/Navbar";
+import { ToasterProvider } from "./context/ToasterContext";
 import "./fonts.css";
+import { AuthenticationGuard } from "./lib/AuthGuard";
+import { EventList } from "./pages/EventList";
+import { Home } from "./pages/Home";
 
 const Layout = () => (
   <>
