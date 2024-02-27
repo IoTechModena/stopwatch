@@ -1,16 +1,15 @@
-//Author: Sbenduel
 import { useMenu } from "@/hooks/useMenu";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
-import { LogoComponent } from "./LogoComponent";
 import LoginButton from "./AuthComponents/LoginButton";
 import LogoutButton from "./AuthComponents/LogoutButton";
-import { RegisterButton } from "./AuthComponents/RegisterButton";
 import Profile from "./AuthComponents/Profile";
-import { useAuth0 } from "@auth0/auth0-react";
+import { RegisterButton } from "./AuthComponents/RegisterButton";
+import { LogoComponent } from "./LogoComponent";
 
 export const Navbar = () => {
   const { isAuthenticated } = useAuth0();
-  const { isMenuOpen, toggleMenu } = useMenu(); //spacchettamento di funzione dall'hook useMenuToggle
+  const { isMenuOpen, toggleMenu } = useMenu();
 
   return (
     <header className="text-white bg-[#112d4e] Gelion">
