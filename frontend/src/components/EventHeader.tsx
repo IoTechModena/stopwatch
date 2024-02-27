@@ -1,7 +1,5 @@
-import { formatDateTime } from "@/lib/utils";
-
 interface EventHeaderProps {
-  id: number;
+  name: string;
   recordingCount: number;
   startDateTime: string;
   endDateTime: string;
@@ -9,7 +7,7 @@ interface EventHeaderProps {
 }
 
 export const EventHeader = ({
-  id,
+  name,
   recordingCount,
   startDateTime,
   endDateTime,
@@ -18,7 +16,7 @@ export const EventHeader = ({
   return (
     <>
       <div id="eventDescription" className="text-center Gelion">
-        <h1 className="text-3xl font-extrabold mb-1">🔔Evento {id}</h1>
+        <h1 className="text-3xl font-extrabold mb-1">🔔{name}</h1>
         <div className="flex justify-center gap-10">
           <p className="text-gray-700 font-bold">
             Numero di filmati: {recordingCount}
@@ -26,12 +24,8 @@ export const EventHeader = ({
           <p className="text-gray-700 font-bold">Canale: {channel}</p>
         </div>
         <div className="flex justify-center gap-10">
-          <p className="text-gray-500 font-normal ">
-            Inizio: {formatDateTime(startDateTime)}
-          </p>
-          <p className="text-gray-500 font-normal">
-            Fine: {formatDateTime(endDateTime)}
-          </p>
+          <p className="text-gray-500 font-normal ">Inizio: {startDateTime}</p>
+          <p className="text-gray-500 font-normal">Fine: {endDateTime}</p>
         </div>
       </div>
     </>
