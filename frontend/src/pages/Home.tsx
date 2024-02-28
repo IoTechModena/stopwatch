@@ -19,9 +19,8 @@ export const Home = () => {
   const [eventsCount, setEventsCount] = useState(initialEventsCount);
 
   const fetchEventsCount = async () => {
-    try {
       const response = await axios.get<ChannelData[]>(
-        "http://localhost/api/getEventsCount"
+        "api/getEventsCount"
       );
       const eventsCountData = response.data;
 
@@ -34,9 +33,6 @@ export const Home = () => {
       setEventsCount(latestEventsCount);
 
       localStorage.setItem("eventsCount", JSON.stringify(latestEventsCount));
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const checkToken = useCallback(async () => {
