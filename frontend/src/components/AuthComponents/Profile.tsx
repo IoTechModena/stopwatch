@@ -7,11 +7,7 @@ type user = {
 };
 
 const Profile: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth0<user>();
-
-  if (isLoading) {
-    return <></>;
-  }
+  const { user, isAuthenticated } = useAuth0<user>();
 
   return isAuthenticated ? (
     <>
@@ -22,9 +18,8 @@ const Profile: React.FC = () => {
           className="h-10 rounded-full mr-2 ml-6"
         />
         <div>
-          {/*<p>{user?.name ?? "Chiunque tu sia"}</p>*/}
           <p className="lg:inline hidden">
-            {user?.email ?? "Ue giacconss tutt a posttt"}
+            {user?.email ?? ""}
           </p>
         </div>
       </div>
