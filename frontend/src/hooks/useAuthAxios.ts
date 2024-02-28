@@ -5,7 +5,7 @@ import axios from "axios";
 export const useAuthAxios = () => {
   const { getAccessTokenSilently } = useAuth0();
   const [axiosInstance] = useState(() =>
-    axios.create({ baseURL: "http://localhost/api" })
+    axios.create({ baseURL: "api" })
   );
 
   const getToken = async () => {
