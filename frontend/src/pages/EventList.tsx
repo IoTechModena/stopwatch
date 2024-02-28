@@ -69,7 +69,7 @@ export const EventList = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const lowerCaseSearchInput = searchInput.toLowerCase();
+    const lowerCaseSearchInput = searchInput.toLowerCase().trim();
     const filtered = eventList.filter((event) => {
       return searchFields.some((field) => {
         const value = event[field].toString().toLowerCase();
@@ -106,7 +106,7 @@ export const EventList = () => {
         />
         <Alert
           type="info"
-          prefix="Hmm...🤔"
+          prefix="Hmm...🤔 "
           message="Al momento non sembrano esserci eventi."
         />
       </>
