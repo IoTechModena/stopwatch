@@ -40,6 +40,7 @@ export const App = () => {
           />
           <Route path="/" index element={<Home />} />
         </Route>
+        <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </ToasterProvider>
   );
