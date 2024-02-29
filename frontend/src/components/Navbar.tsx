@@ -1,6 +1,5 @@
 import { useMenu } from "@/hooks/useMenu";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Link } from "react-router-dom";
 import LoginButton from "./AuthComponents/LoginButton";
 import LogoutButton from "./AuthComponents/LogoutButton";
 import Profile from "./AuthComponents/Profile";
@@ -30,12 +29,12 @@ export const Navbar = () => {
             <div className="bg-[#112d4e] border rounded-lg p-2">
               <ul>
                 <li>
-                  <Link
-                    to="/events"
+                  <a
+                    href="/events"
                     className="text-center mb-2 py-2 px-4 text-white rounded-lg hover:bg-[#0B1D32] block"
                   >
                     Eventi
-                  </Link>
+                  </a>
                 </li>
                 {isAuthenticated ? (
                   <>
@@ -62,12 +61,12 @@ export const Navbar = () => {
         {/*DESKTOP-MENU */}
         <ul className="md:flex hidden gap-8 items-center w-full">
           <li>
-            <Link
-              to="/events"
+            <a
+              href="/events"
               className="hover:bg-[#0B1D32] rounded-lg px-4 py-3"
             >
               Eventi
-            </Link>
+            </a>
           </li>
           <li className="flex-grow"></li>
           {/*Spazio vuoto per spostare sul lato destro il login e le credenziali */}
