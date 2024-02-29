@@ -9,9 +9,7 @@ node_modules/
 dist/
 
 # Environment
-ssl/
 recordings/
-password.txt
 
 # Visual Studio
 .vs/
