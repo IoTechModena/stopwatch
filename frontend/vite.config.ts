@@ -10,4 +10,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    https: {
+      key: '../proxy/ssl/privkey.pem',
+      cert: '../proxy/ssl/fullchain.pem',
+    },
+    proxy: {
+      '/api': 'http://localhost',
+    }
+  }
 });

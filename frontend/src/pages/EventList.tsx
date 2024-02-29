@@ -38,13 +38,8 @@ export const EventList = () => {
 
   useEffect(() => {
     const getEvents = async () => {
-      try {
-        const response = await authAxios.get("/getEvents");
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
+      const response = await authAxios.get("/getEvents");
+      return response.data;
     };
 
     const fetchEvents = async () => {
