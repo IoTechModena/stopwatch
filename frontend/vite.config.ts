@@ -16,7 +16,9 @@ export default defineConfig({
       cert: '../proxy/ssl/fullchain.pem',
     },
     proxy: {
-      '/api': 'http://localhost',
+      '/api': {
+        target: 'https://localhost',
+        secure: false }
     }
   }
 });
