@@ -1,9 +1,8 @@
-﻿namespace backend;
+﻿namespace backend.Utilty;
 
-public static class Utility
+public static class UtilityMethods
 {
     // Collection of utility methods
-
     public static string FormatDate(string date)
     {
         // This method formats a date from yyyy-mm-dd to yyyymmdd
@@ -25,7 +24,6 @@ public static class Utility
         // This method parses a response from the camera
         // and returns a dictionary with the key-value pairs
         // contained in the response
-
         var lines = response.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         var values = new Dictionary<string, string>();
 
@@ -33,9 +31,7 @@ public static class Utility
         {
             var parts = line.Split('=');
             if (parts.Length == 2)
-            {
                 values[parts[0]] = parts[1];
-            }
         }
         return values;
     }

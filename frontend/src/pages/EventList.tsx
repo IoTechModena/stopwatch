@@ -1,13 +1,12 @@
-//Author: Aboom
-import { useState, useEffect } from "react";
+import { formatDateTime } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+import { Alert } from "../components/Alert";
+import { EventHeader } from "../components/EventHeader";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoComponents/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoComponents/VideoCardsCarousel";
-import { EventHeader } from "../components/EventHeader";
-import { ErrorAlert } from "../components/ErrorAlert";
 import { useAuthAxios } from "../hooks/useAuthAxios";
-import BeatLoader from "react-spinners/BeatLoader";
-import React from "react";
 
 interface Recording {
   id: number;
@@ -21,7 +20,7 @@ interface Recording {
   eventId: number;
 }
 
-interface Event {
+export interface Event {
   id: number;
   recordings: Recording[];
   channel: number;
@@ -34,6 +33,9 @@ export const EventList = () => {
   const [eventList, setEventList] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const searchFields = ["name", "startDateTime", "endDateTime"] as const;
   const { axiosInstance: authAxios } = useAuthAxios();
 
   useEffect(() => {
@@ -45,7 +47,13 @@ export const EventList = () => {
     const fetchEvents = async () => {
       try {
         const data = await getEvents();
-        setEventList(data.sort((a: Event, b: Event) => b.id - a.id));
+        const formattedData = data.map((event: Event) => ({
+          ...event,
+          startDateTime: formatDateTime(event.startDateTime),
+          endDateTime: formatDateTime(event.endDateTime),
+          name: `Evento ${event.id}`,
+        }));
+        setEventList(formattedData.sort((a: Event, b: Event) => b.id - a.id));
       } catch (e) {
         setError(e as Error);
       } finally {
@@ -55,22 +63,62 @@ export const EventList = () => {
     fetchEvents();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    const lowerCaseSearchInput = searchInput.toLowerCase().trim();
+    const filtered = eventList.filter((event) => {
+      return searchFields.some((field) => {
+        const value = event[field].toString().toLowerCase();
+        return value.includes(lowerCaseSearchInput);
+      });
+    });
+    setFilteredEvents(filtered);
+  }, [searchInput, eventList]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (error) {
     return (
       <>
-        <Searchbox datepickerIcon key="Searchbox" />
-        <ErrorAlert errorMessage="Al momento non è  possibile caricare i dati." />
+        <Searchbox
+          key="Searchbox"
+          searchInput={searchInput}
+          setSearchInput={setSearchInput}
+        />
+        <Alert
+          type="error"
+          prefix="Ops😥! "
+          message="Al momento non è  possibile caricare i dati."
+        />
+      </>
+    );
+  }
+
+  if (eventList.length === 0 && !loading) {
+    return (
+      <>
+        <Searchbox
+          key="Searchbox"
+          searchInput={searchInput}
+          setSearchInput={setSearchInput}
+        />
+        <Alert
+          type="info"
+          prefix="Hmm...🤔 "
+          message="Al momento non sembrano esserci eventi."
+        />
       </>
     );
   }
 
   return (
     <>
-      <Searchbox datepickerIcon key="Searchbox" />
-      {eventList.map((data: Event, index: number) => (
+      <Searchbox
+        key="Searchbox"
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
+      />
+      {filteredEvents.map((data: Event, index: number) => (
         <React.Fragment key={`event-${data.id}`}>
           <EventHeader
-            id={data.id}
+            name={data.name}
             recordingCount={data.recordings.length}
             startDateTime={data.startDateTime}
             endDateTime={data.endDateTime}

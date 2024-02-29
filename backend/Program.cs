@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using backend;
 
-
 const string path = "/run/secrets/database-password";
 string? databasePassword = File.Exists(path) ? File.ReadAllText(path) : null;
 
@@ -36,7 +35,6 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") + databasePassword));
 
-builder.Services.AddAuthorization();
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
 {
     options.Authority = "https://manuelcampi.eu.auth0.com/";
@@ -57,8 +55,6 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 app.UseCors();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

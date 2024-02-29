@@ -1,6 +1,6 @@
+import { useState } from "react";
 import ReactPlayer from "react-player/lazy";
 import { useAuthAxios } from "../../hooks/useAuthAxios";
-import { useState } from "react";
 
 export const VideoPlayer = (props: { id: number }) => {
   const { axiosInstance: authAxios } = useAuthAxios();

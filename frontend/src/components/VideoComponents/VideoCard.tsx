@@ -1,5 +1,3 @@
-// Author: Aboom
-
 import { DownloadButton } from "../DownloadButton";
 import { VideoPlayer } from "./VideoPlayer";
 
