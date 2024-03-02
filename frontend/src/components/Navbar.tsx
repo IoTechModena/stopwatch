@@ -26,10 +26,7 @@ export const Navbar = () => {
           <div className="flex mt-1">
             <Profile />
             {/*il nome sarebbe dropdown menu*/}
-            <button
-              className="lg:hover:bg-[#0B1D32] rounded-lg px-4 py-2 mx-4"
-              onClick={toggleMenu}
-            >
+            <button className="rounded-lg px-4 py-2 mx-4" onClick={toggleMenu}>
               <i
                 className={` ${
                   isMenuOpen ? "fa-solid fa-x px-[1px]" : "fa-solid fa-bars"
