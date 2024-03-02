@@ -5,19 +5,39 @@ import LogoutButton from "./AuthComponents/LogoutButton";
 import Profile from "./AuthComponents/Profile";
 import { RegisterButton } from "./AuthComponents/RegisterButton";
 import { LogoComponent } from "./LogoComponent";
+import { useEffect, useRef } from "react";
 
 export const Navbar = () => {
   const { isAuthenticated } = useAuth0();
-  const { isMenuOpen, toggleMenu } = useMenu();
+  const { isMenuOpen, toggleMenu, closeMenu } = useMenu();
+  const menuRef = useRef<HTMLDivElement>(null); // <HTMLDivElement> indica che il ref è un elemento del DOM
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        closeMenu(); //se clicchi fuori dal div col ref menuRef chiudi il menu
+      }
+    };
+
+    document.addEventListener("click", handler); //click è come mousedown ma non si attiva quando si clicca il tasto destro
+    //ogni volta che clicchi chiama la funzione handler
+    return () => {
+      document.removeEventListener("click", handler); //rimuove l'event listener per evitare perdite di memoria sennò lo senti Fillo dopo
+    };
+  });
 
   return (
     <header className="text-white bg-[#112d4e] Gelion">
       <nav className="font-bold flex justify-start items-center h-16 px-4 md:px-[8%]">
         <LogoComponent />
         {/*MOBILE-MENU */}
-        <section className="z-10 md:hidden absolute top-2 right-2 flex-col rounded-lg">
+        <section
+          ref={menuRef}
+          className="z-10 md:hidden absolute top-2 right-2 flex-col rounded-lg"
+        >
           <div className="flex mt-1">
             <Profile />
+            {/*il nome sarebbe dropdown menu*/}
             <button
               className="hover:bg-[#0B1D32] rounded-lg px-4 py-2 mx-4"
               onClick={toggleMenu}
