@@ -35,6 +35,7 @@
     --radius: 0.5rem;
   }
 
+  /* Ma a che serve */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -110,6 +111,23 @@
   cursor: pointer;
 }
 
+/*Usare tailwind immagino fosse troppo mainstream*/
 .highlight {
   background-color: yellow;
+}
+
+/* Animazione del mobileMenu, fatta da me shishi! */
+@keyframes easeIn {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* Quando il menu viene aperto */
+.apriti-sesamo {
+  animation: easeIn 0.4s ease;
 }
