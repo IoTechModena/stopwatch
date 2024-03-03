@@ -10,7 +10,7 @@ export const VideoCardsCarousel = ({ children }: VideoCardsCarouselProps) => {
   return (
     <>
       <Carousel
-        className="lg:justify-evenly lg:mx-20 md:mx-10 sm:mx-5 mb-5"
+        className="lg:mx-20 md:mx-10 sm:mx-5 mb-5"
         arrows
         slidesToSlide={1}
         draggable={false}
