@@ -19,7 +19,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
     readonly HttpClient client = new();
     private readonly DataContext context = context;
 
-    [HttpGet("saveRecording/{chnid}")]
+    [HttpPost("saveRecording/{chnid}")]
     public async Task<IActionResult> SaveRecording([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
         // This method downloads videos from a camera.
