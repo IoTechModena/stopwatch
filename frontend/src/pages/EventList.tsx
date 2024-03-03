@@ -98,7 +98,7 @@ export const EventList = () => {
     );
   }
 
-  if (eventList.length === 0 && !loading) {
+  if (filteredEvents.length === 0 && !loading) {
     return (
       <>
         <Searchbox

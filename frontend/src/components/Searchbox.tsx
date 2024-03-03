@@ -36,8 +36,12 @@ export const Searchbox = ({ searchInput, setSearchInput }: searchboxProps) => {
             name="search-box"
           />
           <select
-            value={selectedChannel === null ? "" : selectedChannel.toString()}
-            onChange={(e) => setSelectedChannel(Number(e.target.value))}
+            value={selectedChannel?.toString()}
+            onChange={(e) =>
+              setSelectedChannel(
+                e.target.value === "" ? null : Number(e.target.value)
+              )
+            }
             id="channels"
             className="shadow-xl text-center bg-gray-400 text-black text-sm rounded-lg block pl-2 focus:outline-none"
           >
