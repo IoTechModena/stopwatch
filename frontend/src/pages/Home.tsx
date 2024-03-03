@@ -76,7 +76,6 @@ export const Home = () => {
           channelNum={0}
           location={"Descrizione"}
           eventsNum={eventsCount[0]}
-          href={"events"}
         />
         <VideocameraCard
           key="2"
@@ -84,7 +83,6 @@ export const Home = () => {
           channelNum={1}
           location={"Descrizione"}
           eventsNum={eventsCount[1]}
-          href={"events"}
         />
       </div>
     </>
