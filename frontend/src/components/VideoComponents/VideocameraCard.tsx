@@ -1,4 +1,3 @@
-import { useMenu } from "@/hooks/useMenu";
 import { ChannelContext } from "@/context/ChannelContext";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -17,10 +16,8 @@ export const VideocameraCard = ({
   eventsNum,
 }: VideocameraCardProps) => {
   const { setSelectedChannel } = React.useContext(ChannelContext);
-  const { closeMenu } = useMenu();
   const handleClick = () => {
     setSelectedChannel(channelNum);
-    closeMenu();
   };
 
   return (

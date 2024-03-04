@@ -60,7 +60,7 @@ export const Home = () => {
             StopWatch
           </span>
         </h1>
-        <p className="mb-20 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400 mx-2">
+        <p className="mb-20 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 mx-2">
           Qui troverai le telecamere disponibili, premi su "Registrazioni" per
           visualizzare gli eventi della telecamera.
         </p>
