@@ -1,9 +1,13 @@
+import { useMenu } from "@/hooks/useMenu";
+import { ChannelContext } from "@/context/ChannelContext";
+import React from "react";
+import { Link } from "react-router-dom";
+
 interface VideocameraCardProps {
   title: string;
   channelNum: number;
   location: string;
   eventsNum: number;
-  href: string;
 }
 
 export const VideocameraCard = ({
@@ -11,8 +15,14 @@ export const VideocameraCard = ({
   channelNum,
   location,
   eventsNum,
-  href,
 }: VideocameraCardProps) => {
+  const { setSelectedChannel } = React.useContext(ChannelContext);
+  const { closeMenu } = useMenu();
+  const handleClick = () => {
+    setSelectedChannel(channelNum);
+    closeMenu();
+  };
+
   return (
     <>
       <div className="max-w-md mx-4 Gelion rounded-xl overflow-hidden shadow-2xl">
@@ -36,11 +46,11 @@ export const VideocameraCard = ({
             Eventi: {eventsNum}
           </p>
           <hr className="mt-3 my-5" />
-          <a href={href}>
+          <Link to="/events" onClick={handleClick}>
             <button className="bg-yellow-500 mb-1 w-full hover:bg-yellow-400 font-bold py-2 px-4 rounded-lg">
               Registrazioni
             </button>
-          </a>
+          </Link>
         </div>
       </div>
     </>
