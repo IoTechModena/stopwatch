@@ -1,4 +1,3 @@
-import { useMenu } from "@/hooks/useMenu";
 import { useContext } from "react";
 import { ChannelContext } from "@/context/ChannelContext";
 
@@ -8,7 +7,6 @@ interface searchboxProps {
 }
 
 export const Searchbox = ({ searchInput, setSearchInput }: searchboxProps) => {
-  const { closeMenu } = useMenu();
   const { selectedChannel, setSelectedChannel } = useContext(ChannelContext);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -19,7 +17,6 @@ export const Searchbox = ({ searchInput, setSearchInput }: searchboxProps) => {
     <>
       <form
         className="my-12 p-2 Gelion"
-        onFocus={closeMenu}
         onSubmit={handleSubmit}
       >
         <div className="relative max-w-3xl mx-auto flex gap-2 sm:gap-6">
