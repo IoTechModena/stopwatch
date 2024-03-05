@@ -31,8 +31,6 @@ public class VideoCameraController(DataContext context) : ControllerBase
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
         "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
-        
-        client.DefaultRequestHeaders.Add("Retry-After", "60");
 
         var recordInfoResponse = await client.GetAsync(recordInfoURL);
 
@@ -53,6 +51,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
             }
             catch
             {
+                Response.Headers.Append("Retry-After", "60");
                 return StatusCode(503);
             }
 
