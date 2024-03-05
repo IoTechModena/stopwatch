@@ -25,6 +25,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
         Dictionary<string, string> recordInfoValues;
         int cnt;
         string sid;
+        Event? currEvent = null;
 
         string recordInfoURL = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={p.StartDate}%20{p.StartTime}&endTime={p.EndDate}%20{p.EndTime}";
         string relativeFilePath = $"./public/recordings/";
@@ -55,24 +56,6 @@ public class VideoCameraController(DataContext context) : ControllerBase
                 return StatusCode(503);
             }
 
-            Event currEvent = new Event()
-            {
-                Channel = chnid,
-                Name = $"Event_{sid}",
-                StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-            };
-
-            try
-            {
-                await context.AddAsync(currEvent);
-                await context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
-
             for (int i = 0; i < cnt; i++)
             {
                 // get.playback.recordinfo requests through curl processes
@@ -98,6 +81,34 @@ public class VideoCameraController(DataContext context) : ControllerBase
                 process.Start();
                 await process.WaitForExitAsync();
 
+                string curlOutput = process.StandardOutput.ReadToEnd();
+                if (curlOutput.Trim() == "existing")
+                {
+                    Response.Headers.Append("Retry-After", "60");
+                    return StatusCode(503);
+                }
+
+                if (i == 0)
+                {
+                    currEvent = new Event()
+                    {
+                        Channel = chnid,
+                        Name = $"Event_{sid}",
+                        StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                        EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                    };
+
+                    try
+                    {
+                        await context.AddAsync(currEvent);
+                        await context.SaveChangesAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        return StatusCode(500, e.Message);
+                    }
+                }
+
                 Recording recording = new Recording()
                 {
                     Name = fileName,
@@ -110,7 +121,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
                 };
                 recording.Duration = recording.EndDateTime - recording.StartDateTime;
 
-                currEvent.Recordings?.Add(recording);
+                currEvent?.Recordings?.Add(recording);
 
                 try
                 {
