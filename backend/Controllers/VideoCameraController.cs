@@ -81,8 +81,9 @@ public class VideoCameraController(DataContext context) : ControllerBase
                 process.Start();
                 await process.WaitForExitAsync();
 
-                string curlOutput = process.StandardOutput.ReadToEnd();
-                if (curlOutput.Trim() == "existing")
+                var fileInfo = new FileInfo($"{relativeFilePath}{fileName}");
+
+                if (fileInfo.Length < 50)
                 {
                     Response.Headers.Append("Retry-After", "60");
                     return StatusCode(503);
