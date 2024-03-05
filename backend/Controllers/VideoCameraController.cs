@@ -6,14 +6,13 @@ using System.Globalization;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using backend.Models;
-using backend.Utilty;
+using backend.Utility;
 
 namespace backend.Controllers;
 
 [ApiController]
 public class VideoCameraController(DataContext context) : ControllerBase
 {
-    // Data needed to access the camera recording
     readonly string authenticationString = "admin:mutina23";
     private readonly string ip = "151.78.228.229";
     readonly HttpClient client = new();
@@ -22,17 +21,18 @@ public class VideoCameraController(DataContext context) : ControllerBase
     [HttpPost("saveRecording/{chnid}")]
     public async Task<IActionResult> SaveRecording([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
-        // This method downloads videos from a camera.
-        // It first retrieves the necessary information for the download request,
-        // then sends the download request and checks if it was successful.
-
         // get.playback.recordinfo request
-
-        // Setting Authentication header
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-        "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
+        Dictionary<string, string> recordInfoValues;
+        int cnt;
+        string sid;
 
         string recordInfoURL = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={p.StartDate}%20{p.StartTime}&endTime={p.EndDate}%20{p.EndTime}";
+        string relativeFilePath = $"./public/recordings/";
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+        "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
+        
+        client.DefaultRequestHeaders.Add("Retry-After", "60");
 
         var recordInfoResponse = await client.GetAsync(recordInfoURL);
 
@@ -40,21 +40,22 @@ public class VideoCameraController(DataContext context) : ControllerBase
         {
             var content = await recordInfoResponse.Content.ReadAsStringAsync();
 
-            // Parsing the content of recordInfoResponse 
-            Dictionary<string, string> recordInfoValues = UtilityMethods.ParseResponse(content);
+            try
+            {
+                recordInfoValues = UtilityMethods.ParseResponse(content);
 
-            // Printing the values of recordInfoResponse
-            Console.WriteLine("\nPrinting the keys and values of recordInfoResponse");
-            foreach (KeyValuePair<string, string> entry in recordInfoValues)
-                Console.WriteLine($"{entry.Key}:{entry.Value}");
+                Console.WriteLine("\nPrinting the keys and values of recordInfoResponse");
+                foreach (KeyValuePair<string, string> entry in recordInfoValues)
+                    Console.WriteLine($"{entry.Key}:{entry.Value}");
 
-            // Retrieving needed values for the get.playback.download request
-            string sid = recordInfoValues["sid"];
-            int cnt = int.Parse(recordInfoValues["cnt"]);
+                sid = recordInfoValues["sid"];
+                cnt = int.Parse(recordInfoValues["cnt"]);
+            }
+            catch
+            {
+                return StatusCode(503);
+            }
 
-            string relativeFilePath = $"./public/recordings/";
-
-            // Saving an Event
             Event currEvent = new Event()
             {
                 Channel = chnid,
@@ -63,7 +64,6 @@ public class VideoCameraController(DataContext context) : ControllerBase
                 EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
             };
 
-            // Adding Event to the database
             try
             {
                 await context.AddAsync(currEvent);
@@ -87,23 +87,18 @@ public class VideoCameraController(DataContext context) : ControllerBase
                 string fileName = $"CAM{chnid + 1}-S{UtilityMethods.FormatDate(p.StartDate)}-{UtilityMethods.FormatTime(p.StartTime)}-E{UtilityMethods.FormatDate(p.EndDate)}-{UtilityMethods.FormatTime(p.EndTime)}_{i + 1}.mp4";
                 Console.WriteLine($"Video name: {fileName}");
 
-                // Create a new ProcessStartInfo object
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = "curl",
                     Arguments = $"--http1.0 --output {relativeFilePath}{fileName} -u {authenticationString}  -v {recordDownloadURL}",
-                    // Set UseShellExecute to false. This means the process will be executed in the same process, not a new shell.
                     UseShellExecute = false,
                 };
 
-                // Create a new Process object and set its StartInfo property to the previously created startInfo object
                 var process = new Process { StartInfo = startInfo };
 
-                // Start the process. This will execute the curl command with the specified arguments.
                 process.Start();
                 await process.WaitForExitAsync();
 
-                // Creating a Recording object and saving it in currEvent
                 Recording recording = new Recording()
                 {
                     Name = fileName,
@@ -118,7 +113,6 @@ public class VideoCameraController(DataContext context) : ControllerBase
 
                 currEvent.Recordings?.Add(recording);
 
-                // Adding Recording to the database
                 try
                 {
                     await context.AddAsync(recording);
@@ -129,8 +123,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
                     return StatusCode(500, e.Message);
                 }
             }
-
-            return Ok("Video successfully downloaded");
+            return Ok();
         }
         else
             return StatusCode((int)recordInfoResponse.StatusCode, recordInfoResponse.ReasonPhrase + "Unable to retrieve recordings info");

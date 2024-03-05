@@ -1,4 +1,4 @@
-﻿namespace backend.Utilty;
+﻿namespace backend.Utility;
 
 public static class UtilityMethods
 {
