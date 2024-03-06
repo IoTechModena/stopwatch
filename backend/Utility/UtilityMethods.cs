@@ -21,9 +21,6 @@ public static class UtilityMethods
 
     public static Dictionary<string, string> ParseResponse(string response)
     {
-        // This method parses a response from the camera
-        // and returns a dictionary with the key-value pairs
-        // contained in the response
         var lines = response.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         var values = new Dictionary<string, string>();
 
@@ -33,6 +30,12 @@ public static class UtilityMethods
             if (parts.Length == 2)
                 values[parts[0]] = parts[1];
         }
+
+        if (values.Count == 1)
+        {
+            throw new Exception("The response is empty");
+        }
+
         return values;
     }
 }

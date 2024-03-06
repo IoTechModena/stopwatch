@@ -15,129 +15,60 @@ public class VideoCameraController(DataContext context) : ControllerBase
 {
     readonly string authenticationString = "admin:mutina23";
     private readonly string ip = "151.78.228.229";
+    private readonly string retryTime = "60";
+    private string relativeFilePath = $"./public/recordings/";
     readonly HttpClient client = new();
     private readonly DataContext context = context;
 
     [HttpPost("saveRecording/{chnid}")]
-    public async Task<IActionResult> SaveRecording([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
+    public async Task<IActionResult> SaveEventAndRecordings([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
-        // get.playback.recordinfo request
-        Dictionary<string, string> recordInfoValues;
-        int cnt;
-        string sid;
-        Event? currEvent = null;
-
-        string recordInfoURL = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={p.StartDate}%20{p.StartTime}&endTime={p.EndDate}%20{p.EndTime}";
-        string relativeFilePath = $"./public/recordings/";
-
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-        "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
-
-        var recordInfoResponse = await client.GetAsync(recordInfoURL);
-
-        if (recordInfoResponse.IsSuccessStatusCode)
+        var recordingsInfo = await GetRecordingsInfo(chnid, p);
+        if (recordingsInfo == null)
         {
-            var content = await recordInfoResponse.Content.ReadAsStringAsync();
-
-            try
-            {
-                recordInfoValues = UtilityMethods.ParseResponse(content);
-
-                Console.WriteLine("\nPrinting the keys and values of recordInfoResponse");
-                foreach (KeyValuePair<string, string> entry in recordInfoValues)
-                    Console.WriteLine($"{entry.Key}:{entry.Value}");
-
-                sid = recordInfoValues["sid"];
-                cnt = int.Parse(recordInfoValues["cnt"]);
-            }
-            catch
-            {
-                Response.Headers.Append("Retry-After", "60");
-                return StatusCode(503);
-            }
-
-            for (int i = 0; i < cnt; i++)
-            {
-                // get.playback.recordinfo requests through curl processes
-
-                Console.WriteLine($"\nDownloading video {i + 1} of {cnt}");
-                string cntStartDateTime = recordInfoValues[$"startTime{i}"];
-                string cntEndDateTime = recordInfoValues[$"endTime{i}"];
-
-                string recordDownloadURL = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
-
-                string fileName = $"CAM{chnid + 1}-S{UtilityMethods.FormatDate(p.StartDate)}-{UtilityMethods.FormatTime(p.StartTime)}-E{UtilityMethods.FormatDate(p.EndDate)}-{UtilityMethods.FormatTime(p.EndTime)}_{i + 1}.mp4";
-                Console.WriteLine($"Video name: {fileName}");
-
-                var startInfo = new ProcessStartInfo
-                {
-                    FileName = "curl",
-                    Arguments = $"--http1.0 --output {relativeFilePath}{fileName} -u {authenticationString}  -v {recordDownloadURL}",
-                    UseShellExecute = false,
-                };
-
-                var process = new Process { StartInfo = startInfo };
-
-                process.Start();
-                await process.WaitForExitAsync();
-
-                var fileInfo = new FileInfo($"{relativeFilePath}{fileName}");
-
-                if (fileInfo.Length < 50)
-                {
-                    Response.Headers.Append("Retry-After", "60");
-                    return StatusCode(503);
-                }
-
-                if (i == 0)
-                {
-                    currEvent = new Event()
-                    {
-                        Channel = chnid,
-                        Name = $"Event_{sid}",
-                        StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                        EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                    };
-
-                    try
-                    {
-                        await context.AddAsync(currEvent);
-                        await context.SaveChangesAsync();
-                    }
-                    catch (Exception e)
-                    {
-                        return StatusCode(500, e.Message);
-                    }
-                }
-
-                Recording recording = new Recording()
-                {
-                    Name = fileName,
-                    Path = Path.GetFullPath(relativeFilePath + fileName),
-                    Description = "",
-                    Size = new FileInfo(relativeFilePath + fileName).Length,
-                    StartDateTime = DateTime.ParseExact(cntStartDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                    EndDateTime = DateTime.ParseExact(cntEndDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                    Event = currEvent,
-                };
-                recording.Duration = recording.EndDateTime - recording.StartDateTime;
-
-                currEvent?.Recordings?.Add(recording);
-
-                try
-                {
-                    await context.AddAsync(recording);
-                    await context.SaveChangesAsync();
-                }
-                catch (Exception e)
-                {
-                    return StatusCode(500, e.Message);
-                }
-            }
-            return Ok();
+            ServiceUnavailable();
         }
-        else
-            return StatusCode((int)recordInfoResponse.StatusCode, recordInfoResponse.ReasonPhrase + "Unable to retrieve recordings info");
+
+        byte cnt = byte.Parse(recordingsInfo["cnt"]);
+        string sid = recordingsInfo["sid"];
+
+        for (int i = 0; i < cnt; i++)
+        {
+            string cntStartDateTime = recordingsInfo[$"startTime{i}"];
+            string cntEndDateTime = recordingsInfo[$"endTime{i}"];
+
+            string fileName = $"CAM{chnid + 1}-" +
+                              $"S{UtilityMethods.FormatDate(p.StartDate)}-{UtilityMethods.FormatTime(p.StartTime)}-" +
+                              $"E{UtilityMethods.FormatDate(p.EndDate)}-{UtilityMethods.FormatTime(p.EndTime)}_" +
+                              $"{i + 1}.mp4";
+
+            var isDownloadSuccess = await DownloadRecordingProcess(i, cnt, sid, chnid, cntStartDateTime, cntEndDateTime, fileName);
+            if (!isDownloadSuccess)
+            {
+                ServiceUnavailable();
+            }
+
+            Event currEvent = new()
+            {
+                Channel = chnid,
+                Name = $"Event_{sid}",
+                StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+            };
+
+            var isEventSaved = await SaveEvent(i, currEvent);
+            if (!isEventSaved)
+            {
+                ServiceUnavailable();
+            }
+
+            var recordingSaved = await SaveRecording(cntStartDateTime, cntEndDateTime, fileName, currEvent);
+            if (!recordingSaved)
+            {
+                ServiceUnavailable();
+            }
+        }
+        return Ok();
     }
 
     [Authorize]
@@ -163,5 +94,100 @@ public class VideoCameraController(DataContext context) : ControllerBase
         }
         else
             return BadRequest("Path is null");
+    }
+    private async Task<Dictionary<string, string>> GetRecordingsInfo(byte chnid, SaveRecordingParams p)
+    {
+        Dictionary<string, string> recordingsInfo;
+
+        string url = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={p.StartDate}%20{p.StartTime}&endTime={p.EndDate}%20{p.EndTime}";
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+        "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
+
+        var response = await client.GetAsync(url);
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Failed to get recordings info from the NVR, response code {response.StatusCode}");
+        }
+
+        try
+        {
+            recordingsInfo = UtilityMethods.ParseResponse(content);
+        }
+        catch
+        {
+            return null;
+        }
+        return recordingsInfo;
+    }
+
+    private async Task<bool> DownloadRecordingProcess(int i, byte cnt, string sid, byte chnid, string cntStartDateTime, string cntEndDateTime, string fileName)
+    {
+        string url = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
+
+        Console.WriteLine($"\nDownloading video {i + 1} of {cnt}");
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "curl",
+            Arguments = $"--http1.0 --output {relativeFilePath}{fileName} -u {authenticationString} -v {url}",
+            UseShellExecute = false,
+        };
+
+        var process = new Process { StartInfo = startInfo };
+
+        process.Start();
+        await process.WaitForExitAsync();
+
+        if (i == 0)
+        {
+            var fileInfo = new FileInfo($"{relativeFilePath}{fileName}");
+            if (fileInfo.Length < 50)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private async Task<bool> SaveEvent(int i, Event e)
+    {
+        if (i == 0)
+        {
+            await context.AddAsync(e);
+            await context.SaveChangesAsync();
+
+        }
+        return true;
+    }
+
+    private async Task<bool> SaveRecording(string cntStartDateTime, string cntEndDateTime, string fileName, Event e)
+    {
+        Recording recording = new Recording()
+        {
+            Name = fileName,
+            Path = Path.GetFullPath(relativeFilePath + fileName),
+            Description = "",
+            Size = new FileInfo(relativeFilePath + fileName).Length,
+            StartDateTime = DateTime.ParseExact(cntStartDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+            EndDateTime = DateTime.ParseExact(cntEndDateTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+            Event = e,
+        };
+        recording.Duration = recording.EndDateTime - recording.StartDateTime;
+
+        e?.Recordings?.Add(recording);
+
+        await context.AddAsync(recording);
+        await context.SaveChangesAsync();
+
+        return true;
+    }
+
+    private IActionResult ServiceUnavailable()
+    {
+        Response.Headers.Append("Retry-After", retryTime);
+        return StatusCode(503);
     }
 }
