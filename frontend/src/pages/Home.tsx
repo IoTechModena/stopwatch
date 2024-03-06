@@ -1,14 +1,13 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Toaster } from "../components/Toaster";
 import { VideocameraCard } from "../components/VideoComponents/VideocameraCard";
+import axios from "axios";
 
 interface ChannelData {
   channel: number;
   eventsCount: number;
 }
-
 const savedEventsCount = localStorage.getItem("eventsCount");
 const initialEventsCount = savedEventsCount
   ? JSON.parse(savedEventsCount)
@@ -17,22 +16,21 @@ const initialEventsCount = savedEventsCount
 export const Home = () => {
   const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
   const [eventsCount, setEventsCount] = useState(initialEventsCount);
+  const [cameraLocation, setCameraLocation] = useState<boolean>(true);
 
   const fetchEventsCount = async () => {
-      const response = await axios.get<ChannelData[]>(
-        "api/getEventsCount"
-      );
-      const eventsCountData = response.data;
+    const response = await axios.get<ChannelData[]>("api/getEventsCount");
+    const eventsCountData = response.data;
 
-      const channel0Count =
-        eventsCountData.find((item) => item.channel === 0)?.eventsCount || 0;
-      const channel1Count =
-        eventsCountData.find((item) => item.channel === 1)?.eventsCount || 0;
+    const channel0Count =
+      eventsCountData.find((item) => item.channel === 0)?.eventsCount || 0;
+    const channel1Count =
+      eventsCountData.find((item) => item.channel === 1)?.eventsCount || 0;
 
-      const latestEventsCount = [channel0Count, channel1Count];
-      setEventsCount(latestEventsCount);
+    const latestEventsCount = [channel0Count, channel1Count];
+    setEventsCount(latestEventsCount);
 
-      localStorage.setItem("eventsCount", JSON.stringify(latestEventsCount));
+    localStorage.setItem("eventsCount", JSON.stringify(latestEventsCount));
   };
 
   const checkToken = useCallback(async () => {
@@ -40,6 +38,7 @@ export const Home = () => {
       try {
         await getAccessTokenSilently();
       } catch (error) {
+        setCameraLocation(false);
         logout({
           logoutParams: {
             returnTo: window.location.origin,
@@ -77,6 +76,8 @@ export const Home = () => {
           location={"Descrizione"}
           eventsNum={eventsCount[0]}
           href={"events"}
+          cameraLocation={cameraLocation}
+          setCameraLocation={setCameraLocation}
         />
         <VideocameraCard
           key="2"
@@ -85,6 +86,8 @@ export const Home = () => {
           location={"Descrizione"}
           eventsNum={eventsCount[1]}
           href={"events"}
+          cameraLocation={cameraLocation}
+          setCameraLocation={setCameraLocation}
         />
       </div>
     </>

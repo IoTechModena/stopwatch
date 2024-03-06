@@ -1,9 +1,13 @@
+import { useAuth0 } from "@auth0/auth0-react";
+
 interface VideocameraCardProps {
   title: string;
   channelNum: number;
   location: string;
   eventsNum: number;
   href: string;
+  cameraLocation: boolean;
+  setCameraLocation: (value: boolean) => void;
 }
 
 export const VideocameraCard = ({
@@ -12,7 +16,11 @@ export const VideocameraCard = ({
   location,
   eventsNum,
   href,
+  cameraLocation,
+  setCameraLocation,
 }: VideocameraCardProps) => {
+  const { isAuthenticated } = useAuth0();
+
   return (
     <>
       <div className="max-w-md mx-4 Gelion rounded-xl overflow-hidden shadow-2xl">
@@ -28,10 +36,13 @@ export const VideocameraCard = ({
               Canale: {channelNum}
             </span>
           </div>
-          <p className="font-medium text-md mt-2">
-            📌Location:{" "}
-            <span className="text-gray-500 text-base">{location}</span>
-          </p>
+
+          {cameraLocation && isAuthenticated ? (
+            <p className="font-medium text-md mt-2">
+              📌Location:{" "}
+              <span className="text-gray-500 text-base">{location}</span>
+            </p>
+          ) : null}
           <p className="text-gray-700 mt-8 font-bold text-center">
             Eventi: {eventsNum}
           </p>
