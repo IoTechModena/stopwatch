@@ -7,7 +7,6 @@ interface ChannelData {
   channel: number;
   eventsCount: number;
 }
-
 const savedEventsCount = localStorage.getItem("eventsCount");
 const initialEventsCount = savedEventsCount
   ? JSON.parse(savedEventsCount)
@@ -16,6 +15,7 @@ const initialEventsCount = savedEventsCount
 export const Home = () => {
   const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
   const [eventsCount, setEventsCount] = useState(initialEventsCount);
+  const [cameraLocation, setCameraLocation] = useState<boolean>(true);
 
   const fetchEventsCount = async () => {
     const response = await axios.get<ChannelData[]>("api/getEventsCount");
@@ -37,6 +37,7 @@ export const Home = () => {
       try {
         await getAccessTokenSilently();
       } catch (error) {
+        setCameraLocation(false);
         logout({
           logoutParams: {
             returnTo: window.location.origin,
@@ -72,6 +73,8 @@ export const Home = () => {
           channelNum={0}
           location={"Descrizione"}
           eventsNum={eventsCount[0]}
+          href={"events"}
+          cameraLocation={cameraLocation}
         />
         <VideocameraCard
           key="2"
@@ -79,6 +82,8 @@ export const Home = () => {
           channelNum={1}
           location={"Descrizione"}
           eventsNum={eventsCount[1]}
+          href={"events"}
+          cameraLocation={cameraLocation}
         />
       </div>
     </>
