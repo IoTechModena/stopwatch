@@ -1,13 +1,14 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Outlet, Route, Routes } from "react-router-dom";
-import BeatLoader from "react-spinners/BeatLoader";
-import "./App.css";
 import { Navbar } from "./components/Navbar";
-import { ToasterProvider } from "./context/ToasterContext";
-import "./fonts.css";
+import { ChannelContext } from "./context/ChannelContext";
 import { AuthenticationGuard } from "./lib/AuthGuard";
 import { EventList } from "./pages/EventList";
 import { Home } from "./pages/Home";
+import React from "react";
+import "./fonts.css";
+import BeatLoader from "react-spinners/BeatLoader";
+import "./App.css";
 
 const Layout = () => (
   <>
@@ -18,6 +19,10 @@ const Layout = () => (
 
 export const App = () => {
   const { isLoading } = useAuth0();
+  const [selectedChannel, setSelectedChannel] = React.useState<number | null>(
+    null
+  );
+
   if (isLoading) {
     return (
       <>
@@ -31,7 +36,7 @@ export const App = () => {
   }
 
   return (
-    <ToasterProvider>
+    <ChannelContext.Provider value={{ selectedChannel, setSelectedChannel }}>
       <Routes>
         <Route path="" element={<Layout />}>
           <Route
@@ -42,7 +47,7 @@ export const App = () => {
         </Route>
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
-    </ToasterProvider>
+    </ChannelContext.Provider>
   );
 };
 

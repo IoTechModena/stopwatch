@@ -1,4 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { ChannelContext } from "@/context/ChannelContext";
+import { Link } from "react-router-dom";
+import React from "react";
 
 interface VideocameraCardProps {
   title: string;
@@ -17,8 +20,13 @@ export const VideocameraCard = ({
   href,
   cameraLocation,
 }: VideocameraCardProps) => {
-  const { isAuthenticated } = useAuth0();
 
+}: VideocameraCardProps) => {
+  const { isAuthenticated } = useAuth0();
+  const { setSelectedChannel } = React.useContext(ChannelContext);
+  const handleClick = () => {
+    setSelectedChannel(channelNum);
+  };
   return (
     <>
       <div className="max-w-md mx-4 Gelion rounded-xl overflow-hidden shadow-2xl">
@@ -45,11 +53,11 @@ export const VideocameraCard = ({
             Eventi: {eventsNum}
           </p>
           <hr className="mt-3 my-5" />
-          <a href={href}>
+          <Link to="/events" onClick={handleClick}>
             <button className="bg-yellow-500 mb-1 w-full hover:bg-yellow-400 font-bold py-2 px-4 rounded-lg">
               Registrazioni
             </button>
-          </a>
+          </Link>
         </div>
       </div>
     </>

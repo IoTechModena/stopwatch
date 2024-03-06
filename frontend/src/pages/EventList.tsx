@@ -1,12 +1,13 @@
 import { formatDateTime } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
-import BeatLoader from "react-spinners/BeatLoader";
+import { ChannelContext } from "@/context/ChannelContext";
 import { Alert } from "../components/Alert";
 import { EventHeader } from "../components/EventHeader";
 import { Searchbox } from "../components/Searchbox";
 import { VideoCard } from "../components/VideoComponents/VideoCard";
 import { VideoCardsCarousel } from "../components/VideoComponents/VideoCardsCarousel";
 import { useAuthAxios } from "../hooks/useAuthAxios";
+import React, { useEffect, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
 
 interface Recording {
   id: number;
@@ -37,6 +38,7 @@ export const EventList = () => {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const searchFields = ["name", "startDateTime", "endDateTime"] as const;
   const { axiosInstance: authAxios } = useAuthAxios();
+  const { selectedChannel } = React.useContext(ChannelContext);
 
   useEffect(() => {
     const getEvents = async () => {
@@ -66,13 +68,18 @@ export const EventList = () => {
   useEffect(() => {
     const lowerCaseSearchInput = searchInput.toLowerCase().trim();
     const filtered = eventList.filter((event) => {
-      return searchFields.some((field) => {
+      const matchesSearchInput = searchFields.some((field) => {
         const value = event[field].toString().toLowerCase();
         return value.includes(lowerCaseSearchInput);
       });
+
+      const matchesSelectedChannel =
+        selectedChannel === null || event.channel === selectedChannel;
+
+      return matchesSearchInput && matchesSelectedChannel;
     });
     setFilteredEvents(filtered);
-  }, [searchInput, eventList]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchInput, selectedChannel, eventList]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (error) {
     return (
@@ -91,7 +98,7 @@ export const EventList = () => {
     );
   }
 
-  if (eventList.length === 0 && !loading) {
+  if (filteredEvents.length === 0 && !loading) {
     return (
       <>
         <Searchbox
