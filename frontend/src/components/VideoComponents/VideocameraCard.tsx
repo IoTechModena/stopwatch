@@ -17,10 +17,7 @@ export const VideocameraCard = ({
   channelNum,
   location,
   eventsNum,
-  href,
   cameraLocation,
-}: VideocameraCardProps) => {
-
 }: VideocameraCardProps) => {
   const { isAuthenticated } = useAuth0();
   const { setSelectedChannel } = React.useContext(ChannelContext);
