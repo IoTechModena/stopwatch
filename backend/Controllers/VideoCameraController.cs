@@ -13,11 +13,11 @@ namespace backend.Controllers;
 [ApiController]
 public class VideoCameraController(DataContext context) : ControllerBase
 {
-    readonly string authenticationString = "admin:mutina23";
+    private readonly string authenticationString = "admin:mutina23";
     private readonly string ip = "151.78.228.229";
     private readonly string retryTime = "60";
-    private string relativeFilePath = $"./public/recordings/";
-    readonly HttpClient client = new();
+    private readonly string relativeFilePath = $"./public/recordings/";
+    private readonly HttpClient client = new();
     private readonly DataContext context = context;
 
     [HttpPost("saveRecording/{chnid}")]
