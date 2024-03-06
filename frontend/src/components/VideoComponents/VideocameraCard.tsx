@@ -7,7 +7,6 @@ interface VideocameraCardProps {
   eventsNum: number;
   href: string;
   cameraLocation: boolean;
-  setCameraLocation: (value: boolean) => void;
 }
 
 export const VideocameraCard = ({
@@ -17,7 +16,6 @@ export const VideocameraCard = ({
   eventsNum,
   href,
   cameraLocation,
-  setCameraLocation,
 }: VideocameraCardProps) => {
   const { isAuthenticated } = useAuth0();
 
