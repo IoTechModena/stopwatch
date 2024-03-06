@@ -1,32 +1,34 @@
-import { useMenu } from "@/hooks/useMenu";
 import { useAuth0 } from "@auth0/auth0-react";
-import LoginButton from "./AuthComponents/LoginButton";
-import LogoutButton from "./AuthComponents/LogoutButton";
-import Profile from "./AuthComponents/Profile";
 import { RegisterButton } from "./AuthComponents/RegisterButton";
 import { LogoComponent } from "./LogoComponent";
 import { useRef } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import LoginButton from "./AuthComponents/LoginButton";
+import LogoutButton from "./AuthComponents/LogoutButton";
+import Profile from "./AuthComponents/Profile";
 
 export const Navbar = () => {
   const { isAuthenticated } = useAuth0();
-  const { isMenuOpen, toggleMenu, closeMenu } = useMenu();
   const menuRef = useRef<HTMLDivElement>(null);
-  useClickOutside(menuRef, closeMenu);
-
+  const [isMenuOpen, setIsMenuOpen] = useClickOutside(menuRef, () => {});
+  //menuRef viene passato al hook che intanto spacchetta isMenuOpen e setIsMenuOpen
+  //() => {} perchè nel caso di navbar quando chiudiamo il menu non succede nulla, oltre a chiudere il menu
   return (
     <header className="text-white bg-[#112d4e] Gelion">
       <nav className="font-bold flex justify-start items-center h-16 px-4 md:px-[8%]">
         <LogoComponent />
         {/*MOBILE-MENU */}
         <section
-          ref={menuRef}
+          ref={menuRef} //clickOutside controlla questo div
           className="z-10 md:hidden absolute top-2 right-2 flex-col rounded-lg"
         >
           <div className="flex mt-1">
             <Profile />
             {/*il nome sarebbe dropdown menu*/}
-            <button className="rounded-lg px-4 py-2 mx-4" onClick={toggleMenu}>
+            <button
+              className="rounded-lg px-4 py-2 mx-4"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
               <i
                 className={` ${
                   isMenuOpen ? "fa-solid fa-x px-[1px]" : "fa-solid fa-bars"

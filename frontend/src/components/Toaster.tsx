@@ -1,5 +1,5 @@
+import { useToaster } from "@/hooks/useToaster";
 import React from "react";
-import { useToaster } from "../hooks/useToaster";
 
 export const Toaster: React.FC = () => {
   const { toasterMessage, isToasterVisible } = useToaster();

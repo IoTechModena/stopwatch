@@ -1,5 +1,5 @@
-import { useAuthAxios } from "../hooks/useAuthAxios";
-import { formatBytes } from "../lib/utils";
+import { useAuthAxios } from "@/hooks/useAuthAxios";
+import { formatBytes } from "@/lib/utils";
 
 export const DownloadButton = (props: {
   videoSize: number;
