@@ -156,9 +156,15 @@ public class VideoCameraController(DataContext context) : ControllerBase
     {
         if (i == 0)
         {
-            await context.AddAsync(e);
-            await context.SaveChangesAsync();
-
+            try
+            {
+                await context.AddAsync(e);
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -176,11 +182,17 @@ public class VideoCameraController(DataContext context) : ControllerBase
             Event = e,
         };
         recording.Duration = recording.EndDateTime - recording.StartDateTime;
-
         e?.Recordings?.Add(recording);
 
-        await context.AddAsync(recording);
-        await context.SaveChangesAsync();
+        try
+        {
+            await context.AddAsync(recording);
+            await context.SaveChangesAsync();
+        }
+        catch
+        {
+            return false;
+        }
 
         return true;
     }
