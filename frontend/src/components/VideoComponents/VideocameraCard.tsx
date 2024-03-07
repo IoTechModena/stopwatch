@@ -8,7 +8,6 @@ interface VideocameraCardProps {
   channelNum: number;
   location: string;
   eventsNum: number;
-  href: string;
   cameraLocation: boolean;
 }
 
