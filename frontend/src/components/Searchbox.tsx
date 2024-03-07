@@ -5,7 +5,7 @@ interface SearchboxProps {
   searchInput: string;
   setSearchInput: (input: string) => void;
 }
-// Ho modificato la const per renderla Typescript friendly, facciamolo sempre per evitare errori di compilazione
+
 export const Searchbox: React.FC<SearchboxProps> = ({
   searchInput,
   setSearchInput,
@@ -17,9 +17,8 @@ export const Searchbox: React.FC<SearchboxProps> = ({
     event.preventDefault();
   };
 
-  //ho sostituito il value stringa con number onde evitare una conversione
   const handleSelectChange = (value: number) => {
-    setSelectedChannel(Number(value));
+    setSelectedChannel(value);
     setIsDropdownOpen(false);
   };
 
@@ -39,8 +38,7 @@ export const Searchbox: React.FC<SearchboxProps> = ({
             placeholder="Che evento stai cercando?"
             name="search-box"
           />
-
-          {/* Il select è stato sostituito da un dropdown */}
+          
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
