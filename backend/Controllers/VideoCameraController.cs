@@ -34,6 +34,14 @@ public class VideoCameraController(DataContext context) : ControllerBase
         byte cnt = byte.Parse(recordingsInfo["cnt"]);
         string sid = recordingsInfo["sid"];
 
+        Event currEvent = new()
+        {
+            Channel = chnid,
+            Name = $"Event_{sid}",
+            StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+            EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+        };
+        
         for (int i = 0; i < cnt; i++)
         {
             string cntStartDateTime = recordingsInfo[$"startTime{i}"];
@@ -49,18 +57,13 @@ public class VideoCameraController(DataContext context) : ControllerBase
                 return ServiceUnavailable();
             }
 
-            Event currEvent = new()
+            if (i == 0)
             {
-                Channel = chnid,
-                Name = $"Event_{sid}",
-                StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-                EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-            };
-
-            var isEventSaved = await SaveEvent(i, currEvent);
-            if (!isEventSaved)
-            {
-                return ServiceUnavailable();
+                var isEventSaved = await SaveEvent(currEvent);
+                if (!isEventSaved)
+                {
+                    return ServiceUnavailable();
+                }
             }
 
             var recordingSaved = await SaveRecording(cntStartDateTime, cntEndDateTime, fileName, currEvent);
@@ -159,19 +162,16 @@ public class VideoCameraController(DataContext context) : ControllerBase
         return true;
     }
 
-    private async Task<bool> SaveEvent(int i, Event e)
+    private async Task<bool> SaveEvent(Event e)
     {
-        if (i == 0)
+        try
         {
-            try
-            {
-                await context.AddAsync(e);
-                await context.SaveChangesAsync();
-            }
-            catch
-            {
-                return false;
-            }
+            await context.AddAsync(e);
+            await context.SaveChangesAsync();
+        }
+        catch
+        {
+            return false;
         }
         return true;
     }
