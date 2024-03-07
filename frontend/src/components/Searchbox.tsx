@@ -17,7 +17,7 @@ export const Searchbox: React.FC<SearchboxProps> = ({
     event.preventDefault();
   };
 
-  const handleSelectChange = (value: number) => {
+  const handleSelectChange = (value: number | null) => {
     setSelectedChannel(value);
     setIsDropdownOpen(false);
   };
@@ -38,18 +38,24 @@ export const Searchbox: React.FC<SearchboxProps> = ({
             placeholder="Che evento stai cercando?"
             name="search-box"
           />
-          
+
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="shadow-xl bg-gray-400 text-sm rounded-lg h-14 w-24 hover:bg-gray-300"
             >
-              {selectedChannel !== undefined && selectedChannel !== null
-                ? `Canale: ${selectedChannel}`
-                : "Seleziona il canale"}
+              {selectedChannel === null
+                ? "Tutti"
+                : `Canale: ${selectedChannel}`}
             </button>
             {isDropdownOpen && (
               <ul className="absolute z-10 mt-2 w-full bg-gray-400 shadow-lg rounded-md text-center">
+                <li
+                  className="my-2 hover:bg-gray-300 rounded-lg py-1"
+                  onClick={() => handleSelectChange(null)}
+                >
+                  Tutti i canali
+                </li>
                 <li
                   className="my-2 hover:bg-gray-300 rounded-lg py-1"
                   onClick={() => handleSelectChange(0)}
