@@ -149,7 +149,7 @@ export const EventList = () => {
               />
             ))}
           </VideoCardsCarousel>
-          {index !== eventList.length - 1 && (
+          {index !== filteredEvents.length - 1 && (
             <hr className="lg:mx-20 md:mx-10 sm:mx-5 mb-10 mt-10" />
           )}
         </React.Fragment>
