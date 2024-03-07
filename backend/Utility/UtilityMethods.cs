@@ -30,12 +30,7 @@ public static class UtilityMethods
             if (parts.Length == 2)
                 values[parts[0]] = parts[1];
         }
-
-        if (values.Count == 1)
-        {
-            throw new Exception("The response is empty");
-        }
-
+        
         return values;
     }
 }

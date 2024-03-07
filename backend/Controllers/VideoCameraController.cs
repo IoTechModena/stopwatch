@@ -5,8 +5,10 @@ using System.Text;
 using System.Globalization;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using backend.Models;
 using backend.Utility;
+
 
 namespace backend.Controllers;
 
@@ -24,9 +26,9 @@ public class VideoCameraController(DataContext context) : ControllerBase
     public async Task<IActionResult> SaveEventAndRecordings([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
         var recordingsInfo = await GetRecordingsInfo(chnid, p);
-        if (recordingsInfo == null)
+        if (recordingsInfo.IsNullOrEmpty())
         {
-            ServiceUnavailable();
+            return ServiceUnavailable();
         }
 
         byte cnt = byte.Parse(recordingsInfo["cnt"]);
@@ -38,14 +40,13 @@ public class VideoCameraController(DataContext context) : ControllerBase
             string cntEndDateTime = recordingsInfo[$"endTime{i}"];
 
             string fileName = $"CAM{chnid + 1}-" +
-                              $"S{UtilityMethods.FormatDate(p.StartDate)}-{UtilityMethods.FormatTime(p.StartTime)}-" +
-                              $"E{UtilityMethods.FormatDate(p.EndDate)}-{UtilityMethods.FormatTime(p.EndTime)}_" +
+                              $"{sid}_" +
                               $"{i + 1}.mp4";
 
             var isDownloadSuccess = await DownloadRecordingProcess(i, cnt, sid, chnid, cntStartDateTime, cntEndDateTime, fileName);
             if (!isDownloadSuccess)
             {
-                ServiceUnavailable();
+                return ServiceUnavailable();
             }
 
             Event currEvent = new()
@@ -59,13 +60,13 @@ public class VideoCameraController(DataContext context) : ControllerBase
             var isEventSaved = await SaveEvent(i, currEvent);
             if (!isEventSaved)
             {
-                ServiceUnavailable();
+                return ServiceUnavailable();
             }
 
             var recordingSaved = await SaveRecording(cntStartDateTime, cntEndDateTime, fileName, currEvent);
             if (!recordingSaved)
             {
-                ServiceUnavailable();
+                return ServiceUnavailable();
             }
         }
         return Ok();
@@ -97,30 +98,37 @@ public class VideoCameraController(DataContext context) : ControllerBase
     }
     private async Task<Dictionary<string, string>> GetRecordingsInfo(byte chnid, SaveRecordingParams p)
     {
-        Dictionary<string, string> recordingsInfo;
+        Dictionary<string, string> d;
 
         string url = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={p.StartDate}%20{p.StartTime}&endTime={p.EndDate}%20{p.EndTime}";
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
         "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
 
-        var response = await client.GetAsync(url);
-        var content = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception($"Failed to get recordings info from the NVR, response code {response.StatusCode}");
-        }
-
         try
         {
-            recordingsInfo = UtilityMethods.ParseResponse(content);
+            var response = await client.GetAsync(url);
+            var content = await response.Content.ReadAsStringAsync();
+
+            d = UtilityMethods.ParseResponse(content);
+
+            Console.WriteLine("\nKeys and values of the recordings info response:");
+            foreach (var pair in d)
+            {
+                Console.WriteLine($"{pair.Key}: {pair.Value}");
+            }
         }
         catch
         {
-            return null;
+            d = new();
         }
-        return recordingsInfo;
+
+        if (d.Count > 0 && (!d.ContainsKey("cnt") || !d.ContainsKey("sid")))
+        {
+            d.Clear();
+        }
+
+        return d;
     }
 
     private async Task<bool> DownloadRecordingProcess(int i, byte cnt, string sid, byte chnid, string cntStartDateTime, string cntEndDateTime, string fileName)
@@ -141,14 +149,13 @@ public class VideoCameraController(DataContext context) : ControllerBase
         process.Start();
         await process.WaitForExitAsync();
 
-        if (i == 0)
+        var fileInfo = new FileInfo($"{relativeFilePath}{fileName}");
+        if (fileInfo.Length < 50)
         {
-            var fileInfo = new FileInfo($"{relativeFilePath}{fileName}");
-            if (fileInfo.Length < 50)
-            {
-                return false;
-            }
+            fileInfo.Delete();
+            return false;
         }
+
         return true;
     }
 
