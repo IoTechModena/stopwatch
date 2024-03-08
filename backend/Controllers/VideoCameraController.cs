@@ -5,7 +5,6 @@ using System.Text;
 using System.Globalization;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
 using backend.Models;
 using backend.Utility;
 
@@ -15,6 +14,7 @@ namespace backend.Controllers;
 [ApiController]
 public class VideoCameraController(DataContext context) : ControllerBase
 {
+    private static bool isBusy;
     private readonly string authenticationString = "admin:mutina23";
     private readonly string ip = "151.78.228.229";
     private readonly string retryTime = "60";
@@ -25,52 +25,70 @@ public class VideoCameraController(DataContext context) : ControllerBase
     [HttpPost("saveRecording/{chnid}")]
     public async Task<IActionResult> SaveEventAndRecordings([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
-        var recordingsInfo = await GetRecordingsInfo(chnid, p);
-        if (recordingsInfo.IsNullOrEmpty())
+        if (isBusy)
         {
-            return ServiceUnavailable();
+            return ServiceBusy();
         }
 
-        byte cnt = byte.Parse(recordingsInfo["cnt"]);
-        string sid = recordingsInfo["sid"];
-
-        Event currEvent = new()
+        isBusy = true;
+        try
         {
-            Channel = chnid,
-            Name = $"Event_{sid}",
-            StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-            EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
-        };
-        
-        for (int i = 0; i < cnt; i++)
-        {
-            string cntStartDateTime = recordingsInfo[$"startTime{i}"];
-            string cntEndDateTime = recordingsInfo[$"endTime{i}"];
-
-            string fileName = $"CAM{chnid + 1}-" +
-                              $"{sid}_" +
-                              $"{i + 1}.mp4";
-
-            var isDownloadSuccess = await DownloadRecordingProcess(i, cnt, sid, chnid, cntStartDateTime, cntEndDateTime, fileName);
-            if (!isDownloadSuccess)
+            var recordingsInfo = await GetRecordingsInfo(chnid, p);
+            if (recordingsInfo == null)
             {
-                return ServiceUnavailable();
+                return ServiceUnavailable("The NVR is unreachable.");
+
+            }
+            else if (recordingsInfo.Count == 0)
+            {
+                return ServiceUnavailable("The NVR response is not valid.");
             }
 
-            if (i == 0)
+            byte cnt = byte.Parse(recordingsInfo["cnt"]);
+            string sid = recordingsInfo["sid"];
+
+            Event currEvent = new()
             {
-                var isEventSaved = await SaveEvent(currEvent);
-                if (!isEventSaved)
+                Channel = chnid,
+                Name = $"Event_{sid}",
+                StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+                EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
+            };
+            for (int i = 0; i < cnt; i++)
+            {
+                string cntStartDateTime = recordingsInfo[$"startTime{i}"];
+                string cntEndDateTime = recordingsInfo[$"endTime{i}"];
+                int expectedSize = int.Parse(recordingsInfo[$"size{i}"]);
+
+                string fileName = $"CAM{chnid + 1}-" +
+                                  $"{sid}_" +
+                                  $"{i + 1}.mp4";
+
+                var isDownloadSuccess = await DownloadRecordingProcess(i, cnt, sid, chnid, cntStartDateTime, cntEndDateTime, fileName, expectedSize);
+                if (!isDownloadSuccess)
                 {
-                    return ServiceUnavailable();
+                    return ServiceUnavailable("There was an error while downloading a recording from the NVR.");
+                }
+
+                if (i == 0)
+                {
+                    var isEventSaved = await SaveEvent(currEvent);
+                    if (!isEventSaved)
+                    {
+                        return ServiceUnavailable("There was an error while saving the Event.");
+                    }
+                }
+
+                var isRecordingSaved = await SaveRecording(cntStartDateTime, cntEndDateTime, fileName, currEvent);
+                if (!isRecordingSaved)
+                {
+                    return ServiceUnavailable("There was an error while saving a Recording.");
                 }
             }
-
-            var recordingSaved = await SaveRecording(cntStartDateTime, cntEndDateTime, fileName, currEvent);
-            if (!recordingSaved)
-            {
-                return ServiceUnavailable();
-            }
+        }
+        finally
+        {
+            isBusy = false;
         }
         return Ok();
     }
@@ -123,18 +141,17 @@ public class VideoCameraController(DataContext context) : ControllerBase
         }
         catch
         {
-            d = new();
+            return null;
         }
 
-        if (d.Count > 0 && (!d.ContainsKey("cnt") || !d.ContainsKey("sid")))
+        if (!d.ContainsKey("sid"))
         {
             d.Clear();
         }
-
         return d;
     }
 
-    private async Task<bool> DownloadRecordingProcess(int i, byte cnt, string sid, byte chnid, string cntStartDateTime, string cntEndDateTime, string fileName)
+    private async Task<bool> DownloadRecordingProcess(int i, byte cnt, string sid, byte chnid, string cntStartDateTime, string cntEndDateTime, string fileName, int expectedSize)
     {
         string url = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}".Replace(" ", "%20");
 
@@ -153,12 +170,13 @@ public class VideoCameraController(DataContext context) : ControllerBase
         await process.WaitForExitAsync();
 
         var fileInfo = new FileInfo($"{relativeFilePath}{fileName}");
-        if (fileInfo.Length < 50)
+
+        Console.WriteLine($"\n Actual size: {fileInfo.Length} - Expected size: {expectedSize}");
+        if (fileInfo.Length < expectedSize)
         {
             fileInfo.Delete();
             return false;
         }
-
         return true;
     }
 
@@ -200,13 +218,20 @@ public class VideoCameraController(DataContext context) : ControllerBase
         {
             return false;
         }
-
         return true;
     }
 
-    private IActionResult ServiceUnavailable()
+    private IActionResult ServiceBusy()
     {
         Response.Headers.Append("Retry-After", retryTime);
-        return StatusCode(503);
+        return StatusCode(503, "Another request is being processed right now.");
     }
+
+    private IActionResult ServiceUnavailable(string m)
+    {
+        Response.Headers.Append("Retry-After", retryTime);
+        isBusy = false;
+        return StatusCode(503, "Service Unavailable: " + m);
+    }
+
 }
