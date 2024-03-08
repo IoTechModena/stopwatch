@@ -1,5 +1,6 @@
-import { useState, useContext } from "react";
+import { useContext, useRef } from "react";
 import { ChannelContext } from "@/context/ChannelContext";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 <i className="fa-solid fa-caret-down"></i>;
 
@@ -13,7 +14,6 @@ export const Searchbox: React.FC<SearchboxProps> = ({
   setSearchInput,
 }) => {
   const { selectedChannel, setSelectedChannel } = useContext(ChannelContext);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -21,8 +21,10 @@ export const Searchbox: React.FC<SearchboxProps> = ({
 
   const handleSelectChange = (value: number | null) => {
     setSelectedChannel(value);
-    setIsDropdownOpen(false);
   };
+
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useClickOutside(menuRef, () => {});
 
   return (
     <>
@@ -41,9 +43,9 @@ export const Searchbox: React.FC<SearchboxProps> = ({
             name="search-box"
           />
 
-          <div className="relative">
+          <div ref={menuRef} className="relative">
             <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="shadow-xl bg-gray-400 text-sm rounded-lg h-14 w-24 hover:bg-gray-300"
             >
               {selectedChannel === null
@@ -51,14 +53,14 @@ export const Searchbox: React.FC<SearchboxProps> = ({
                 : `Canale: ${selectedChannel}`}
               <i
                 className={` ${
-                  isDropdownOpen
+                  isMenuOpen
                     ? "fa-solid fa-caret-up pl-1"
                     : "fa-solid fa-caret-down pl-1"
                 }`}
               ></i>
             </button>
 
-            {isDropdownOpen && (
+            {isMenuOpen && (
               <ul className="absolute z-10 mt-2 w-full bg-gray-400 shadow-lg rounded-md text-center">
                 <li
                   className="my-2 hover:bg-gray-300 rounded-lg py-1"
