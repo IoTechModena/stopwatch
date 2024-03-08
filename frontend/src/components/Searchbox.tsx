@@ -1,6 +1,8 @@
 import { useState, useContext } from "react";
 import { ChannelContext } from "@/context/ChannelContext";
 
+<i className="fa-solid fa-caret-down"></i>;
+
 interface SearchboxProps {
   searchInput: string;
   setSearchInput: (input: string) => void;
@@ -47,14 +49,22 @@ export const Searchbox: React.FC<SearchboxProps> = ({
               {selectedChannel === null
                 ? "Tutti"
                 : `Canale: ${selectedChannel}`}
+              <i
+                className={` ${
+                  isDropdownOpen
+                    ? "fa-solid fa-caret-up pl-1"
+                    : "fa-solid fa-caret-down pl-1"
+                }`}
+              ></i>
             </button>
+
             {isDropdownOpen && (
               <ul className="absolute z-10 mt-2 w-full bg-gray-400 shadow-lg rounded-md text-center">
                 <li
                   className="my-2 hover:bg-gray-300 rounded-lg py-1"
                   onClick={() => handleSelectChange(null)}
                 >
-                  Tutti i canali
+                  Tutti
                 </li>
                 <li
                   className="my-2 hover:bg-gray-300 rounded-lg py-1"
