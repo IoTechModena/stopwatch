@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using backend.Models;
 using backend.Utility;
 
-
 namespace backend.Controllers;
 
 [ApiController]
@@ -117,6 +116,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
         else
             return BadRequest("Path is null");
     }
+    
     private async Task<Dictionary<string, string>> GetRecordingsInfo(byte chnid, SaveRecordingParams p)
     {
         Dictionary<string, string> d;
@@ -233,5 +233,4 @@ public class VideoCameraController(DataContext context) : ControllerBase
         isBusy = false;
         return StatusCode(503, "Service Unavailable: " + m);
     }
-
 }
