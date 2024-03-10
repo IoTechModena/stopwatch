@@ -14,6 +14,7 @@ namespace backend.Controllers;
 public class VideoCameraController(DataContext context) : ControllerBase
 {
     private static bool isBusy;
+    private readonly string apiKey = "hnGFNkAHFtB2ubQSaz3whHNgXwN2f4fcT3F3rdjMZ2HCLIGl8dcWBpoKDjx2pAb89lKxubJFdMvIrMLKq84zrweP3qjoztbTFJ0nVuTHzmHsMhiY78LvXxYL2ZLRhSnb";
     private readonly string authenticationString = "admin:mutina23";
     private readonly string ip = "151.78.228.229";
     private readonly string retryTime = "60";
@@ -22,8 +23,18 @@ public class VideoCameraController(DataContext context) : ControllerBase
     private readonly DataContext context = context;
 
     [HttpPost("saveRecording/{chnid}")]
-    public async Task<IActionResult> SaveEventAndRecordings([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
+    public async Task<IActionResult> SaveEventAndRecordings([FromHeader(Name = "Authorization")] string apiKey, [FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
+        bool? apiKeyCheck = CheckApiKey(apiKey);
+        if (apiKeyCheck == null)
+        {
+            return BadRequest("The Authorization header value does not start with 'APIKey '");
+        }
+        else if (apiKeyCheck == false)
+        {
+            return Unauthorized();
+        }
+
         if (isBusy)
         {
             return ServiceBusy();
@@ -116,7 +127,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
         else
             return BadRequest("Path is null");
     }
-    
+
     private async Task<Dictionary<string, string>> GetRecordingsInfo(byte chnid, SaveRecordingParams p)
     {
         Dictionary<string, string> d;
@@ -232,5 +243,19 @@ public class VideoCameraController(DataContext context) : ControllerBase
         Response.Headers.Append("Retry-After", retryTime);
         isBusy = false;
         return StatusCode(503, "Service Unavailable: " + m);
+    }
+
+    private bool? CheckApiKey(string userApiKey)
+    {
+        const string prefix = "APIKey ";
+        if (!userApiKey.StartsWith(prefix))
+        {
+            return null;
+        }
+        else if (!userApiKey.Substring(prefix.Length).Equals(apiKey))
+        {
+            return false;
+        }
+        return true;
     }
 }
