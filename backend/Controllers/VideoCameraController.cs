@@ -23,14 +23,9 @@ public class VideoCameraController(DataContext context) : ControllerBase
     private readonly DataContext context = context;
 
     [HttpPost("saveRecording/{chnid}")]
-    public async Task<IActionResult> SaveEventAndRecordings([FromHeader(Name = "Authorization")] string apiKey, [FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
+    public async Task<IActionResult> SaveEventAndRecordings([FromHeader(Name = "X-API-Key")] string apiKey, [FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
-        bool? apiKeyCheck = CheckApiKey(apiKey);
-        if (apiKeyCheck == null)
-        {
-            return BadRequest("The Authorization header value does not start with 'APIKey '");
-        }
-        else if (apiKeyCheck == false)
+        if (!CheckApiKey(apiKey))
         {
             return Unauthorized();
         }
@@ -245,14 +240,9 @@ public class VideoCameraController(DataContext context) : ControllerBase
         return StatusCode(503, "Service Unavailable: " + m);
     }
 
-    private bool? CheckApiKey(string userApiKey)
+    private bool CheckApiKey(string userApiKey)
     {
-        const string prefix = "APIKey ";
-        if (!userApiKey.StartsWith(prefix))
-        {
-            return null;
-        }
-        else if (!userApiKey.Substring(prefix.Length).Equals(apiKey))
+        if (!userApiKey.Equals(apiKey))
         {
             return false;
         }
