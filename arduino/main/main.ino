@@ -7,16 +7,23 @@
 const uint8_t buttonPin = 0;
 const char* ssid = "<ssid>";
 const char* password = "<password>";
+const uint16_t debounceDelay = 300;
 const char* fingerprint = "4E:88:C3:74:00:53:62:98:74:59:98:E1:FF:E5:5B:7C:50:01:8B:AB";
 const uint16_t requestTimeout = 65535;
 const char* host = "stopwatch.cloudside.it";
 const uint16_t port = 443;
 const char* uri = "/api/saveRecording/0";
-const char* headerKeys[] = { "retry-after" };
+const char* APIKey = "hnGFNkAHFtB2ubQSaz3whHNgXwN2f4fcT3F3rdjMZ2HCLIGl8dcWBpoKDjx2pAb89lKxubJFdMvIrMLKq84zrweP3qjoztbTFJ0nVuTHzmHsMhiY78LvXxYL2ZLRhSnb";
+const char* headerKeys[] = { "Retry-After" };
 const size_t headerKeysCount = 1;
+const uint8_t defaultRetryAfter = 60;
+
+bool wasClicked = false;
+String parameters;
+struct tm timeinfo;
 
 void setup() {
-  pinMode(buttonPin, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
   Serial.begin(9600);
   WiFi.mode(WIFI_STA);
 
@@ -35,39 +42,57 @@ void setup() {
 }
 
 void loop() {
-  const int buttonStatus = digitalRead(buttonPin);
+  const int buttonState = digitalRead(buttonPin);
 
-  if (WiFi.status() == WL_CONNECTED) {
-    String parameters;
-    struct tm timeinfo;
+  if (buttonState == LOW && wasClicked == false) {
+    delay(debounceDelay);
 
-    parameters += uri;
-    parameters += getStartDateTime(&timeinfo);
-    delay(5000);
-    parameters += getEndDateTime(&timeinfo);
-
-    WiFiClientSecure wifiClient;
-    wifiClient.setFingerprint(fingerprint);
-
-    HTTPClient httpClient;
-    httpClient.setTimeout(requestTimeout);
-
-    if (httpClient.begin(wifiClient, host, port, parameters)) {
-      httpClient.collectHeaders(headerKeys, headerKeysCount);
-
-      Serial.printf("POST https://%s", host);
-      Serial.println(parameters);
-
-      const int httpCode = httpClient.POST("");
-      const String retryAfter = httpClient.header("retry-after");
-      httpClient.end();
-
-      Serial.printf("Response: %d\n", httpCode);
-    } else {
-      Serial.println("HTTP Client error");
+    if (buttonState == LOW) {
+      parameters = uri;
+      parameters += getStartDateTime(&timeinfo);
+      wasClicked = true;
     }
+  }
 
-  } else {
-    Serial.println("WiFi not connected");
+  if (buttonState == HIGH && wasClicked == true) {
+    delay(debounceDelay);
+
+    if (buttonState == HIGH) {
+      int httpCode;
+
+      parameters += getEndDateTime(&timeinfo);
+
+      WiFiClientSecure wifiClient;
+      wifiClient.setFingerprint(fingerprint);
+
+      HTTPClient httpClient;
+      httpClient.setTimeout(requestTimeout);
+
+      do {
+        uint8_t retryAfter;
+
+        httpClient.begin(wifiClient, host, port, parameters);
+        httpClient.addHeader("X-API-Key", APIKey);
+        httpClient.collectHeaders(headerKeys, headerKeysCount);
+
+        Serial.printf("POST https://%s", host);
+        Serial.print(parameters);
+
+        httpCode = httpClient.POST("");
+        retryAfter = httpClient.header("Retry-After").toInt();
+        Serial.println(httpClient.getString());
+        httpClient.end();
+
+        Serial.printf("Response: %d\n", httpCode);
+
+        if (httpCode == HTTP_CODE_SERVICE_UNAVAILABLE) {
+          retryAfter = retryAfter ? retryAfter : defaultRetryAfter;
+          delay(retryAfter * 1000);
+        }
+
+      } while (httpCode == HTTP_CODE_SERVICE_UNAVAILABLE);
+
+      wasClicked = false;
+    }
   }
 }
