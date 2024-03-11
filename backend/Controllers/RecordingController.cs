@@ -11,7 +11,7 @@ using backend.Utility;
 namespace backend.Controllers;
 
 [ApiController]
-public class VideoCameraController(DataContext context) : ControllerBase
+public class RecordingController(DataContext context) : ControllerBase
 {
     private static bool isBusy;
     private readonly string authenticationString = "admin:mutina23";
@@ -48,7 +48,7 @@ public class VideoCameraController(DataContext context) : ControllerBase
 
             Event currEvent = new()
             {
-                Channel = chnid,
+                CameraId = chnid,
                 Name = $"Event_{sid}",
                 StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
                 EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),

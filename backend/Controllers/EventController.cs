@@ -25,21 +25,6 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("getEventsCount")]
-        public async Task<IActionResult> GetEventsCount()
-        {
-            try
-            {
-                var eventsCount = await context.Events
-                .GroupBy(e => e.Channel)
-                .Select(g => new { Channel = g.Key, EventsCount = g.Count() })
-                .ToListAsync();
-                return Ok(eventsCount);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
-        }
+      
     }
 }

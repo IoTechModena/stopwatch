@@ -7,4 +7,5 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 {
     public DbSet<Recording> Recordings { get; set; }
     public DbSet<Event> Events { get; set; }
+    public DbSet<Camera> Cameras { get; set; }
 }
