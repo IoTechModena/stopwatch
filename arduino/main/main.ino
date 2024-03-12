@@ -5,8 +5,8 @@
 // devFingerprint: E3:6F:1F:FF:2F:10:7D:D6:C4:14:40:30:42:61:83:12:97:2F:69:8E
 
 const uint8_t buttonPin = 0;
-const char* ssid = "ssid";
-const char* password = "password";
+const char* ssid = "<ssid>";
+const char* password = "<password>";
 const uint16_t debounceDelay = 300;
 const char* fingerprint = "4E:88:C3:74:00:53:62:98:74:59:98:E1:FF:E5:5B:7C:50:01:8B:AB";
 const uint16_t requestTimeout = 65535;
