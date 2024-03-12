@@ -1,5 +1,5 @@
 char* getStartDateTime(tm* timeinfo) {
-  static char dateTime[50];
+  static char dateTime[64];
 
   getLocalTime(timeinfo);
   strftime(dateTime, sizeof(dateTime), "?startDate=%F&startTime=%T", timeinfo);
@@ -8,7 +8,7 @@ char* getStartDateTime(tm* timeinfo) {
 }
 
 char* getEndDateTime(tm* timeinfo) {
-  static char dateTime[50];
+  static char dateTime[64];
 
   getLocalTime(timeinfo);
   strftime(dateTime, sizeof(dateTime), "&endDate=%F&endTime=%T", timeinfo);

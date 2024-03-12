@@ -15,7 +15,6 @@ const uint16_t port = 443;
 const char* uri = "/api/saveRecording/0";
 const char* APIKey = "hnGFNkAHFtB2ubQSaz3whHNgXwN2f4fcT3F3rdjMZ2HCLIGl8dcWBpoKDjx2pAb89lKxubJFdMvIrMLKq84zrweP3qjoztbTFJ0nVuTHzmHsMhiY78LvXxYL2ZLRhSnb";
 const char* headerKeys[] = { "Retry-After" };
-const size_t headerKeysCount = 1;
 const uint8_t defaultRetryAfter = 60;
 
 bool wasClicked = false;
@@ -42,57 +41,63 @@ void setup() {
 }
 
 void loop() {
-  const int buttonState = digitalRead(buttonPin);
+  if (WiFi.status() == WL_CONNECTED) {
+    const int buttonState = digitalRead(buttonPin);
 
-  if (buttonState == LOW && wasClicked == false) {
-    delay(debounceDelay);
+    if (buttonState == LOW && wasClicked == false) {
+      delay(debounceDelay);
 
-    if (buttonState == LOW) {
-      parameters = uri;
-      parameters += getStartDateTime(&timeinfo);
-      wasClicked = true;
+      if (buttonState == LOW) {
+        wasClicked = true;
+        parameters = uri;
+        parameters += getStartDateTime(&timeinfo);
+      }
     }
-  }
 
-  if (buttonState == HIGH && wasClicked == true) {
-    delay(debounceDelay);
+    if (buttonState == HIGH && wasClicked) {
+      delay(debounceDelay);
 
-    if (buttonState == HIGH) {
-      int httpCode;
+      if (buttonState == HIGH) {
+        int httpCode;
+        WiFiClientSecure wifiClient;
+        HTTPClient httpClient;
 
-      parameters += getEndDateTime(&timeinfo);
+        wasClicked = false;
+        wifiClient.setFingerprint(fingerprint);
+        parameters += getEndDateTime(&timeinfo);
 
-      WiFiClientSecure wifiClient;
-      wifiClient.setFingerprint(fingerprint);
+        if (httpClient.begin(wifiClient, host, port, parameters)) {
+          uint8_t retryAfter;
 
-      HTTPClient httpClient;
-      httpClient.setTimeout(requestTimeout);
+          do {
+            httpClient.setTimeout(requestTimeout);
+            httpClient.addHeader("X-API-Key", APIKey);
+            httpClient.collectHeaders(headerKeys, 1);
 
-      do {
-        uint8_t retryAfter;
+            Serial.printf("POST https://%s", host);
+            Serial.println(parameters);
 
-        httpClient.begin(wifiClient, host, port, parameters);
-        httpClient.addHeader("X-API-Key", APIKey);
-        httpClient.collectHeaders(headerKeys, headerKeysCount);
+            httpCode = httpClient.POST("");
 
-        Serial.printf("POST https://%s", host);
-        Serial.print(parameters);
+            retryAfter = httpClient.header("Retry-After").toInt();
+            Serial.printf("Response: %d\n", httpCode);
 
-        httpCode = httpClient.POST("");
-        retryAfter = httpClient.header("Retry-After").toInt();
-        Serial.println(httpClient.getString());
-        httpClient.end();
+            if (httpCode == HTTP_CODE_SERVICE_UNAVAILABLE) {
+              retryAfter = retryAfter ? retryAfter : defaultRetryAfter;
+              delay(retryAfter * 1000);
+            }
 
-        Serial.printf("Response: %d\n", httpCode);
+          } while (httpCode == HTTP_CODE_SERVICE_UNAVAILABLE);
+          httpClient.end();
 
-        if (httpCode == HTTP_CODE_SERVICE_UNAVAILABLE) {
-          retryAfter = retryAfter ? retryAfter : defaultRetryAfter;
-          delay(retryAfter * 1000);
+        } else {
+          Serial.println("HTTP Client error");
         }
-
-      } while (httpCode == HTTP_CODE_SERVICE_UNAVAILABLE);
-
-      wasClicked = false;
+      }
     }
+
+  } else {
+    Serial.println("WiFi not connected");
+    delay(1000);
   }
 }
