@@ -25,9 +25,7 @@ export const VideoPlayer = (props: { id: number }) => {
   return (
     <div className="relative aspect-[4/3]">
       <ReactPlayer
-        light={
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvGUQB47iWuzsTHiKxSff9EHRR0ioZc2a4hw&usqp=CAU"
-        }
+        light={"/imgs/dark-gray.jpg"}
         loop
         playing
         onClickPreview={fetchVideoStream}

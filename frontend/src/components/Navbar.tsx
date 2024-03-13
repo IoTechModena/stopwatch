@@ -14,7 +14,7 @@ export const Navbar = () => {
   //menuRef viene passato al hook che intanto spacchetta isMenuOpen e setIsMenuOpen
   //() => {} perchè nel caso di navbar quando chiudiamo il menu non succede nulla, oltre a chiudere il menu
   return (
-    <header className="text-white bg-[#112d4e] Gelion">
+    <header className="text-white bg-[#112d4e]">
       <nav className="font-bold flex justify-start items-center h-16 px-4 md:px-[8%]">
         <LogoComponent />
         {/*MOBILE-MENU */}
