@@ -92,7 +92,23 @@
     transform: scale(1);
   }
 }
-/* Quando il menu viene aperto */
+
 .apriti-sesamo {
   animation: easeIn 0.4s ease;
 }
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 91vh; 
+  text-align: center; 
+}
+
+.centeredImage {
+  max-width: 95%;
+  max-height: 95%; 
+  height: auto; 
+  margin-bottom: 20px; 
+ }
