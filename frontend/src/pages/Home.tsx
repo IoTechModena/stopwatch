@@ -54,7 +54,7 @@ export const Home = () => {
 
   return (
     <>
-      <div className="text-center Gelion">
+      <div className="text-center">
         <h1 className="mb-4 mt-20 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
           Benvenuto su{" "}
           <span className="bg-gradient-to-r from-[#0B1E33] to-[#2460A7] text-transparent bg-clip-text">
@@ -74,6 +74,7 @@ export const Home = () => {
           location={"Descrizione"}
           eventsNum={eventsCount[0]}
           cameraLocation={cameraLocation}
+          imageSrc="/imgs/Ufficio0.jpg"
         />
         <VideocameraCard
           key="2"
@@ -82,6 +83,7 @@ export const Home = () => {
           location={"Descrizione"}
           eventsNum={eventsCount[1]}
           cameraLocation={cameraLocation}
+          imageSrc="/imgs/Ufficio1.webp"
         />
       </div>
     </>
