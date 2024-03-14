@@ -14,6 +14,7 @@ namespace backend.Controllers;
 public class RecordingController(DataContext context) : ControllerBase
 {
     private static bool isBusy;
+    private readonly string apiKey = "hnGFNkAHFtB2ubQSaz3whHNgXwN2f4fcT3F3rdjMZ2HCLIGl8dcWBpoKDjx2pAb89lKxubJFdMvIrMLKq84zrweP3qjoztbTFJ0nVuTHzmHsMhiY78LvXxYL2ZLRhSnb";
     private readonly string authenticationString = "admin:mutina23";
     private readonly string ip = "151.78.228.229";
     private readonly string retryTime = "60";
@@ -22,8 +23,13 @@ public class RecordingController(DataContext context) : ControllerBase
     private readonly DataContext context = context;
 
     [HttpPost("saveRecording/{chnid}")]
-    public async Task<IActionResult> SaveEventAndRecordings([FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
+    public async Task<IActionResult> SaveEventAndRecordings([FromHeader(Name = "X-API-Key")] string apiKey, [FromRoute, Required, Range(0, 1)] byte chnid, [FromQuery] SaveRecordingParams p)
     {
+        if (!CheckApiKey(apiKey))
+        {
+            return Unauthorized();
+        }
+
         if (isBusy)
         {
             return ServiceBusy();
@@ -116,7 +122,7 @@ public class RecordingController(DataContext context) : ControllerBase
         else
             return BadRequest("Path is null");
     }
-    
+
     private async Task<Dictionary<string, string>> GetRecordingsInfo(byte chnid, SaveRecordingParams p)
     {
         Dictionary<string, string> d;
@@ -232,5 +238,14 @@ public class RecordingController(DataContext context) : ControllerBase
         Response.Headers.Append("Retry-After", retryTime);
         isBusy = false;
         return StatusCode(503, "Service Unavailable: " + m);
+    }
+
+    private bool CheckApiKey(string userApiKey)
+    {
+        if (!userApiKey.Equals(apiKey))
+        {
+            return false;
+        }
+        return true;
     }
 }

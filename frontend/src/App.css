@@ -34,7 +34,6 @@
 
     --radius: 0.5rem;
   }
-
 }
 
 @layer base {
@@ -95,4 +94,13 @@
 /* Quando il menu viene aperto */
 .apriti-sesamo {
   animation: easeIn 0.4s ease;
+}
+
+.react-multi-carousel-track {
+  margin: auto;
+}
+
+/* Tenere questa regola per ultima */
+body {
+  font-family: "Gelion", Arial, Helvetica, sans-serif;
 }
