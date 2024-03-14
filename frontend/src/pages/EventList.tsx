@@ -92,7 +92,7 @@ export const EventList = () => {
         <Alert
           type="error"
           prefix="Ops😥! "
-          message="Al momento non è  possibile caricare i dati."
+          message="Al momento non è  possibile caricare i dati degli eventi."
         />
       </>
     );

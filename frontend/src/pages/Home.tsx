@@ -1,35 +1,37 @@
+import { Alert } from "@/components/Alert";
+import { VideocameraCard } from "@/components/VideoComponents/VideocameraCard";
+import { Welcome } from "@/components/Welcome";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useCallback, useEffect, useState } from "react";
-import { VideocameraCard } from "../components/VideoComponents/VideocameraCard";
 import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
 
-interface ChannelData {
+interface CameraData {
+  id: number;
   channel: number;
+  name: string;
+  location: string;
   eventsCount: number;
 }
-const savedEventsCount = localStorage.getItem("eventsCount");
-const initialEventsCount = savedEventsCount
-  ? JSON.parse(savedEventsCount)
-  : [0, 0];
 
 export const Home = () => {
   const { isAuthenticated, logout, getAccessTokenSilently } = useAuth0();
-  const [eventsCount, setEventsCount] = useState(initialEventsCount);
+  const [loading, setLoading] = useState(true);
+  const [cameras, setCameras] = useState<CameraData[]>([]);
   const [cameraLocation, setCameraLocation] = useState<boolean>(true);
+  const [error, setError] = useState<null | Error>(null);
 
-  const fetchEventsCount = async () => {
-    const response = await axios.get<ChannelData[]>("api/getEventsCount");
-    const eventsCountData = response.data;
+  const fetchCameraData = async () => {
+    try {
+      const response = await axios.get<CameraData[]>("api/getCameras");
+      const cameraData = response.data;
 
-    const channel0Count =
-      eventsCountData.find((item) => item.channel === 0)?.eventsCount || 0;
-    const channel1Count =
-      eventsCountData.find((item) => item.channel === 1)?.eventsCount || 0;
-
-    const latestEventsCount = [channel0Count, channel1Count];
-    setEventsCount(latestEventsCount);
-
-    localStorage.setItem("eventsCount", JSON.stringify(latestEventsCount));
+      setCameras(cameraData);
+    } catch (e) {
+      setError(e as Error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const checkToken = useCallback(async () => {
@@ -49,43 +51,42 @@ export const Home = () => {
 
   useEffect(() => {
     checkToken();
-    fetchEventsCount();
+    fetchCameraData();
   }, [checkToken]);
 
+  if (error) {
+    return (
+      <>
+        <Welcome />
+        <Alert
+          type="error"
+          prefix="Ops😥! "
+          message="Al momento non è  possibile caricare i dati delle telecamere."
+        />
+      </>
+    );
+  }
   return (
     <>
-      <div className="text-center">
-        <h1 className="mb-4 mt-20 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
-          Benvenuto su{" "}
-          <span className="bg-gradient-to-r from-[#0B1E33] to-[#2460A7] text-transparent bg-clip-text">
-            StopWatch
-          </span>
-        </h1>
-        <p className="mb-20 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 mx-2">
-          Qui troverai le telecamere disponibili, premi su "Registrazioni" per
-          visualizzare gli eventi della telecamera.
-        </p>
-      </div>
+      <Welcome />
       <div className="flex flex-col md:flex-row justify-center items-center mb-10  lg:gap-x-28 md:gap-x-7 gap-y-20">
-        <VideocameraCard
-          key="1"
-          title="Telecamera 1"
-          channelNum={0}
-          location={"Descrizione"}
-          eventsNum={eventsCount[0]}
-          cameraLocation={cameraLocation}
-          imageSrc="/imgs/Ufficio0.jpg"
-        />
-        <VideocameraCard
-          key="2"
-          title="Telecamera 2"
-          channelNum={1}
-          location={"Descrizione"}
-          eventsNum={eventsCount[1]}
-          cameraLocation={cameraLocation}
-          imageSrc="/imgs/Ufficio1.webp"
-        />
+        {cameras.map((camera, index) => (
+          <VideocameraCard
+            key={camera.id}
+            title={camera.name}
+            channelNum={camera.channel}
+            location={camera.location}
+            eventsNum={camera.eventsCount}
+            cameraLocation={cameraLocation}
+            imageSrc={`/imgs/Ufficio${index}.jpg`}
+          />
+        ))}
       </div>
+      <BeatLoader
+        className="text-center my-20"
+        color="#eab308"
+        loading={loading}
+      />
     </>
   );
 };
