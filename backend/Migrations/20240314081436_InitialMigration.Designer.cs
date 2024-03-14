@@ -12,8 +12,8 @@ using backend;
 namespace backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240209174432_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240314081436_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace backend.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("backend.Models.Event", b =>
+            modelBuilder.Entity("backend.Models.Camera", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,6 +35,46 @@ namespace backend.Migrations
 
                     b.Property<byte>("Channel")
                         .HasColumnType("smallint");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cameras");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Channel = (byte)0,
+                            Location = "Ufficio Mutinanet - Sala Server",
+                            Name = "Telecamera 1"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Channel = (byte)0,
+                            Location = "Ufficio Mutinanet - Sala Riunioni",
+                            Name = "Telecamera 2"
+                        });
+                });
+
+            modelBuilder.Entity("backend.Models.Event", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CameraId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("EndDateTime")
                         .HasColumnType("timestamp with time zone");
@@ -47,6 +87,8 @@ namespace backend.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CameraId");
 
                     b.ToTable("Events");
                 });
@@ -91,6 +133,17 @@ namespace backend.Migrations
                     b.HasIndex("EventId");
 
                     b.ToTable("Recordings");
+                });
+
+            modelBuilder.Entity("backend.Models.Event", b =>
+                {
+                    b.HasOne("backend.Models.Camera", "Camera")
+                        .WithMany()
+                        .HasForeignKey("CameraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Camera");
                 });
 
             modelBuilder.Entity("backend.Models.Recording", b =>

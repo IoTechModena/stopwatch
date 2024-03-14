@@ -30,6 +30,9 @@ namespace backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<byte>("Channel")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
@@ -41,6 +44,22 @@ namespace backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Cameras");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Channel = (byte)0,
+                            Location = "Ufficio Mutinanet - Sala Server",
+                            Name = "Telecamera 1"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Channel = (byte)0,
+                            Location = "Ufficio Mutinanet - Sala Riunioni",
+                            Name = "Telecamera 2"
+                        });
                 });
 
             modelBuilder.Entity("backend.Models.Event", b =>

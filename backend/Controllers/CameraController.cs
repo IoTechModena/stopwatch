@@ -6,10 +6,8 @@ namespace backend.Controllers
 {
     public class CameraController(DataContext context) : Controller
     {
-
         private readonly DataContext context = context;
         
-
         [HttpGet("getCameras")]
         public async Task<IActionResult> GetCameras()
         {
@@ -30,6 +28,5 @@ namespace backend.Controllers
                 return StatusCode(500, e.Message);
             }
         }
-
     }
 }

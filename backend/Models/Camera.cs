@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
@@ -9,11 +8,13 @@ namespace backend.Models
         public long Id { get; set; }
 
         [Required]
+        public byte Channel { get; set; }
+
+        [Required]
         public string? Name { get; set; }
 
         [Required]
         public string? Location { get; set; }
-
     }
 
 

@@ -26,7 +26,5 @@ namespace backend.Models
 
         [JsonIgnore]
         public Camera Camera { get; set; }
-
-        public Event() { }
     }
 }
