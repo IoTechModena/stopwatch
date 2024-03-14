@@ -4,28 +4,51 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Events",
+                name: "Cameras",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Channel = table.Column<byte>(type: "smallint", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cameras", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     StartDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    EndDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CameraId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Cameras_CameraId",
+                        column: x => x.CameraId,
+                        principalTable: "Cameras",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,6 +77,20 @@ namespace backend.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Cameras",
+                columns: new[] { "Id", "Channel", "Location", "Name" },
+                values: new object[,]
+                {
+                    { 1L, (byte)0, "Ufficio Mutinanet - Sala Server", "Telecamera 1" },
+                    { 2L, (byte)1, "Ufficio Mutinanet - Sala Riunioni", "Telecamera 2" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_CameraId",
+                table: "Events",
+                column: "CameraId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Recordings_EventId",
                 table: "Recordings",
@@ -68,6 +105,9 @@ namespace backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Cameras");
         }
     }
 }
