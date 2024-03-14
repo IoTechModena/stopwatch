@@ -83,7 +83,7 @@ namespace backend.Migrations
                 values: new object[,]
                 {
                     { 1L, (byte)0, "Ufficio Mutinanet - Sala Server", "Telecamera 1" },
-                    { 2L, (byte)0, "Ufficio Mutinanet - Sala Riunioni", "Telecamera 2" }
+                    { 2L, (byte)1, "Ufficio Mutinanet - Sala Riunioni", "Telecamera 2" }
                 });
 
             migrationBuilder.CreateIndex(

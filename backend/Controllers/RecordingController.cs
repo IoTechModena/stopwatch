@@ -54,7 +54,7 @@ public class RecordingController(DataContext context) : ControllerBase
 
             Event currEvent = new()
             {
-                CameraId = chnid,
+                CameraId = chnid + 1,
                 Name = $"Event_{sid}",
                 StartDateTime = DateTime.ParseExact($"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),
                 EndDateTime = DateTime.ParseExact($"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUniversalTime(),

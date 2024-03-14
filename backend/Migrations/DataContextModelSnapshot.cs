@@ -56,7 +56,7 @@ namespace backend.Migrations
                         new
                         {
                             Id = 2L,
-                            Channel = (byte)0,
+                            Channel = (byte)1,
                             Location = "Ufficio Mutinanet - Sala Riunioni",
                             Name = "Telecamera 2"
                         });

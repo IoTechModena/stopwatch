@@ -16,6 +16,16 @@ namespace backend.Controllers
             {
                 var events = await context.Events
                 .Include(e => e.Recordings) //Including the related recordings, feature called "Eager loading"
+                .Include(e => e.Camera)
+                .Select(e => new 
+                {
+                    e.Id,
+                    e.Name,
+                    e.StartDateTime,
+                    e.EndDateTime,
+                    e.Camera.Channel,
+                    e.Recordings
+                })
                 .ToListAsync();
                 return Ok(events);
             }
