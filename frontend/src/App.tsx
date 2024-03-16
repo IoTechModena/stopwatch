@@ -5,6 +5,7 @@ import { ChannelContext } from "./context/ChannelContext";
 import { AuthenticationGuard } from "./lib/AuthGuard";
 import { EventList } from "./pages/EventList";
 import { Home } from "./pages/Home";
+import ErrorPage from "./components/ErrorPage"
 import React from "react";
 import "./fonts.css";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -45,7 +46,7 @@ export const App = () => {
           />
           <Route path="/" index element={<Home />} />
         </Route>
-        <Route path="*" element={<h1>404 Not Found</h1>} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </ChannelContext.Provider>
   );
