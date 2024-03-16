@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace backend.Models
 {
@@ -12,9 +13,6 @@ namespace backend.Models
         public ICollection<Recording>? Recordings { get; set; }
 
         [Required]
-        public byte Channel { get; set; }
-
-        [Required]
         public string? Name { get; set; }
 
         [Required]
@@ -23,6 +21,10 @@ namespace backend.Models
         [Required]
         public DateTime EndDateTime { get; set; }
 
-        public Event() { }
+        [ForeignKey("Camera")]
+        public long CameraId { get; set; }
+
+        [JsonIgnore]
+        public Camera Camera { get; set; }
     }
 }

@@ -34,7 +34,6 @@
 
     --radius: 0.5rem;
   }
-
 }
 
 @layer base {
@@ -112,3 +111,12 @@
   height: auto; 
   margin-bottom: 20px; 
  }
+
+.react-multi-carousel-track {
+  margin: auto;
+}
+
+/* Tenere questa regola per ultima */
+body {
+  font-family: "Gelion", Arial, Helvetica, sans-serif;
+}

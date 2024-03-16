@@ -39,7 +39,7 @@ export const DownloadButton = (props: {
     <button
       onClick={() => downloadVideo(props.videoId, props.videoName)}
       type="button"
-      className="group w-full py-2 px-4 font-bold bg-[#112d4e] hover:bg-[#0B1D32]  rounded-sm text-white inline-flex items-center justify-center  Gelion"
+      className="group w-full py-2 px-4 font-bold bg-[#112d4e] hover:bg-[#0B1D32]  rounded-sm text-white inline-flex items-center justify-center"
     >
       <img
         id="original-svg"

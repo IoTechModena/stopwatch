@@ -16,25 +16,18 @@ namespace backend.Controllers
             {
                 var events = await context.Events
                 .Include(e => e.Recordings) //Including the related recordings, feature called "Eager loading"
+                .Include(e => e.Camera)
+                .Select(e => new
+                {
+                    e.Id,
+                    e.Name,
+                    e.StartDateTime,
+                    e.EndDateTime,
+                    e.Camera.Channel,
+                    Recordings = e.Recordings.OrderBy(r => r.StartDateTime).ToList()
+                })
                 .ToListAsync();
                 return Ok(events);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
-        }
-
-        [HttpGet("getEventsCount")]
-        public async Task<IActionResult> GetEventsCount()
-        {
-            try
-            {
-                var eventsCount = await context.Events
-                .GroupBy(e => e.Channel)
-                .Select(g => new { Channel = g.Key, EventsCount = g.Count() })
-                .ToListAsync();
-                return Ok(eventsCount);
             }
             catch (Exception e)
             {

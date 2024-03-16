@@ -15,7 +15,7 @@ export const EventHeader = ({
 }: EventHeaderProps) => {
   return (
     <>
-      <div id="eventDescription" className="text-center Gelion">
+      <div id="eventDescription" className="text-center">
         <h1 className="text-3xl font-extrabold mb-1">🔔{name}</h1>
         <div className="flex justify-center gap-10">
           <p className="text-gray-700 font-bold">
