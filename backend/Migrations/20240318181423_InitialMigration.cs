@@ -82,8 +82,8 @@ namespace backend.Migrations
                 columns: new[] { "Id", "Channel", "Location", "Name" },
                 values: new object[,]
                 {
-                    { 1L, (byte)0, "Ufficio Mutinanet - Sala Server", "Telecamera 1" },
-                    { 2L, (byte)1, "Ufficio Mutinanet - Sala Riunioni", "Telecamera 2" }
+                    { 1L, (byte)0, "Mutinanet - Sala Riunioni", "Telecamera 1" },
+                    { 2L, (byte)1, "Mutinanet - Uffici", "Telecamera 2" }
                 });
 
             migrationBuilder.CreateIndex(

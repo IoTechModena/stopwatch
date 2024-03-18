@@ -12,7 +12,7 @@ using backend;
 namespace backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240314083620_InitialMigration")]
+    [Migration("20240318181423_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -53,14 +53,14 @@ namespace backend.Migrations
                         {
                             Id = 1L,
                             Channel = (byte)0,
-                            Location = "Ufficio Mutinanet - Sala Server",
+                            Location = "Mutinanet - Sala Riunioni",
                             Name = "Telecamera 1"
                         },
                         new
                         {
                             Id = 2L,
                             Channel = (byte)1,
-                            Location = "Ufficio Mutinanet - Sala Riunioni",
+                            Location = "Mutinanet - Uffici",
                             Name = "Telecamera 2"
                         });
                 });
