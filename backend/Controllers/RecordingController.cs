@@ -11,15 +11,14 @@ using backend.Utility;
 namespace backend.Controllers;
 
 [ApiController]
-public class RecordingController(DataContext context) : ControllerBase
+public class RecordingController(IConfiguration configuration, DataContext context) : ControllerBase
 {
     private static bool isBusy;
-    private readonly string apiKey = "hnGFNkAHFtB2ubQSaz3whHNgXwN2f4fcT3F3rdjMZ2HCLIGl8dcWBpoKDjx2pAb89lKxubJFdMvIrMLKq84zrweP3qjoztbTFJ0nVuTHzmHsMhiY78LvXxYL2ZLRhSnb";
-    private readonly string authenticationString = "admin:mutina23";
     private readonly string ip = "151.78.228.229";
     private readonly string retryTime = "60";
     private readonly string relativeFilePath = $"./public/recordings/";
     private readonly HttpClient client = new();
+    private readonly IConfiguration configuration = configuration;
     private readonly DataContext context = context;
 
     [HttpPost("saveRecording/{chnid}")]
@@ -123,14 +122,14 @@ public class RecordingController(DataContext context) : ControllerBase
             return BadRequest("Path is null");
     }
 
-    private async Task<Dictionary<string, string>> GetRecordingsInfo(byte chnid, SaveRecordingParams p)
+    private async Task<Dictionary<string, string>?> GetRecordingsInfo(byte chnid, SaveRecordingParams p)
     {
         Dictionary<string, string> d;
 
         string url = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={p.StartDate}%20{p.StartTime}&endTime={p.EndDate}%20{p.EndTime}";
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-        "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString)));
+        "Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(configuration["NVR_CREDENTIALS"])));
 
         try
         {
@@ -166,7 +165,7 @@ public class RecordingController(DataContext context) : ControllerBase
         var startInfo = new ProcessStartInfo
         {
             FileName = "curl",
-            Arguments = $"--http1.0 --output {relativeFilePath}{fileName} -u {authenticationString} -v {url}",
+            Arguments = $"--http1.0 --output {relativeFilePath}{fileName} -u {configuration["NVR_CREDENTIALS"]} -v {url}",
             UseShellExecute = false,
         };
 
@@ -242,7 +241,7 @@ public class RecordingController(DataContext context) : ControllerBase
 
     private bool CheckApiKey(string userApiKey)
     {
-        if (!userApiKey.Equals(apiKey))
+        if (!userApiKey.Equals(configuration["API_KEY"]))
         {
             return false;
         }

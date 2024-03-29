@@ -1,13 +1,24 @@
+using DotNetEnv.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using backend;
 
-const string path = "/run/secrets/database-password";
-string? databasePassword = File.Exists(path) ? File.ReadAllText(path) : null;
-
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Configuration.AddDotNetEnv();
+
+builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") + builder.Configuration["POSTGRES_PASSWORD"]));
+
+builder.Services.AddControllers();
+
+builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
+{
+    options.Authority = "https://manuelcampi.eu.auth0.com/";
+    options.Audience = "https://localhost/API";
+});
 
 builder.Services.AddCors(options =>
 {
@@ -17,8 +28,6 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("https://localhost:5173").AllowAnyHeader();
         });
 });
-
-builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -33,20 +42,14 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") + databasePassword));
-
-builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
-{
-    options.Authority = "https://manuelcampi.eu.auth0.com/";
-    options.Audience = "https://localhost/API";
-});
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+    db.Database.Migrate();
 }
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -54,8 +57,15 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
+app.MapControllers();
+
 app.UseCors();
 
-app.MapControllers();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 
 app.Run();

@@ -3,28 +3,23 @@ services:
     image: postgres:16.1-alpine3.19
     ports:
       - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/database-password
-    secrets:
-      - database-password
+    env_file:
+      - backend/.env
     volumes:
       - database-data:/var/lib/postgresql/data
-
-  migrations:
-    build:
-      context: backend
-      dockerfile: migrations.Dockerfile
-    secrets:
-      - database-password
-    depends_on:
-      - database
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 5s
 
   backend:
     build: backend
-    secrets:
-      - database-password
+    env_file:
+      - backend/.env
     volumes:
       - recordings:/app/public/recordings
+    depends_on:
+      database:
+        condition: service_healthy
 
   frontend:
     build: frontend
@@ -40,10 +35,6 @@ services:
       - static-data:/usr/share/nginx/html
     depends_on:
       - backend
-
-secrets:
-  database-password:
-    file: database/password.txt
 
 volumes:
   database-data:
