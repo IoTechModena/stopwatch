@@ -9,9 +9,9 @@ export const Auth0ProviderWithNavigate = ({
 }) => {
   const navigate = useNavigate();
 
-  const domain = "manuelcampi.eu.auth0.com";
-  const clientId = "7ZvDxcyIxwYz3IWx6ycjYXyX9EPEKVS5";
-  const audience = "https://localhost/API";
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN;  
+  const clientId = import.meta.env.VITE_AUTH0_CLIENTID;
+  const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
 
   const onRedirectCallback = (appState: AppState | undefined) => {
     navigate(appState?.returnTo || window.location.pathname);
