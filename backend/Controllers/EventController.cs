@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using backend.Data;
 
 namespace backend.Controllers
 {
@@ -15,7 +16,7 @@ namespace backend.Controllers
             try
             {
                 var events = await context.Events
-                .Include(e => e.Recordings) //Including the related recordings, feature called "Eager loading"
+                .Include(e => e.Recordings)
                 .Include(e => e.Camera)
                 .Select(e => new
                 {
@@ -23,8 +24,8 @@ namespace backend.Controllers
                     e.Name,
                     e.StartDateTime,
                     e.EndDateTime,
-                    e.Camera.Channel,
-                    Recordings = e.Recordings.OrderBy(r => r.StartDateTime).ToList()
+                    e.Camera!.Channel,
+                    Recordings = e.Recordings!.OrderBy(r => r.StartDateTime).ToList()
                 })
                 .ToListAsync();
                 return Ok(events);

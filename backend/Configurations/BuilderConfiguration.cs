@@ -1,3 +1,4 @@
+using backend.Data;
 using DotNetEnv.Configuration;
 using Microsoft.EntityFrameworkCore;
 
