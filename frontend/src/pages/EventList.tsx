@@ -42,7 +42,7 @@ export const EventList = () => {
 
   useEffect(() => {
     const getEvents = async () => {
-      const response = await authAxios.get("/getEvents");
+      const response = await authAxios.get("/events");
       return response.data;
     };
 
