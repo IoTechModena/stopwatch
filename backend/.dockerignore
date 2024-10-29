@@ -2,7 +2,7 @@
 bin/
 obj/
 
-# Recordings
+# Videos
 public/
 
 # Docker

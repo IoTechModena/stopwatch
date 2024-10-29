@@ -16,7 +16,7 @@ services:
     env_file:
       - backend/.env
     volumes:
-      - recordings:/app/public/recordings
+      - videos:/app/public/videos
     depends_on:
       database:
         condition: service_healthy
@@ -38,5 +38,5 @@ services:
 
 volumes:
   database-data:
-  recordings:
+  videos:
   static-data:

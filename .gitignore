@@ -10,7 +10,7 @@ dist/
 
 # Environment
 ssl/
-recordings/
+videos/
 
 # Visual Studio
 .vs/

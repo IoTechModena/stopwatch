@@ -11,5 +11,5 @@ WORKDIR /app
 COPY --from=build-env /app/out .
 RUN apk update
 RUN apk --no-cache add curl
-RUN mkdir -p ./public/recordings
+RUN mkdir -p ./public/videos
 ENTRYPOINT ["dotnet", "backend.dll"]

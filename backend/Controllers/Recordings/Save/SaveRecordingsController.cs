@@ -1,57 +1,55 @@
-﻿using backend.Models;
-using backend.Utility;
 using backend.Data;
-using Microsoft.AspNetCore.Mvc;
+using backend.Models;
+using backend.Utility;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Globalization;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 
-namespace backend.Controllers;
+namespace backend.Controllers.Recordings.Save;
 
 [ApiController]
-public class RecordingController(IConfiguration configuration, DataContext context) : ControllerBase
+[Route("recordings/save/{chnid}")]
+[Tags("Recordings")]
+public class SaveRecordingsController(IConfiguration _configuration, DataContext _context) : ControllerBase
 {
     private static bool isBusy;
     private readonly string ip = "151.78.228.229";
     private readonly string retryTime = "60";
-    private readonly string relativeFilePath = $"./public/recordings/";
-    private readonly HttpClient client = new();
-    private readonly IConfiguration configuration = configuration;
-    private readonly DataContext context = context;
+    private readonly string relativeFilePath = $"./public/videos/";
+    private readonly IConfiguration configuration = _configuration;
+    private readonly DataContext context = _context;
 
-    [HttpPost("saveRecording/{chnid}")]
-    public async Task<IActionResult> SaveEventAndRecordings(
+    [HttpPost]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(503)]
+    public async Task<IActionResult> SaveRecordingsAsync(
         [FromHeader(Name = "X-API-Key")] string apiKey,
         [FromRoute, Required, Range(0, 1)] byte chnid,
-        [FromQuery] SaveRecordingParams p
+        [FromQuery] SaveRecordingParams p,
+        CancellationToken cancellationToken
     )
     {
         if (!CheckApiKey(apiKey))
-        {
             return Unauthorized();
-        }
 
         if (isBusy)
-        {
             return ServiceBusy();
-        }
 
         isBusy = true;
+
         try
         {
-            var recordingsInfo = await GetRecordingsInfo(chnid, p);
-            if (recordingsInfo == null)
-            {
+            var recordingsInfo = await GetRecordingsInfoAsync(chnid, p, cancellationToken);
+
+            if (recordingsInfo is null)
                 return ServiceUnavailable("The NVR is unreachable.");
 
-            }
-            else if (recordingsInfo.Count == 0)
-            {
+            if (recordingsInfo.Count == 0)
                 return ServiceUnavailable("The NVR response is not valid.");
-            }
 
             byte cnt = byte.Parse(recordingsInfo["cnt"]);
             string sid = recordingsInfo["sid"];
@@ -69,6 +67,7 @@ public class RecordingController(IConfiguration configuration, DataContext conte
                     CultureInfo.InvariantCulture
                 ).ToUniversalTime(),
             };
+
             for (int i = 0; i < cnt; i++)
             {
                 string cntStartDateTime = recordingsInfo[$"startTime{i}"];
@@ -76,10 +75,10 @@ public class RecordingController(IConfiguration configuration, DataContext conte
                 int expectedSize = int.Parse(recordingsInfo[$"size{i}"]);
 
                 string fileName = $"CAM{chnid + 1}-" +
-                                  $"{sid}_" +
-                                  $"{i + 1}.mp4";
+                    $"{sid}_" +
+                    $"{i + 1}.mp4";
 
-                var isDownloadSuccess = await DownloadRecordingProcess(
+                var isDownloadSuccess = await DownloadRecordingProcessAsync(
                     i,
                     cnt,
                     sid,
@@ -87,64 +86,48 @@ public class RecordingController(IConfiguration configuration, DataContext conte
                     cntStartDateTime,
                     cntEndDateTime,
                     fileName,
-                    expectedSize
+                    expectedSize,
+                    cancellationToken
                 );
+
                 if (!isDownloadSuccess)
-                {
                     return ServiceUnavailable("There was an error while downloading a recording from the NVR.");
-                }
 
                 if (i == 0)
                 {
-                    var isEventSaved = await SaveEvent(currEvent);
+                    var isEventSaved = await SaveEventAsync(currEvent, cancellationToken);
                     if (!isEventSaved)
-                    {
                         return ServiceUnavailable("There was an error while saving the Event.");
-                    }
                 }
 
-                var isRecordingSaved = await SaveRecording(cntStartDateTime, cntEndDateTime, fileName, currEvent);
+                var isRecordingSaved = await SaveRecordingAsync(
+                    cntStartDateTime,
+                    cntEndDateTime,
+                    fileName,
+                    currEvent,
+                    cancellationToken
+                );
+
                 if (!isRecordingSaved)
-                {
                     return ServiceUnavailable("There was an error while saving a Recording.");
-                }
             }
         }
         finally
         {
             isBusy = false;
         }
+
         return Ok();
     }
 
-    [Authorize]
-    [HttpGet("downloadRecording/{id}")]
-    public async Task<IActionResult> DownloadRecording(long id)
-    {
-        var record = await context.Recordings.FindAsync(id);
-
-        if (record == null)
-            return NotFound("Record not found");
-        else
-            if (record.Path != null)
-        {
-            var recordingPath = record.Path;
-
-            var fileBytes = await System.IO.File.ReadAllBytesAsync(recordingPath);
-
-            var recordDownload = File(fileBytes, "application/octet-stream", Path.GetFileName(recordingPath));
-
-            Response.Headers.ContentDisposition = "attachment; filename=" + Path.GetFileName(recordingPath);
-
-            return recordDownload;
-        }
-        else
-            return BadRequest("Path is null");
-    }
-
-    private async Task<Dictionary<string, string>?> GetRecordingsInfo(byte chnid, SaveRecordingParams p)
+    private async Task<Dictionary<string, string>?> GetRecordingsInfoAsync(
+        byte chnid,
+        SaveRecordingParams p,
+        CancellationToken cancellationToken
+    )
     {
         Dictionary<string, string> d;
+        HttpClient client = new();
 
         string url = $"http://{ip}/sdk.cgi?action=get.playback.recordinfo&chnid={chnid}&stream=0&startTime={p.StartDate}%20{p.StartTime}&endTime={p.EndDate}%20{p.EndTime}";
 
@@ -153,16 +136,14 @@ public class RecordingController(IConfiguration configuration, DataContext conte
 
         try
         {
-            var response = await client.GetAsync(url);
-            var content = await response.Content.ReadAsStringAsync();
+            var response = await client.GetAsync(url, cancellationToken);
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
             d = UtilityMethods.ParseResponse(content);
 
             Console.WriteLine("\nKeys and values of the recordings info response:");
             foreach (var pair in d)
-            {
                 Console.WriteLine($"{pair.Key}: {pair.Value}");
-            }
         }
         catch
         {
@@ -170,13 +151,22 @@ public class RecordingController(IConfiguration configuration, DataContext conte
         }
 
         if (!d.ContainsKey("sid"))
-        {
             d.Clear();
-        }
+
         return d;
     }
 
-    private async Task<bool> DownloadRecordingProcess(int i, byte cnt, string sid, byte chnid, string cntStartDateTime, string cntEndDateTime, string fileName, int expectedSize)
+    private async Task<bool> DownloadRecordingProcessAsync(
+        int i,
+        byte cnt,
+        string sid,
+        byte chnid,
+        string cntStartDateTime,
+        string cntEndDateTime,
+        string fileName,
+        int expectedSize,
+        CancellationToken cancellationToken
+    )
     {
         string url = $"http://{ip}/sdk.cgi?action=get.playback.download&chnid={chnid}&sid={sid}&streamType=primary&videoFormat=mp4&streamData=1&startTime={cntStartDateTime}&endTime={cntEndDateTime}"
             .Replace(" ", "%20");
@@ -191,40 +181,43 @@ public class RecordingController(IConfiguration configuration, DataContext conte
         };
 
         var process = new Process { StartInfo = startInfo };
-
         process.Start();
-        await process.WaitForExitAsync();
+        await process.WaitForExitAsync(cancellationToken);
 
         var fileInfo = new FileInfo($"{relativeFilePath}{fileName}");
 
         Console.WriteLine($"\n Actual size: {fileInfo.Length} - Expected size: {expectedSize}");
+
         if (fileInfo.Length < expectedSize)
         {
             fileInfo.Delete();
             return false;
         }
+
         return true;
     }
 
-    private async Task<bool> SaveEvent(Event e)
+    private async Task<bool> SaveEventAsync(Event e, CancellationToken cancellationToken)
     {
         try
         {
-            await context.AddAsync(e);
-            await context.SaveChangesAsync();
+            await context.AddAsync(e, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
         }
         catch
         {
             return false;
         }
+
         return true;
     }
 
-    private async Task<bool> SaveRecording(
+    private async Task<bool> SaveRecordingAsync(
         string cntStartDateTime,
         string cntEndDateTime,
         string fileName,
-        Event e
+        Event e,
+        CancellationToken cancellationToken
     )
     {
         Recording recording = new()
@@ -245,18 +238,20 @@ public class RecordingController(IConfiguration configuration, DataContext conte
             ).ToUniversalTime(),
             Event = e,
         };
+
         recording.Duration = recording.EndDateTime - recording.StartDateTime;
-        e?.Recordings?.Add(recording);
+        e.Recordings!.Add(recording);
 
         try
         {
-            await context.AddAsync(recording);
-            await context.SaveChangesAsync();
+            await context.AddAsync(recording, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
         }
         catch
         {
             return false;
         }
+
         return true;
     }
 
@@ -276,9 +271,8 @@ public class RecordingController(IConfiguration configuration, DataContext conte
     private bool CheckApiKey(string userApiKey)
     {
         if (!userApiKey.Equals(configuration["API_KEY"]))
-        {
             return false;
-        }
+
         return true;
     }
 }
