@@ -9,9 +9,9 @@ namespace backend.Controllers.Events.GetAll;
 [ApiController]
 [Route("events")]
 [Tags("Events")]
-public class GetAllEventsController(DataContext context) : Controller
+public class GetAllEventsController(DataContext _context) : ControllerBase
 {
-    private readonly DataContext context = context;
+    private readonly DataContext context = _context;
 
     [HttpGet]
     [ProducesResponseType<IEnumerable<GetAllEventsResponse>>(200)]

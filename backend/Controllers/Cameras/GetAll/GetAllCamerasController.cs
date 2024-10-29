@@ -7,9 +7,9 @@ namespace backend.Controllers.Cameras.GetAll;
 [ApiController]
 [Route("cameras")]
 [Tags("Cameras")]
-public class GetAllCamerasController(DataContext context) : Controller
+public class GetAllCamerasController(DataContext _context) : ControllerBase
 {
-    private readonly DataContext context = context;
+    private readonly DataContext context = _context;
 
     [HttpGet]
     [ProducesResponseType<IEnumerable<GetAllCamerasResponse>>(200)]
