@@ -29,7 +29,7 @@ public class SaveRecordingsController(IConfiguration _configuration, DataContext
     public async Task<IActionResult> SaveRecordingsAsync(
         [FromHeader(Name = "X-API-Key")] string apiKey,
         [FromRoute, Required, Range(0, 1)] byte chnid,
-        [FromQuery] SaveRecordingParams p,
+        [FromQuery] SaveRecordingsRequest p,
         CancellationToken cancellationToken
     )
     {
@@ -122,7 +122,7 @@ public class SaveRecordingsController(IConfiguration _configuration, DataContext
 
     private async Task<Dictionary<string, string>?> GetRecordingsInfoAsync(
         byte chnid,
-        SaveRecordingParams p,
+        SaveRecordingsRequest p,
         CancellationToken cancellationToken
     )
     {
