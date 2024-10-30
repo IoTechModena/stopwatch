@@ -13,7 +13,7 @@ public class Event
     public ICollection<Recording>? Recordings { get; set; }
 
     [Required]
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Required]
     public DateTime StartDateTime { get; set; }

@@ -23,7 +23,7 @@ public class GetAllEventsController(DataContext _context) : ControllerBase
             .Select(e => new GetAllEventsResponse
             {
                 Id = e.Id,
-                Name = e.Name!,
+                Name = e.Name,
                 StartDateTime = e.StartDateTime,
                 EndDateTime = e.EndDateTime,
                 Channel = e.Camera!.Channel,

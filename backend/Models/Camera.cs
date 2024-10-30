@@ -11,8 +11,8 @@ public class Camera
     public byte Channel { get; set; }
 
     [Required]
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Required]
-    public string? Location { get; set; }
+    public string Location { get; set; } = string.Empty;
 }

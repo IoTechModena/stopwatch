@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder();
 builder.ConfigureStorage();
 builder.ConfigureAuthentication();
 builder.ConfigureCors();
+builder.ConfigureValidation();
 builder.ConfigureScalar();
 builder.ConfigureControllers();
 

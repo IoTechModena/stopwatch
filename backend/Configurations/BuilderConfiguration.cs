@@ -1,5 +1,7 @@
 using backend.Data;
+using backend.Controllers.Recordings.Save;
 using DotNetEnv.Configuration;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Configurations;
@@ -33,6 +35,12 @@ public static class BuilderConfiguration
                 policy.WithOrigins("https://localhost:5173").AllowAnyHeader();
             });
         });
+    }
+
+    public static void ConfigureValidation(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddValidatorsFromAssemblyContaining<SaveRecordingsRequestValidator>();
     }
 
     public static void ConfigureScalar(this WebApplicationBuilder builder)

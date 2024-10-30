@@ -10,13 +10,13 @@ public class Recording
     public long Id { get; set; }
 
     [Required]
-    public string? Path { get; set; }
+    public string Path { get; set; } = string.Empty;
 
     [Required]
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [MaxLength(500)]
-    public string? Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     [Required]
     public DateTime StartDateTime { get; set; }
@@ -35,6 +35,4 @@ public class Recording
 
     [JsonIgnore]
     public Event? Event { get; set; }
-
-    public Recording() { }
 }
