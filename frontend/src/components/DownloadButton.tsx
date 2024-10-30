@@ -9,7 +9,7 @@ export const DownloadButton = (props: {
   const { axiosInstance: authAxios } = useAuthAxios();
   const downloadVideo = async (videoId: number, videoName: string) => {
     try {
-      const response = await authAxios.get(`downloadRecording/${videoId}`, {
+      const response = await authAxios.get(`recordings/${videoId}`, {
         responseType: "blob", // Gestisce la risposta come file binario
       });
 

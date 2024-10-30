@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:16.1-alpine3.19
+    image: postgres:17-alpine3.20
     ports:
       - 5432:5432
     env_file:
@@ -16,7 +16,7 @@ services:
     env_file:
       - backend/.env
     volumes:
-      - recordings:/app/public/recordings
+      - videos:/app/public/videos
     depends_on:
       database:
         condition: service_healthy
@@ -38,5 +38,5 @@ services:
 
 volumes:
   database-data:
-  recordings:
+  videos:
   static-data:

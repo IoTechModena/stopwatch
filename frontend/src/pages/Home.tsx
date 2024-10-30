@@ -23,7 +23,7 @@ export const Home = () => {
 
   const fetchCameraData = async () => {
     try {
-      const response = await axios.get<CameraData[]>("api/getCameras");
+      const response = await axios.get<CameraData[]>("api/cameras");
       const cameraData = response.data;
 
       setCameras(cameraData);

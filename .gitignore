@@ -9,8 +9,7 @@ node_modules/
 dist/
 
 # Environment
-ssl/
-recordings/
+videos/
 
 # Visual Studio
 .vs/

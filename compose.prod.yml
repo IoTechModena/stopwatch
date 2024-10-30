@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:16.1-alpine3.19
+    image: postgres:17-alpine3.20
     restart: unless-stopped
     env_file:
       - backend/.env
@@ -16,7 +16,7 @@ services:
     env_file:
       - backend/.env
     volumes:
-      - recordings:/app/public/recordings
+      - videos:/app/public/videos
     depends_on:
       database:
         condition: service_healthy
@@ -39,5 +39,5 @@ services:
 
 volumes:
   database-data:
-  recordings:
+  videos:
   static-data:

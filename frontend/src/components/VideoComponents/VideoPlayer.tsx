@@ -10,7 +10,7 @@ export const VideoPlayer = (props: { id: number }) => {
   const fetchVideoStream = async () => {
     try {
       setIsLoading(true);
-      const response = await authAxios.get(`/downloadRecording/${props.id}`, {
+      const response = await authAxios.get(`/recordings/${props.id}`, {
         responseType: "blob",
       });
       const blobUrl = URL.createObjectURL(response.data);

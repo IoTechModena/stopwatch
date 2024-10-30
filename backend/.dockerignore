@@ -2,10 +2,9 @@
 bin/
 obj/
 
-# Recordings
+# Videos
 public/
 
 # Docker
 .dockerignore
 Dockerfile
-migrations.Dockerfile
