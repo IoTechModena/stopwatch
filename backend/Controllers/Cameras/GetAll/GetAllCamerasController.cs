@@ -13,7 +13,7 @@ public class GetAllCamerasController(DataContext _context) : ControllerBase
 
     [HttpGet]
     [ProducesResponseType<IEnumerable<GetAllCamerasResponse>>(200)]
-    public async Task<IActionResult> GetAllCamerasAsync()
+    public async Task<IActionResult> GetAllCamerasAsync(CancellationToken cancellationToken)
     {
         var cameras = await context.Cameras
             .Select(c => new GetAllCamerasResponse
@@ -25,7 +25,7 @@ public class GetAllCamerasController(DataContext _context) : ControllerBase
                 EventsCount = context.Events.Count(e => e.CameraId == c.Id),
             })
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return Ok(cameras);
     }

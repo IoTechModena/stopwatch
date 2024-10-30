@@ -15,7 +15,7 @@ public class GetAllEventsController(DataContext _context) : ControllerBase
 
     [HttpGet]
     [ProducesResponseType<IEnumerable<GetAllEventsResponse>>(200)]
-    public async Task<IActionResult> GetAllEventsAsync()
+    public async Task<IActionResult> GetAllEventsAsync(CancellationToken cancellationToken)
     {
         var events = await context.Events
             .Include(e => e.Recordings)
@@ -32,7 +32,7 @@ public class GetAllEventsController(DataContext _context) : ControllerBase
                     .ToList()
             })
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return Ok(events);
     }
