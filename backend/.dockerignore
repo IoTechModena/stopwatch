@@ -8,4 +8,3 @@ public/
 # Docker
 .dockerignore
 Dockerfile
-migrations.Dockerfile

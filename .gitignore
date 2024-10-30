@@ -9,7 +9,6 @@ node_modules/
 dist/
 
 # Environment
-ssl/
 videos/
 
 # Visual Studio
