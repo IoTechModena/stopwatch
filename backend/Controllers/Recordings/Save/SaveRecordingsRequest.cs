@@ -1,18 +1,18 @@
-using backend.Utility.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace backend.Controllers.Recordings.Save;
 
 public class SaveRecordingsRequest
 {
-    [Date]
+    [Required]
     public required string StartDate { get; set; }
 
-    [Time]
+    [Required]
     public required string StartTime { get; set; }
 
-    [Date]
+    [Required]
     public required string EndDate { get; set; }
 
-    [Time]
+    [Required]
     public required string EndTime { get; set; }
 }

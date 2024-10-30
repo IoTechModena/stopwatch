@@ -1,6 +1,7 @@
 ﻿using backend.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace backend.Controllers.Recordings.Download;
 
@@ -16,7 +17,9 @@ public class DownloadRecordingController(DataContext _context) : ControllerBase
     [ProducesResponseType<FileContentResult>(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> DownloadRecordingAsync(long id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DownloadRecordingAsync(
+        [Required] long id,
+        CancellationToken cancellationToken)
     {
         var record = await context.Recordings.FindAsync(id, cancellationToken);
 

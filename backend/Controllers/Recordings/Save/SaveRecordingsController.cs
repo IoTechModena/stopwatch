@@ -1,19 +1,23 @@
 using backend.Data;
 using backend.Models;
-using backend.Utility;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Diagnostics;
+using FluentValidation.AspNetCore;
 
 namespace backend.Controllers.Recordings.Save;
 
 [ApiController]
 [Route("recordings/save/{chnid}")]
 [Tags("Recordings")]
-public class SaveRecordingsController(IConfiguration _configuration, DataContext _context) : ControllerBase
+public class SaveRecordingsController(
+    IConfiguration _configuration,
+    DataContext _context,
+    SaveRecordingsRequestValidator _validator
+) : ControllerBase
 {
     private static bool isBusy;
     private readonly string ip = "151.78.228.229";
@@ -21,20 +25,28 @@ public class SaveRecordingsController(IConfiguration _configuration, DataContext
     private readonly string relativeFilePath = $"./public/videos/";
     private readonly IConfiguration configuration = _configuration;
     private readonly DataContext context = _context;
+    private readonly SaveRecordingsRequestValidator validator = _validator;
 
     [HttpPost]
     [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(503)]
     public async Task<IActionResult> SaveRecordingsAsync(
         [FromHeader(Name = "X-API-Key")] string apiKey,
         [FromRoute, Required, Range(0, 1)] byte chnid,
-        [FromQuery] SaveRecordingsRequest p,
+        [FromQuery] SaveRecordingsRequest request,
         CancellationToken cancellationToken
     )
     {
-        if (!CheckApiKey(apiKey))
+        if (!apiKey.Equals(configuration["API_KEY"]))
             return Unauthorized();
+
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        validationResult.AddToModelState(ModelState);
+
+        if (!ModelState.IsValid)
+            return ValidationProblem();
 
         if (isBusy)
             return ServiceBusy();
@@ -43,7 +55,7 @@ public class SaveRecordingsController(IConfiguration _configuration, DataContext
 
         try
         {
-            var recordingsInfo = await GetRecordingsInfoAsync(chnid, p, cancellationToken);
+            var recordingsInfo = await GetRecordingsInfoAsync(chnid, request, cancellationToken);
 
             if (recordingsInfo is null)
                 return ServiceUnavailable("The NVR is unreachable.");
@@ -59,11 +71,13 @@ public class SaveRecordingsController(IConfiguration _configuration, DataContext
                 CameraId = chnid + 1,
                 Name = $"Event_{sid}",
                 StartDateTime = DateTime.ParseExact(
-                    $"{p.StartDate} {p.StartTime}", "yyyy-MM-dd HH:mm:ss",
+                    $"{request.StartDate} {request.StartTime}",
+                    "yyyy-MM-dd HH:mm:ss",
                     CultureInfo.InvariantCulture
                 ).ToUniversalTime(),
                 EndDateTime = DateTime.ParseExact(
-                    $"{p.EndDate} {p.EndTime}", "yyyy-MM-dd HH:mm:ss",
+                    $"{request.EndDate} {request.EndTime}",
+                    "yyyy-MM-dd HH:mm:ss",
                     CultureInfo.InvariantCulture
                 ).ToUniversalTime(),
             };
@@ -139,7 +153,7 @@ public class SaveRecordingsController(IConfiguration _configuration, DataContext
             var response = await client.GetAsync(url, cancellationToken);
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
-            d = UtilityMethods.ParseResponse(content);
+            d = ParseResponse(content);
 
             Console.WriteLine("\nKeys and values of the recordings info response:");
             foreach (var pair in d)
@@ -154,6 +168,20 @@ public class SaveRecordingsController(IConfiguration _configuration, DataContext
             d.Clear();
 
         return d;
+    }
+
+    private static Dictionary<string, string> ParseResponse(string response)
+    {
+        var lines = response.Split(["\r\n", "\r", "\n"], StringSplitOptions.None);
+        var values = new Dictionary<string, string>();
+
+        foreach (var line in lines)
+        {
+            var parts = line.Split('=');
+            if (parts.Length == 2)
+                values[parts[0]] = parts[1];
+        }
+        return values;
     }
 
     private async Task<bool> DownloadRecordingProcessAsync(
@@ -266,13 +294,5 @@ public class SaveRecordingsController(IConfiguration _configuration, DataContext
         Response.Headers.Append("Retry-After", retryTime);
         isBusy = false;
         return StatusCode(503, "Service Unavailable: " + m);
-    }
-
-    private bool CheckApiKey(string userApiKey)
-    {
-        if (!userApiKey.Equals(configuration["API_KEY"]))
-            return false;
-
-        return true;
     }
 }

@@ -20,8 +20,8 @@ public class GetAllCamerasController(DataContext _context) : ControllerBase
             {
                 Id = c.Id,
                 Channel = c.Channel,
-                Name = c.Name!,
-                Location = c.Location!,
+                Name = c.Name,
+                Location = c.Location,
                 EventsCount = context.Events.Count(e => e.CameraId == c.Id),
             })
             .AsNoTracking()
