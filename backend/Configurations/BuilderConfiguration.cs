@@ -40,4 +40,11 @@ public static class BuilderConfiguration
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
     }
+
+    public static void ConfigureControllers(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddControllers(options =>
+            options.ReturnHttpNotAcceptable = true
+        );
+    }
 }
